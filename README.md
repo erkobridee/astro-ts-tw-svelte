@@ -1,6 +1,8 @@
-# astro-ts-tw-hello
+# astro-ts-tw-svelte
 
-[Astro Build](https://astro.build/) using [TypeScript](https://www.typescriptlang.org/) plus [TailwindCSS](https://tailwindcss.com/)
+[Astro Build](https://astro.build/) using [TypeScript](https://www.typescriptlang.org/), [TailwindCSS](https://tailwindcss.com/), and Svelte
+
+- Project template: [[GitHub] erkobridee/astro-ts-tw-hello](https://github.com/erkobridee/astro-ts-tw-hello)
 
 ## Local Development
 
@@ -62,10 +64,12 @@ Following a Unix OS approach, that beens said so we have the following alias map
 
 - [Effortless Code Styling: Configuring Astro with Prettier, ESLint, and Tailwind CSS | Raj Vadeghar](https://r44j.dev/blog/beginner-s-guide-to-setting-up-astro-astro-prettier-eslint-tailwind-css/) (2024/03/03)
 
+<!--
+
 ## Test it online
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/erkobridee/astro-ts-tw-hello)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/erkobridee/astro-ts-tw-hello?devcontainer_path=.devcontainer/devcontainer.json)
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/erkobridee/astro-ts-tw-svelte)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/erkobridee/astro-ts-tw-svelte?devcontainer_path=.devcontainer/devcontainer.json)
 
 ## Setup a new project using this repository
 
@@ -74,11 +78,13 @@ You can use the `Use this template` button
 ### degit
 
 ```sh
-npx degit erkobridee/astro-ts-tw-hello {project_name}
+npx degit erkobridee/astro-ts-tw-svelte {project_name}
 ```
 
 ### create a new project based on a GitHub repository’s main branch
 
 ```sh
-npm create astro@latest -- --template erkobridee/astro-ts-tw-hello
+npm create astro@latest -- --template erkobridee/astro-ts-tw-svelte
 ```
+
+-->

@@ -24,6 +24,7 @@
         "astro-build.astro-vscode",
         "bradlc.vscode-tailwindcss",
         "unifiedjs.vscode-mdx",
+        "svelte.svelte-vscode",
         "meganrogge.template-string-converter"
       ],
       "settings": {
