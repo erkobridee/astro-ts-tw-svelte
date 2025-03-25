@@ -1,0 +1,25 @@
+---
+import Layout from '~/layouts/Main.astro';
+
+import Link from '~/components/Link.astro';
+
+import EChartsStarterExample from '~/components/apache-echarts/examples/StarterExample.svelte';
+
+const PAGE_TITLE = 'Testing Apache ECharts';
+---
+
+<Layout
+  content={{
+    title: PAGE_TITLE
+  }}
+>
+  <div class="flex flex-col gap-2 p-10">
+    <div class="mb-4 flex items-center gap-2">
+      <Link href="/">Home page</Link>
+
+      <div class="font-semibold">{PAGE_TITLE}</div>
+    </div>
+
+    <EChartsStarterExample client:load />
+  </div>
+</Layout>
