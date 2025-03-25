@@ -1,9 +1,10 @@
 ---
-import Layout from '~/layouts/main.astro';
+import Layout from '~/layouts/Main.astro';
 
 // Component Imports
 import ConfettiButton from '~/components/ConfettiButton.astro';
 import Link from '~/components/Link.astro';
+import Greetings from '~/components/Greetings.svelte';
 
 // Full Astro Component Syntax:
 // https://docs.astro.build/basics/astro-components/
@@ -11,7 +12,7 @@ import Link from '~/components/Link.astro';
 
 <Layout
   content={{
-    title: 'Astro + TS + TailwindCSS + Svelte'
+    title: 'Astro + TS + TailwindCSS + Svelte v4'
   }}
 >
   <div class="grid h-screen place-items-center content-center space-y-4">
@@ -21,11 +22,23 @@ import Link from '~/components/Link.astro';
 
     <div class="flex flex-col items-center space-y-4">
       <div class="font-bold">Available Pages:</div>
-      <div>
-        <Link href="/markdown-page">Markdown is also supported...</Link> |
+      <div class="flex gap-2 divide-x divide-gray-300">
+        <Link href="/mdx-page">MDX</Link>
+        <Link href="/markdown-content-page">Markdown Content</Link>
         <Link href="/search?q=Hello World">Search 'Hello World'</Link>
       </div>
     </div>
+
+    <div class="w-full border-b border-gray-300"></div>
+
+    <Greetings />
+
+    <Greetings message="Greetings from message property!" />
+
+    <Greetings
+      ><span class="font-semibold">Svelte v4 Component:</span> Greetings from the
+      children!</Greetings
+    >
 
     <div class="w-full border-b border-gray-300"></div>
 
