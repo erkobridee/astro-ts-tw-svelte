@@ -1,7 +1,8 @@
 // https://docs.astro.build/en/reference/configuration-reference/
+import { defineConfig } from 'astro/config';
 
 import mdx from '@astrojs/mdx';
-import { defineConfig } from 'astro/config';
+import svelte from '@astrojs/svelte';
 
 // https://tailwindcss.com/docs/installation/framework-guides/astro
 import tailwindcss from '@tailwindcss/vite';
@@ -18,7 +19,7 @@ const isGitHubPagesPreview = !!process.env.GITHUB_PAGES_PREVIEW;
 
 /** @type {import('astro/config').config} */
 const baseConfig = {
-  integrations: [mdx()],
+  integrations: [svelte({ extensions: ['.svelte'] }), mdx()],
   vite: {
     plugins: [tailwindcss()]
   }

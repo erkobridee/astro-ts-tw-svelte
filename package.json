@@ -6,8 +6,8 @@
     "unset:git-hooks-path": "git config --unset core.hooksPath",
     "simple-git-hooks": "npx simple-git-hooks",
     "postinstall": "is-ci || npm run simple-git-hooks",
-    "prettier": "prettier --write  \"**/*.{js,jsx,ts,tsx,md,mdx,astro}\"",
-    "eslint": "eslint --fix \"src/**/*.{js,ts,jsx,tsx,astro}\"",
+    "prettier": "prettier --write  \"**/*.{js,jsx,ts,tsx,md,mdx,astro,svelte}\"",
+    "eslint": "eslint --fix \"src/**/*.{js,ts,jsx,tsx,astro,svelte}\"",
     "lint": "run-s prettier eslint",
     "dev": "astro dev",
     "start": "astro dev",
@@ -20,11 +20,13 @@
   },
   "dependencies": {
     "astro": "5.5.4",
-    "canvas-confetti": "1.9.3"
+    "canvas-confetti": "1.9.3",
+    "svelte": "4.2.19"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.4",
     "@astrojs/mdx": "4.2.1",
+    "@astrojs/svelte": "5.7.3",
     "@tailwindcss/vite": "4.0.15",
     "@types/canvas-confetti": "1.9.0",
     "@typescript-eslint/eslint-plugin": "8.27.0",
@@ -35,6 +37,7 @@
     "eslint": "9.23.0",
     "eslint-plugin-astro": "1.3.1",
     "eslint-plugin-jsx-a11y": "6.10.2",
+    "eslint-plugin-svelte": "3.3.3",
     "globals": "16.0.0",
     "is-ci": "4.1.0",
     "lint-staged": "15.5.0",
@@ -42,6 +45,7 @@
     "postcss": "8.5.3",
     "prettier": "3.5.3",
     "prettier-plugin-astro": "0.14.1",
+    "prettier-plugin-svelte": "3.3.3",
     "prettier-plugin-tailwindcss": "0.6.11",
     "simple-git-hooks": "2.12.1",
     "tailwind-merge": "3.0.2",
@@ -49,8 +53,8 @@
     "typescript": "5.8.2"
   },
   "lint-staged": {
-    "**/*.{js,jsx,ts,tsx,md,mdx,astro}": "prettier --write",
-    "src/**/*.{js,ts,jsx,tsx,astro}": "eslint --fix"
+    "**/*.{js,jsx,ts,tsx,md,mdx,astro,svelte}": "prettier --write",
+    "src/**/*.{js,ts,jsx,tsx,astro,svelte}": "eslint --fix"
   },
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged"

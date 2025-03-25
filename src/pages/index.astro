@@ -4,6 +4,7 @@ import Layout from '~/layouts/main.astro';
 // Component Imports
 import ConfettiButton from '~/components/ConfettiButton.astro';
 import Link from '~/components/Link.astro';
+import Greetings from '~/components/Greetings.svelte';
 
 // Full Astro Component Syntax:
 // https://docs.astro.build/basics/astro-components/
@@ -26,6 +27,17 @@ import Link from '~/components/Link.astro';
         <Link href="/search?q=Hello World">Search 'Hello World'</Link>
       </div>
     </div>
+
+    <div class="w-full border-b border-gray-300"></div>
+
+    <Greetings />
+
+    <Greetings message="Greetings from message property!" />
+
+    <Greetings
+      ><span class="font-semibold">Svelte v4 Component:</span> Greetings from the
+      children!</Greetings
+    >
 
     <div class="w-full border-b border-gray-300"></div>
 
