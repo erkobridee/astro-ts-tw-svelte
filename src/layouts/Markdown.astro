@@ -11,20 +11,43 @@ import Link from '~/components/Link.astro';
 const { frontmatter } = Astro.props;
 ---
 
+<style>
+  /*
+    https://tailwindcss.com/docs/functions-and-directives#reference-directive
+  */
+  @reference "tailwindcss";
+
+  .page-content {
+    @apply flex flex-col gap-2 divide-y divide-gray-300 p-10;
+  }
+
+  .header {
+    @apply flex justify-between;
+
+    .left {
+      @apply flex items-center gap-4;
+    }
+
+    .right {
+      @apply flex items-center gap-2;
+    }
+  }
+</style>
+
 <Layout
   content={{
     title: frontmatter.title
   }}
 >
-  <div class="flex flex-col gap-2 divide-y divide-gray-300 p-10">
-    <div class="flex justify-between">
-      <div class="flex items-center gap-4">
+  <div class="page-content">
+    <div class="header">
+      <div class="left">
         <Link href="/">Home page</Link>
 
         <div class="font-semibold">Markdown Content</div>
       </div>
 
-      <div class="flex items-center gap-2">
+      <div class="right">
         <Link href="https://tailwindcss.com/blog/tailwindcss-typography"
           >Introducing Tailwind CSS Typography - TailwindCSS Blog</Link
         >

@@ -7,7 +7,12 @@
 </div>
 
 <style lang="postcss">
+  /*
+    https://tailwindcss.com/docs/functions-and-directives#reference-directive
+  */
+  @reference "tailwindcss";
+
   .grettings {
-    @apply italic;
+    @apply p-2 italic;
   }
 </style>
