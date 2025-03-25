@@ -1,6 +1,14 @@
 # astro-ts-tw-svelte
 
-[Astro Build](https://astro.build/) using [TypeScript](https://www.typescriptlang.org/), [TailwindCSS](https://tailwindcss.com/), and Svelte
+[![Astro v5](https://img.shields.io/badge/-astro_v5-gray?style=flat&logo=astro)](https://astro.build/)
+[![Svelte v4](https://img.shields.io/badge/-svelte_v4-gray?style=flat&logo=svelte)](https://v4.svelte.dev/)
+[![Tailwind CSS v4](https://img.shields.io/badge/-tailwindcss_v4-gray?style=flat&logo=tailwindcss)](https://tailwindcss.com/)
+[![PostCSS v8](https://img.shields.io/badge/-postcss_v8-gray?style=flat&logo=postcss)](https://postcss.org/)
+[![TypeScript v5](https://img.shields.io/badge/-typescript_v5-gray?style=flat&logo=typescript)](https://www.typescriptlang.org/)
+[![ESLint v9](https://img.shields.io/badge/-eslint_v9-gray?style=flat&logo=eslint)](https://eslint.org/)
+[![Prettier v3](https://img.shields.io/badge/-eslint_v3-gray?style=flat&logo=prettier)](https://prettier.io/)
+[![Docker](https://img.shields.io/badge/-docker-gray?style=flat&logo=docker)](https://www.docker.com/)
+[![DevContainers](https://img.shields.io/badge/-devcontainers-gray?style=flat&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAzMiAzMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxNiIgY3k9IjE2IiByPSIxNCIgc3R5bGU9ImZpbGw6IzE5M2U2MyIvPjxwb2x5Z29uIHBvaW50cz0iMTAuNzc3IDIyLjc0MiA5LjM0MyAyMS4zNDggMTIuNzI5IDE3Ljg2NSA5LjM0NiAxNC40MTcgMTAuNzc0IDEzLjAxNyAxNS41MjUgMTcuODU5IDEwLjc3NyAyMi43NDIiIHN0eWxlPSJmaWxsOiNhZGQxZWEiLz48cG9seWdvbiBwb2ludHM9IjIxLjQyIDE5LjEwMSAyMi44NTQgMTcuNzA2IDE5LjQ2OCAxNC4yMjQgMjIuODUxIDEwLjc3NiAyMS40MjMgOS4zNzYgMTYuNjcyIDE0LjIxOCAyMS40MiAxOS4xMDEiIHN0eWxlPSJmaWxsOiNhZGQxZWEiLz48L3N2Zz4=)](https://containers.dev/)
 
 - Project template: [[GitHub] erkobridee/astro-ts-tw-hello](https://github.com/erkobridee/astro-ts-tw-hello)
 
