@@ -66,6 +66,34 @@ Following a Unix OS approach, that beens said so we have the following alias map
 
 <!--
 
+## Useful references
+
+- [Markdown Cheat Sheet | Kevin Chatham](https://kevinc.design/posts/tip-markdown-cheat-sheet)
+
+- [Extending AstroJS Markdown Processing With Remark and Rehype Plugins | DEV Community](https://dev.to/fkurz/extending-astrojs-markdown-processing-with-remark-and-rehype-plugins-m1k)
+
+- [How to Create an Astro Markdown Plugin | Larry Myers](https://www.larrymyers.com/posts/how-to-create-an-astro-markdown-plugin/)
+
+- [How to Open a Markdown Link in a New Tab in Astro | Emmanuel Raymond](https://www.peoray.dev/blog/astro-open-link-new-tab/)
+
+  - [[GitHub] JS-DevTools/rehype-url-inspector](https://github.com/JS-DevTools/rehype-url-inspector)
+
+- [Astro, fix .md in links | Flavio Copes](https://flaviocopes.com/astro-fix-dot-md-in-links/)
+
+   - [[GitHub] vernak2539/astro-rehype-relative-markdown-links](https://github.com/vernak2539/astro-rehype-relative-markdown-links)
+
+- [Icons for external links | Astro Digital Garden](https://astro-digital-garden.stereobooster.com/recipes/icons-to-external-links/)
+
+  - [[GitHub] rehypejs/rehype-external-links](https://github.com/rehypejs/rehype-external-links)
+
+- [Create Table of contents in Astro and sectionize the Markdown content | Reza Zahedi
+](https://rezahedi.dev/blog/create-table-of-contents-in-astro-and-sectionize-the-markdown-content)
+
+  - [[GitHub] rezahedi/rezahedi.dev](https://github.com/rezahedi/rezahedi.dev)
+
+  - [[GitHub] hbsnow/rehype-sectionize](https://github.com/hbsnow/rehype-sectionize)
+
+
 ## Test it online
 
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/erkobridee/astro-ts-tw-svelte)
