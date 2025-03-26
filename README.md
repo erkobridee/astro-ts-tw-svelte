@@ -56,6 +56,12 @@ Following a Unix OS approach, that beens said so we have the following alias map
 
     - [Svelte v4](https://v4.svelte.dev/)
 
+      - [TypeScript | Svelte v4 Docs](https://v4.svelte.dev/docs/typescript)
+
+      - [Svelte: Components with Typed Props | Daaang Amy](https://blog.amyndang.me/blog/typed-svelte-components/)
+
+      - [[StackOverflow] Svelte - Extend standard html elements with typescript](https://stackoverflow.com/a/75961340)
+
   - [Deprecated] [@astrojs/tailwind](https://docs.astro.build/en/guides/integrations-guide/tailwind/)
 
     - [Tailwind 4 support](https://astro.build/blog/astro-520/#tailwind-4-support) >>> [Astro TailwindCSS Integration](https://docs.astro.build/en/guides/styling/#tailwind) >>> [Install Tailwind CSS v4 with Astro](https://tailwindcss.com/docs/installation/framework-guides/astro)
