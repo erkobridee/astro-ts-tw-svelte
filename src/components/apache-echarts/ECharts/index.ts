@@ -1,3 +1,7 @@
 export { default } from './ECharts.svelte';
 
-export type { EChartsType, EChartsOption } from './types';
+export type {
+  EChartsInstance,
+  EChartsOption,
+  EChartsPropReplaceMerge
+} from './types';
