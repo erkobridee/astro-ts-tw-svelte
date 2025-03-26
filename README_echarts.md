@@ -10,6 +10,25 @@
 
   - [API](https://echarts.apache.org/en/api.html)
 
+    - [registerTheme](https://echarts.apache.org/en/api.html#echarts.registerTheme)
+
+      ```js
+      echarts.registerTheme('customTheme', customThemeObject);
+      const chart = echarts.init(dom, 'customTheme');
+      ```
+
+    - [registerLocale](https://echarts.apache.org/en/api.html#echarts.registerLocale)
+
+      - [echarts/src/i18n at release · apache/echarts](https://github.com/apache/echarts/tree/release/src/i18n)
+
+        ```js
+        // CL - Custom Language
+        echarts.registerLocale('CL', langObject);
+        echarts.init(DomElement, null, {
+          locale: 'CL'
+        });
+        ```
+
 ## Handbook
 
 - [Best Practices - Web Accessibility](https://echarts.apache.org/handbook/en/best-practices/aria)
@@ -23,6 +42,8 @@
 - [Chart Container and Size](https://echarts.apache.org/handbook/en/concepts/chart-size)
 
 - [Style](https://echarts.apache.org/handbook/en/concepts/style)
+
+  - [Theme Builder | Apache ECharts](https://echarts.apache.org/en/theme-builder.html)
 
 - [Dataset](https://echarts.apache.org/handbook/en/concepts/dataset)
 
@@ -48,6 +69,8 @@
 
 - [Stacked Bar Chart](https://echarts.apache.org/handbook/en/how-to/chart-types/bar/stacked-bar)
 
+- [Asynchronous Data Loading and Dynamic Update](https://echarts.apache.org/handbook/en/how-to/data/dynamic-data/) - [Example](https://echarts.apache.org/examples/en/editor.html?c=doc-example%2Ftutorial-dynamic-data)
+
 ## Examples
 
 - [Examples | Apache ECharts](https://echarts.apache.org/examples/en/index.html)
@@ -59,6 +82,12 @@
   - [Stacked Column Chart](https://echarts.apache.org/examples/en/editor.html?c=bar-stack)
 
   - [Rainfall vs Evaporation](https://echarts.apache.org/examples/en/editor.html?c=bar1) - with marke lines
+
+  - [Dynamic Data](https://echarts.apache.org/examples/en/editor.html?c=dynamic-data)
+
+  - [Bar Chart Drilldown Animation](https://echarts.apache.org/examples/en/editor.html?c=bar-drilldown)
+
+  - [Bar Chart Multi-level Drilldown](https://echarts.apache.org/examples/en/editor.html?c=bar-multi-drilldown)
 
 ### JSFiddle
 
