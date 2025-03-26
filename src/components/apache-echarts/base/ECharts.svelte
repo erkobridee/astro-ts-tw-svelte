@@ -14,23 +14,49 @@
 
   import type { EChartsType } from 'echarts';
 
+  import type { EChartsProps } from './types';
+
   import { onMount } from 'svelte';
   import * as echarts from 'echarts';
 
-  let chartInstance: EChartsType | undefined;
-  let chartContainerElement: HTMLDivElement;
+  // TODO: review
+  /*
+  interface $$Props {
+    message?: string;
+  }*/
+
+  // Svelte v4 way to define the component props TypeScript typings
+  interface $$Props extends EChartsProps {}
+
+  let chart: EChartsType | undefined;
+
+  let element: HTMLDivElement;
+
+  const initChart = () => {
+    if (chart) {
+      chart?.dispose();
+    }
+
+    chart = echarts.init(element);
+  };
+
+  const onResize = () => {
+    chart?.resize();
+  };
 
   onMount(() => {
+    // TODO: remove
     console.log('ECharts.svelte onMount');
+    console.log({ chartContainerElement: element });
 
-    console.log({ chartContainerElement });
-
-    chartInstance = echarts.init(chartContainerElement);
+    // chartInstance = echarts.init(chartContainerElement);
+    initChart();
 
     // TODO: review
-    chartInstance.setOption({
+    chart?.setOption({
       title: {
-        text: 'ECharts Getting Started Example'
+        text: 'Getting Started',
+        subtext: 'ECharts Basic Example'
       },
       tooltip: {},
       xAxis: {
@@ -46,8 +72,17 @@
       ]
     });
 
+    //window.addEventListener('resize', onResize);
+
+    const resizeObserver = new ResizeObserver(onResize);
+    resizeObserver.observe(element);
+
     return () => {
-      chartInstance?.dispose();
+      //window.removeEventListener('resize', onResize);
+
+      resizeObserver.disconnect();
+
+      chart?.dispose();
     };
   });
 
@@ -64,10 +99,10 @@
 
 <div
   class="chart-container"
-  bind:this={chartContainerElement}
+  bind:this={element}
   style="width: 100%; height: 100%;"
 >
-  Chart loading...
+  <slot>Chart loading...</slot>
 </div>
 
 <!--style lang="postcss">
