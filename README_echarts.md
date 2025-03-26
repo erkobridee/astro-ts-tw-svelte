@@ -58,6 +58,8 @@
 
   - [Stacked Column Chart](https://echarts.apache.org/examples/en/editor.html?c=bar-stack)
 
+  - [Rainfall vs Evaporation](https://echarts.apache.org/examples/en/editor.html?c=bar1) - with marke lines
+
 ### JSFiddle
 
 - ECharts - custom x ax : [v0](https://jsfiddle.net/erkobridee/rtkuL18y) | [v255](https://jsfiddle.net/erkobridee/rtkuL18y/255/)
