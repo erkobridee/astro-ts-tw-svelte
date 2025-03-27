@@ -1,0 +1,176 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/astro-ts-tw-svelte/favicon.svg"><meta name="generator" content="Astro v5.5.5"><title>References | Apache ECharts</title>
+<style>
+  :root {
+    --externalIconUrl: url(/astro-ts-tw-svelte/images/external-link.svg);
+  }
+</style>
+<meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/astro-ts-tw-svelte/_astro/ClientRouter.astro_astro_type_script_index_0_lang.CMTcOisY.js"></script><style>/*! tailwindcss v4.0.17 | MIT License | https://tailwindcss.com */.page-content[data-astro-cid-ka2caukq]{gap:calc(var(--spacing,.25rem)*4);min-height:100vh;padding:calc(var(--spacing,.25rem)*10);flex-direction:column;display:flex}:where(.page-content[data-astro-cid-ka2caukq]>:not(:last-child)){--tw-divide-y-reverse:0;border-bottom-style:var(--tw-border-style);border-top-style:var(--tw-border-style);border-top-width:calc(1px*var(--tw-divide-y-reverse));border-bottom-width:calc(1px*calc(1 - var(--tw-divide-y-reverse)));border-color:var(--color-gray-300,oklch(.872 .01 258.338))}.header[data-astro-cid-ka2caukq]{padding-bottom:calc(var(--spacing,.25rem)*2);justify-content:space-between;display:flex}.header[data-astro-cid-ka2caukq] .left{align-items:center;gap:calc(var(--spacing,.25rem)*2);display:flex}:where(.header[data-astro-cid-ka2caukq] .left>:not(:last-child)){--tw-divide-x-reverse:0;border-inline-style:var(--tw-border-style);border-inline-start-width:calc(1px*var(--tw-divide-x-reverse));border-inline-end-width:calc(1px*calc(1 - var(--tw-divide-x-reverse)));border-color:var(--color-gray-300,oklch(.872 .01 258.338))}.header[data-astro-cid-ka2caukq] .right{align-items:center;gap:calc(var(--spacing,.25rem)*2);display:flex}@property --tw-divide-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-divide-x-reverse{syntax:"*";inherits:false;initial-value:0}
+</style>
+<link rel="stylesheet" href="/astro-ts-tw-svelte/_astro/index.BvHnX2K0.css"></head> <body> <div class="page-content" data-astro-cid-ka2caukq><div class="header" data-astro-cid-ka2caukq><div class="left" data-astro-cid-ka2caukq><a href="/astro-ts-tw-svelte/" rel="prefetch" class="p-2 underline transition-colors duration-200 ease-in-out hover:text-purple-500" data-astro-cid-mbqdmgin> Home page </a><a href="/astro-ts-tw-svelte/echarts" rel="prefetch" class="p-2 underline transition-colors duration-200 ease-in-out hover:text-purple-500" data-astro-cid-mbqdmgin> Apache ECharts </a><div class="p-2 font-semibold" data-astro-cid-ka2caukq>References</div></div><div class="right" data-astro-cid-ka2caukq></div></div><div class="flex h-full grow flex-col" data-astro-cid-ka2caukq> <div class="prose lg:prose-l max-w-3xl"> <h1 id="apache-echarts">Apache ECharts</h1>
+<blockquote>
+<p>Apache ECharts is a powerful, interactive charting and data visualization library for browser</p>
+</blockquote>
+<ul>
+<li>
+<p><a href="https://github.com/apache/echarts">[GitHub] apache/echarts</a></p>
+</li>
+<li>
+<p><a href="https://echarts.apache.org/en/index.html">Apache ECharts</a></p>
+<ul>
+<li>
+<p><a href="https://echarts.apache.org/en/option.html">Options - Chart Configuration</a></p>
+</li>
+<li>
+<p><a href="https://echarts.apache.org/en/api.html">API</a></p>
+<ul>
+<li>
+<p><a href="https://echarts.apache.org/en/api.html#echarts.registerTheme">registerTheme</a></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#E1E4E8">echarts.</span><span style="color:#B392F0">registerTheme</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'customTheme'</span><span style="color:#E1E4E8">, customThemeObject);</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> chart</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> echarts.</span><span style="color:#B392F0">init</span><span style="color:#E1E4E8">(dom, </span><span style="color:#9ECBFF">'customTheme'</span><span style="color:#E1E4E8">);</span></span></code></pre>
+</li>
+<li>
+<p><a href="https://echarts.apache.org/en/api.html#echarts.registerLocale">registerLocale</a></p>
+<ul>
+<li>
+<p><a href="https://github.com/apache/echarts/tree/release/src/i18n">echarts/src/i18n at release · apache/echarts</a></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// CL - Custom Language</span></span>
+<span class="line"><span style="color:#E1E4E8">echarts.</span><span style="color:#B392F0">registerLocale</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'CL'</span><span style="color:#E1E4E8">, langObject);</span></span>
+<span class="line"><span style="color:#E1E4E8">echarts.</span><span style="color:#B392F0">init</span><span style="color:#E1E4E8">(DomElement, </span><span style="color:#79B8FF">null</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#E1E4E8">  locale: </span><span style="color:#9ECBFF">'CL'</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="handbook">Handbook</h2>
+<ul>
+<li><a href="https://echarts.apache.org/handbook/en/best-practices/aria">Best Practices - Web Accessibility</a></li>
+</ul>
+<h3 id="basics">Basics</h3>
+<ul>
+<li><a href="https://echarts.apache.org/handbook/en/basics/import">Using ECharts as an NPM Package</a> - on this page is also shown how to customize and reduce the output bundle size uzing only a set of components from the Apache ECharts components</li>
+</ul>
+<h3 id="concepts">Concepts</h3>
+<ul>
+<li>
+<p><a href="https://echarts.apache.org/handbook/en/concepts/chart-size">Chart Container and Size</a></p>
+</li>
+<li>
+<p><a href="https://echarts.apache.org/handbook/en/concepts/style">Style</a></p>
+<ul>
+<li><a href="https://echarts.apache.org/en/theme-builder.html">Theme Builder | Apache ECharts</a></li>
+</ul>
+</li>
+<li>
+<p><a href="https://echarts.apache.org/handbook/en/concepts/dataset">Dataset</a></p>
+<ul>
+<li>
+<p>data configurations</p>
+<ul>
+<li>
+<p><a href="https://echarts.apache.org/handbook/en/concepts/dataset#define-data-under-series">on axis and series</a></p>
+<ul>
+<li>as an one dimensional array</li>
+</ul>
+</li>
+<li>
+<p><a href="https://echarts.apache.org/handbook/en/concepts/dataset#define-data-in-dataset">data on dataset</a></p>
+<ul>
+<li>
+<p>like CSV array, where the first row define the columns names and from the first row defines the data of each column</p>
+</li>
+<li>
+<p>object array, this one needs to have the dataset dimensions definitions which will map the attributes from the object inside of the array</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><a href="https://echarts.apache.org/handbook/en/concepts/axis">Axis</a></p>
+</li>
+<li>
+<p><a href="https://echarts.apache.org/handbook/en/concepts/event">Event and Action</a></p>
+</li>
+</ul>
+<h3 id="how-to-guides">How to guides</h3>
+<ul>
+<li>
+<p><a href="https://echarts.apache.org/handbook/en/how-to/chart-types/bar/basic-bar">Basic Bar Chart</a></p>
+</li>
+<li>
+<p><a href="https://echarts.apache.org/handbook/en/how-to/chart-types/bar/stacked-bar">Stacked Bar Chart</a></p>
+</li>
+<li>
+<p><a href="https://echarts.apache.org/handbook/en/how-to/data/dynamic-data/">Asynchronous Data Loading and Dynamic Update</a> - <a href="https://echarts.apache.org/examples/en/editor.html?c=doc-example%2Ftutorial-dynamic-data">Example</a></p>
+</li>
+</ul>
+<h2 id="examples">Examples</h2>
+<ul>
+<li>
+<p><a href="https://echarts.apache.org/examples/en/index.html">Examples | Apache ECharts</a></p>
+<ul>
+<li>
+<p><a href="https://echarts.apache.org/examples/en/editor.html?c=bar-simple">Basic Bar</a></p>
+</li>
+<li>
+<p><a href="https://echarts.apache.org/examples/en/editor.html?c=bar-stack-borderRadius">Stacked Bar with borderRadius</a></p>
+</li>
+<li>
+<p><a href="https://echarts.apache.org/examples/en/editor.html?c=bar-stack">Stacked Column Chart</a></p>
+</li>
+<li>
+<p><a href="https://echarts.apache.org/examples/en/editor.html?c=bar1">Rainfall vs Evaporation</a> - with marke lines</p>
+</li>
+<li>
+<p><a href="https://echarts.apache.org/examples/en/editor.html?c=dynamic-data">Dynamic Data</a></p>
+</li>
+<li>
+<p><a href="https://echarts.apache.org/examples/en/editor.html?c=bar-drilldown">Bar Chart Drilldown Animation</a></p>
+</li>
+<li>
+<p><a href="https://echarts.apache.org/examples/en/editor.html?c=bar-multi-drilldown">Bar Chart Multi-level Drilldown</a></p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="jsfiddle">JSFiddle</h3>
+<ul>
+<li>ECharts - custom x ax : <a href="https://jsfiddle.net/erkobridee/rtkuL18y">v0</a> | <a href="https://jsfiddle.net/erkobridee/rtkuL18y/255/">v255</a></li>
+</ul>
+<h3 id="codepen">CodePen</h3>
+<ul>
+<li>
+<p><a href="https://codepen.io/erkobridee/pen/jEOKpBe">Line Chart with padding between the y axis labels - Apache ECharts Demo</a></p>
+</li>
+<li>
+<p><a href="https://codepen.io/erkobridee/pen/ZYEoKgN">Stacked Bar with borderRadius - Apache ECharts Demo</a></p>
+</li>
+<li>
+<p><a href="https://codepen.io/erkobridee/pen/yyLEjdM">Stacked Column Chart - Apache ECharts Demo</a></p>
+</li>
+</ul>
+<h2 id="svelte-integration">Svelte integration</h2>
+<ul>
+<li>
+<p><a href="https://github.com/bherbruck/svelte-echarts">[GitHub] bherbruck/svelte-echarts</a> - Apache ECharts wrapper for Svelte</p>
+</li>
+<li>
+<p><a href="https://github.com/spren9er/tilez-echarts">[GitHub] spren9er/tilez-echarts</a> - Apache ECharts component for Svelte layout engine <a href="https://github.com/spren9er/tilez">tilez</a></p>
+</li>
+</ul>
+<h3 id="reference-only">Reference only</h3>
+<ul>
+<li>
+<p><a href="https://github.com/liyuanqiu/echarts-for-svelte">[GitHub] liyuanqiu/echarts-for-svelte</a> - A very simple echarts(v3.0 &#x26; v4.0) wrapper</p>
+</li>
+<li>
+<p><a href="https://github.com/PaulusElektrus/Svelte-eCharts">[GitHub] PaulusElektrus/Svelte-eCharts</a></p>
+</li>
+</ul> </div> </div></div> </body></html>
