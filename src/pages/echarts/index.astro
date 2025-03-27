@@ -5,7 +5,7 @@ import Link from '~/components/Link.astro';
 
 import EChartsStarterExample from '~/components/apache-echarts/examples/StarterExample.svelte';
 
-const PAGE_TITLE = 'Testing Apache ECharts';
+const PAGE_TITLE = 'Apache ECharts';
 ---
 
 <Layout
@@ -13,15 +13,17 @@ const PAGE_TITLE = 'Testing Apache ECharts';
     title: PAGE_TITLE
   }}
 >
-  <div class="flex flex-col gap-2 p-10">
-    <div class="mb-4 flex items-center gap-2">
+  <div class="flex min-h-screen flex-col gap-4 p-10">
+    <div class="flex items-center gap-2">
       <Link href="/">Home page</Link>
 
       <div class="font-semibold">{PAGE_TITLE}</div>
     </div>
 
-    <div class="flex h-[500px]">
-      <EChartsStarterExample client:load />
+    <div class="flex h-full grow flex-col">
+      <div class="relative grow">
+        <EChartsStarterExample client:load />
+      </div>
     </div>
   </div>
 </Layout>

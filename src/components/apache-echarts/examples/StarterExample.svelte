@@ -44,11 +44,16 @@
       }
     ]
   };
+
+  // use max space by echarts
+  // https://github.com/apache/echarts/issues/11791#issuecomment-1875763303
 </script>
 
-<ECharts
-  theme="dark"
-  class="chart-container-starter-example"
-  id="test-id-charts"
-  {options}>Loading Starter Example Chart...</ECharts
->
+<div class="absolute top-0 right-0 bottom-0 left-0">
+  <ECharts
+    theme="dark"
+    class="chart-container-starter-example"
+    id="test-id-charts"
+    {options}>Loading Starter Example Chart...</ECharts
+  >
+</div>
