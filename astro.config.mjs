@@ -58,6 +58,11 @@ const baseConfig = {
       // https://github.com/withastro/astro/issues/12608#issuecomment-2516285448
       conditions: ['browser']
     }
+  },
+
+  // https://docs.astro.build/en/guides/routing/#configured-redirects
+  redirects: {
+    '/echarts/examples': '/echarts'
   }
 };
 
