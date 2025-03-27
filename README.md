@@ -66,6 +66,16 @@ Following a Unix OS approach, that beens said so we have the following alias map
 
     - [Tailwind 4 support](https://astro.build/blog/astro-520/#tailwind-4-support) >>> [Astro TailwindCSS Integration](https://docs.astro.build/en/guides/styling/#tailwind) >>> [Install Tailwind CSS v4 with Astro](https://tailwindcss.com/docs/installation/framework-guides/astro)
 
+    - [[GitHub] tailwindlabs/tailwindcss-typography](https://github.com/tailwindlabs/tailwindcss-typography) - Beautiful typographic defaults for HTML you don't control.
+
+  - [Components | Astro Docs](https://docs.astro.build/en/basics/astro-components/)
+
+    - [Template expressions reference | Astro Docs](https://docs.astro.build/en/reference/astro-syntax/)
+
+    - [Write in Astro: the syntax ✍️ | DEV Community](https://dev.to/this-is-learning/write-in-astro-the-syntax-1j3p)
+
+    - [Astro if...else statements | Future Web Design](https://futurewebdesign.au/posts/astro-if-else-statements/)
+
 ### Editor Setup
 
 - [Editor Setup | Astro Docs](https://docs.astro.build/en/editor-setup/)
