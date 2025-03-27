@@ -27,14 +27,8 @@ export type EChartsInstance = EChartsType;
 
 export type EChartsPropReplaceMerge = SetOptionOpts['replaceMerge'];
 
-// TODO: map the events
 export interface EChartsProps
   extends OmitHandlers<HTMLAttributes<HTMLDivElement>> {
-  // TODO: remove
-  message?: string | undefined;
-
-  //---//
-
   options?: EChartsOption | undefined;
 
   // https://github.com/apache/echarts/blob/release/src/core/locale.ts
