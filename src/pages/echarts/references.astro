@@ -1,0 +1,12 @@
+---
+import Layout from '~/layouts/ApacheEChartsLayout.astro';
+
+// https://docs.astro.build/en/guides/markdown-content/#the-content--component
+import { Content } from '~/components/apache-echarts/references.md';
+---
+
+<Layout title="References" hideReferencesLink>
+  <div class="prose lg:prose-l max-w-3xl">
+    <Content />
+  </div>
+</Layout>
