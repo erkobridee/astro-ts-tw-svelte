@@ -85,21 +85,12 @@
   };
 
   onMount(() => {
-    /*
-    console.log('ECharts.svelte onMount');
-    console.log({ chartContainerElement: element });
-    */
-
     initChart(theme, initOptions, locale);
-
-    //window.addEventListener('resize', onResize);
 
     const resizeObserver = new ResizeObserver(onResize);
     resizeObserver.observe(element);
 
     return () => {
-      //window.removeEventListener('resize', onResize);
-
       resizeObserver.disconnect();
 
       // https://github.com/apache/echarts/blob/5.6.0/src/core/echarts.ts#L1186
