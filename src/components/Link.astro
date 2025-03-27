@@ -15,9 +15,14 @@ import redefineUrl from '~/utils/redefineUrl';
 interface Props {
   href: string;
   external?: boolean;
+  class?: string;
 }
 
-const { href, external = href.startsWith('http') } = Astro.props;
+const {
+  href,
+  external = href.startsWith('http'),
+  class: className
+} = Astro.props;
 
 // https://docs.astro.build/en/reference/configuration-reference/#base
 
@@ -72,6 +77,7 @@ if (!external) {
     duration-200 ease-in-out
     hover:text-purple-500
   `,
+    className,
     { 'external-link': external }
   )}
 >
