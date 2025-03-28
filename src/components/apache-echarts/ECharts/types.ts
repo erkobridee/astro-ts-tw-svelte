@@ -23,8 +23,6 @@ type OmitHandlers<T> = {
 
 //---//
 
-export type EChartsInstance = EChartsType;
-
 export type EChartsPropReplaceMerge = SetOptionOpts['replaceMerge'];
 
 export interface EChartsProps
@@ -38,6 +36,7 @@ export interface EChartsProps
   theme?: string | object | null | undefined;
   initOptions?: EChartsInitOpts | undefined;
 
+  // https://echarts.apache.org/en/api.html#echartsInstance.setOption
   notMerge?: SetOptionOpts['notMerge'];
   lazyUpdate?: SetOptionOpts['lazyUpdate'];
   silent?: SetOptionOpts['silent'];
@@ -45,5 +44,5 @@ export interface EChartsProps
   transition?: SetOptionOpts['transition'];
 
   /** it's the chart instance, to allow binding it from outside */
-  chart?: EChartsInstance | undefined;
+  chart?: EChartsType | undefined;
 }

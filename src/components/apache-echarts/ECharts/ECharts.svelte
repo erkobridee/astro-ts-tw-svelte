@@ -18,6 +18,7 @@
   type ChartLocale = EChartsProps['locale'];
   type ChartTheme = EChartsProps['theme'];
   type ChartInitOptions = EChartsProps['initOptions'];
+  type ChartNotMerge = EChartsProps['notMerge'];
   type ChartInstance = EChartsProps['chart'];
 
   export let options: ChartOptions = undefined;
@@ -26,7 +27,7 @@
   export let theme: ChartTheme = null;
   export let initOptions: ChartInitOptions = {};
 
-  export let notMerge: EChartsProps['notMerge'] = true;
+  export let notMerge: ChartNotMerge = false;
   export let lazyUpdate: EChartsProps['lazyUpdate'] = false;
   export let silent: EChartsProps['silent'] = false;
   export let replaceMerge: EChartsProps['replaceMerge'] = undefined;
@@ -37,11 +38,12 @@
   let element: HTMLDivElement;
 
   $: initChart(theme, initOptions, locale);
-  $: updateChartOptions(chart, options);
+  $: updateChartOptions(chart, options, notMerge);
 
   const updateChartOptions = (
     chartInstance: ChartInstance,
-    newOptions: ChartOptions
+    newOptions: ChartOptions,
+    notMerge: ChartNotMerge
   ) => {
     if (!chartInstance || !newOptions) {
       return;
