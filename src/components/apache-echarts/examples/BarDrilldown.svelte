@@ -109,6 +109,7 @@
     series: {
       ...BASE_BAR_SERIE,
 
+      // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
       cursor: 'zoom-in',
 
       data: optionsLevel0Data
@@ -146,6 +147,7 @@
 
     const drillDownData = subData.data;
 
+    // merge the new options definition with the previous one
     notMerge = false;
     options = {
       xAxis: {
@@ -157,6 +159,7 @@
 
         dataGroupId: subData.dataGroupId,
 
+        // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
         cursor: 'default',
 
         data: drillDownData.map((item) => item[1])
@@ -172,6 +175,7 @@
             fontSize: 18
           },
           onclick: () => {
+            // redefine the chart options without merging it with the previous options definition
             notMerge = true;
             options = optionsLevel0;
           }
