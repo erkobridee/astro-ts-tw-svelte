@@ -4,15 +4,32 @@ import Layout from '~/layouts/ApacheEChartsLayout.astro';
 import Link from '~/components/Link.astro';
 ---
 
+<style>
+  /*
+    https://tailwindcss.com/docs/functions-and-directives#reference-directive
+  */
+  @reference "tailwindcss";
+
+  .links {
+    @apply flex flex-col gap-2 pl-4;
+  }
+
+  .description {
+    @apply py-2 italic;
+
+    span {
+      @apply font-semibold;
+    }
+  }
+</style>
+
 <Layout>
   <div class="font-semibold">Examples</div>
 
-  <div class="flex flex-col gap-2 pt-2 pl-2">
-    <Link class="p-0" href="/echarts/examples/starter">Starter</Link>
+  <div class="description">Data under <span>series</span></div>
 
-    <Link class="p-0" href="/echarts/examples/custom-x-axis"
-      >Custom X Axis labels</Link
-    >
+  <div class="links">
+    <Link href="/echarts/examples/starter">Starter</Link>
 
     <Link href="/echarts/examples/formatting-tooltip-values"
       >Formatting of Values in Tooltip</Link
@@ -27,5 +44,11 @@ import Link from '~/components/Link.astro';
     >
 
     <Link href="/echarts/examples/bar-drilldown">Bar Drilldown</Link>
+  </div>
+
+  <div class="description">Data in <span>dataset</span></div>
+
+  <div class="links">
+    <Link href="/echarts/examples/custom-x-axis">Custom X Axis labels</Link>
   </div>
 </Layout>
