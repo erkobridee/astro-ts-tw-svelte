@@ -87,6 +87,6 @@
 
 <div class="relative grow">
   <div class="absolute top-0 right-0 bottom-0 left-0">
-    <ECharts id="custom-x-axis" {options}></ECharts>
+    <ECharts id="formatting-tooltip-values" {options}></ECharts>
   </div>
 </div>
