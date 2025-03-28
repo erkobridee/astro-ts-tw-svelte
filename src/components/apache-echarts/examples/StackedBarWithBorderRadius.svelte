@@ -195,7 +195,6 @@
     type: 'value',
     position: 'right',
     axisLabel: {
-      inside: true,
       verticalAlign: 'bottom',
       padding: [0, -10, 2, 0],
       color: LABEL_COLOR,
