@@ -63,6 +63,10 @@
 
 - [Event and Action](https://echarts.apache.org/handbook/en/concepts/event)
 
+  - [API - events](https://echarts.apache.org/en/api.html#events)
+
+  - [How to change the cursor on the series? #5588 - apache/echarts](https://github.com/apache/echarts/issues/5588)
+
 ### How to guides
 
 - [Basic Bar Chart](https://echarts.apache.org/handbook/en/how-to/chart-types/bar/basic-bar)
