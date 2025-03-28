@@ -47,5 +47,3 @@ export interface EChartsProps
   /** it's the chart instance, to allow binding it from outside */
   chart?: EChartsInstance | undefined;
 }
-
-export type { EChartsOption } from 'echarts';

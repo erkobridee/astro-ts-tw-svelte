@@ -2,9 +2,9 @@
   // use max space by echarts
   // https://github.com/apache/echarts/issues/11791#issuecomment-1875763303
 
-  import ECharts, {
-    type EChartsOption
-  } from '~/components/apache-echarts/ECharts';
+  import type { EChartsOption } from 'echarts';
+
+  import ECharts from '~/components/apache-echarts/ECharts';
 
   let themeToggleChecked = false;
 

@@ -4,9 +4,9 @@
   // https://stackoverflow.com/questions/76624531/echarts-default-value-tooltip-formatter-for-pie-chart
   // https://echarts.apache.org/examples/en/editor.html?code=PYBwLglsB2AEC8sDeAoWtJgDYFMBcya6GOAHmAQOQBKOAZjgE5OzB2wCGsA6jgEYBnCGByUANEXQCArnxHkqAMQ4BrHLAAiHMB3GTYuOhViUAxjmgjGlIgF8J6MMGBZIIAqmIZGEAOa-mKmEcAFs9LzpgRhDtKwAKEA5GDhCBAEpCL3RmMGlGOAADABIkROTUgDoBJggcAQA5FJxbAB4-RgA-ErKUgQqYxjVGW26k3oroJtaBRLgBMABPXHgAIjosYG0CH18ACzAAblgB3whoAFpDYwAmAAYQUhWOtq7SscqANw4saWaWgHo-B1YHFRuU-iAmOZLLYAKRpAEzDjQDoFA76Wx2BwGHABaAAEw8-iitUsVA-TEgpm-4WIVyoVxs6HsRGqPjqBAA2vpPFlJiF8CYAIKmcwCASwRSMYBhbFeRaQqggWq0rzJfEQaQCKgAVlusNVxHx2g4XP0XiQsC-P0FAEZbgAWAAcYlg_MFlAAyjgkqZdrAAKLQU7QUSwFlZYiW62_AgAdgAzDrXe6qBoIMxTGBKOG5Vlo99Y7AdU7bimmlQAzEIFgcxHI8grYXBc6HeWBVQAKrQKBwIX4gR1vMWps2ggJ25lt0VkwANQg-JwwFg_cH4fNsAAusPYKEQLsOEJtZkG8EQp7FrgiQ3iAID_jgAB3ABCP0YBHtO68d44D8fAHk6DoaowAADQIMsN2_e8nwAYRcKIqEYXw-A4OIpww11bgqHU0iZBtMUjQjiGIzcUFsA4gA
 
-  import ECharts, {
-    type EChartsOption
-  } from '~/components/apache-echarts/ECharts';
+  import type { EChartsOption } from 'echarts';
+
+  import ECharts from '~/components/apache-echarts/ECharts';
 
   //---//
 

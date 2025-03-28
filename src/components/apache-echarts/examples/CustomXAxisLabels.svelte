@@ -1,9 +1,9 @@
 <script lang="ts">
+  import type { EChartsOption } from 'echarts';
+
   import dayjs from 'dayjs';
 
-  import ECharts, {
-    type EChartsOption
-  } from '~/components/apache-echarts/ECharts';
+  import ECharts from '~/components/apache-echarts/ECharts';
 
   import { getRandomInt } from '~/utils/random';
 
