@@ -3,9 +3,15 @@
 
   import ECharts from '~/components/apache-echarts/ECharts';
 
-  //---//
+  import {
+    WEEK_DAYS,
+    LABEL_COLOR,
+    LINE_STYLE,
+    DEFAULT_RADIUS_BORDER,
+    buildBarItemStyleBorderRadius
+  } from '~/components/apache-echarts/common';
 
-  const WEEK_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  //---//
 
   const DATA = {
     direct: [320, 332, 301, 334, 390, 330, 320],
@@ -25,13 +31,6 @@
 
   //---//
 
-  const LABEL_COLOR = '#71717a';
-  const LINE_COLOR = '#a3a3a3';
-  const LINE_STYLE = {
-    type: [1, 3],
-    color: LINE_COLOR
-  };
-
   const BAR_SERIES_EMPHASIS: BarSeriesOption['emphasis'] = {
     focus: 'series',
     itemStyle: {
@@ -40,11 +39,8 @@
     }
   };
 
-  const TOP_BORDER = 10;
-  const BOTTOM_BORDER = 0;
-  const BAR_SERIES_ITEM_STYLE: BarSeriesOption['itemStyle'] = {
-    borderRadius: [TOP_BORDER, TOP_BORDER, BOTTOM_BORDER, BOTTOM_BORDER]
-  };
+  const BAR_SERIES_ITEM_STYLE: BarSeriesOption['itemStyle'] =
+    buildBarItemStyleBorderRadius(DEFAULT_RADIUS_BORDER);
 
   //---//
 

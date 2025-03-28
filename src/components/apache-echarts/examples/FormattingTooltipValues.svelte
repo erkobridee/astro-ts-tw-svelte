@@ -8,9 +8,9 @@
 
   import ECharts from '~/components/apache-echarts/ECharts';
 
-  //---//
+  import { WEEK_DAYS } from '~/components/apache-echarts/common';
 
-  const WEEK_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  //---//
 
   const DATA = {
     evaporation: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6],
