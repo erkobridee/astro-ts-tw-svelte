@@ -3,9 +3,13 @@
 
   import ECharts from '~/components/apache-echarts/ECharts';
 
-  //---//
-
-  const WEEK_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  import {
+    WEEK_DAYS,
+    LABEL_COLOR,
+    LINE_STYLE,
+    DEFAULT_RADIUS_BORDER,
+    buildBarItemStyleBorderRadius
+  } from '~/components/apache-echarts/common';
 
   //---//
 
@@ -28,6 +32,13 @@
   const buildSeries = () => {
     const series: BarSeriesOption[] = [];
 
+    const emphasis: BarSeriesOption['emphasis'] = {
+      itemStyle: {
+        // https://echarts.apache.org/en/option.html#series-bar.emphasis.itemStyle.color
+        color: 'inherit'
+      }
+    };
+
     for (const [stack, serie] of Object.entries(DATA)) {
       for (const [name, data] of Object.entries(serie)) {
         series.push({
@@ -35,38 +46,20 @@
           stack,
           name,
           data,
-          emphasis: {
-            itemStyle: {
-              // https://echarts.apache.org/en/option.html#series-bar.emphasis.itemStyle.color
-              color: 'inherit'
-            }
-          }
+          emphasis
         });
       }
     }
 
+    series.push({
+      type: 'bar',
+      name: 'f',
+      data: [10, 20, 30, EMPTY_ENTRY, 50, 60, 70],
+      emphasis
+    });
+
     return series;
   };
-
-  //---//
-
-  const LABEL_COLOR = '#71717a';
-  const LINE_COLOR = '#a3a3a3';
-  const LINE_STYLE = {
-    type: [1, 3],
-    color: LINE_COLOR
-  };
-
-  //---//
-
-  const DEFAULT_RADIUS_BORDER = 10;
-
-  const buildItemStyleBorderRadius = (
-    topBorder = 0,
-    bottomBorder = 0
-  ): BarSeriesOption['itemStyle'] => ({
-    borderRadius: [topBorder, topBorder, bottomBorder, bottomBorder]
-  });
 
   //---//
 
@@ -82,16 +75,15 @@
   const buildStackInfo = (series: BarSeriesOption[]) => {
     const stackInfo: StackInfo = {};
 
-    if (!series) {
-      return stackInfo;
-    }
-
     for (let i = 0; i < series[0].data!.length; ++i) {
       for (let j = 0; j < series.length; ++j) {
-        const stackName = series[j].stack;
+        const serie = series[j];
+
+        const stackName = serie.stack;
         if (!stackName) {
           continue;
         }
+
         if (!stackInfo[stackName]) {
           stackInfo[stackName] = {
             stackStart: [],
@@ -100,7 +92,7 @@
         }
 
         const info = stackInfo[stackName];
-        const data = series[j].data![i];
+        const data = serie.data![i];
 
         if (data && data !== EMPTY_ENTRY) {
           if (info.stackStart[i] == null) {
@@ -116,15 +108,26 @@
   };
 
   // add the border radius to the specific data entry that needs to render it
-  const addBorderRadiusToStackedBars = (
+  const addBorderRadiusToBars = (
     series: BarSeriesOption[]
   ): EChartsOption['series'] => {
     const stackInfo = buildStackInfo(series);
 
     for (let i = 0; i < series.length; ++i) {
-      const data = series[i].data!;
-      const info = stackInfo[series[i].stack!];
-      for (let j = 0; j < series[i].data!.length; ++j) {
+      const serie = series[i];
+
+      if (!serie.stack) {
+        serie.itemStyle = buildBarItemStyleBorderRadius(DEFAULT_RADIUS_BORDER);
+
+        continue;
+      }
+
+      const data = serie.data!;
+      const dataLength = data.length;
+
+      const info = stackInfo[serie.stack];
+
+      for (let j = 0; j < dataLength; ++j) {
         // const isStart = info.stackStart[j] === i;
         const isEnd = info.stackEnd[j] === i;
 
@@ -133,7 +136,7 @@
         // https://echarts.apache.org/examples/en/editor.html?c=bar-stack-borderRadius&lang=ts
         data[j] = {
           value: data[j],
-          itemStyle: buildItemStyleBorderRadius(
+          itemStyle: buildBarItemStyleBorderRadius(
             isEnd ? DEFAULT_RADIUS_BORDER : 0
           )
         } as any;
@@ -205,8 +208,7 @@
     }
   };
 
-  const series: EChartsOption['series'] =
-    addBorderRadiusToStackedBars(buildSeries());
+  const series: EChartsOption['series'] = addBorderRadiusToBars(buildSeries());
 
   //---//
 
