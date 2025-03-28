@@ -45,17 +45,19 @@ const pageTitle = title ? `${title} | ${TITLE}` : TITLE;
   <div class="page-content">
     <div class="header">
       <div class="left">
-        <Link href="/">Home page</Link>
+        <Link class="pr-2" href="/">Home page</Link>
 
         {
           title ? (
             <>
-              <Link href="/echarts">{TITLE}</Link>
+              <Link class="pr-2" href="/echarts">
+                {TITLE}
+              </Link>
 
-              <div class="p-2 font-semibold">{title}</div>
+              <div class="font-semibold">{title}</div>
             </>
           ) : (
-            <div class="p-2 font-semibold">{TITLE}</div>
+            <div class="font-semibold">{TITLE}</div>
           )
         }
       </div>
