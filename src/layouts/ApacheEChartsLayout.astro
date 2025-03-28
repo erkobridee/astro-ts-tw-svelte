@@ -1,0 +1,78 @@
+---
+import Layout from '~/layouts/BaseLayout.astro';
+
+import Link from '~/components/Link.astro';
+
+interface Props {
+  title?: string;
+  hideReferencesLink?: boolean;
+}
+
+const { title, hideReferencesLink = false } = Astro.props;
+
+const TITLE = 'Apache ECharts';
+const pageTitle = title ? `${title} | ${TITLE}` : TITLE;
+---
+
+<style>
+  /*
+    https://tailwindcss.com/docs/functions-and-directives#reference-directive
+  */
+  @reference "tailwindcss";
+
+  .page-content {
+    @apply flex min-h-screen flex-col gap-4 divide-y divide-gray-300 p-10;
+  }
+
+  .header {
+    @apply flex justify-between pb-2;
+
+    .left {
+      @apply flex items-center gap-2 divide-x divide-gray-300;
+    }
+
+    .right {
+      @apply flex items-center gap-2;
+    }
+  }
+</style>
+
+<Layout
+  content={{
+    title: pageTitle
+  }}
+>
+  <div class="page-content">
+    <div class="header">
+      <div class="left">
+        <Link class="pr-2" href="/">Home page</Link>
+
+        {
+          title ? (
+            <>
+              <Link class="pr-2" href="/echarts">
+                {TITLE}
+              </Link>
+
+              <div class="font-semibold">{title}</div>
+            </>
+          ) : (
+            <div class="font-semibold">{TITLE}</div>
+          )
+        }
+      </div>
+
+      <div class="right">
+        {
+          !hideReferencesLink && (
+            <Link href="/echarts/references">References</Link>
+          )
+        }
+      </div>
+    </div>
+
+    <div class="flex h-full grow flex-col">
+      <slot />
+    </div>
+  </div>
+</Layout>

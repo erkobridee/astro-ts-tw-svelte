@@ -18,6 +18,8 @@
 
   - [[GitHub] erkobridee/devcontainer-hello](https://github.com/erkobridee/devcontainer-hello) - Learning about Development Containers
 
+<!-- npm i --legacy-peer-deps -->
+
 ## import path alias
 
 It's commonly used the pattern `@* -> src/*`, but this approach annoys me due to the current npm package namespaces ( [scopes | npm docs](https://docs.npmjs.com/about-scopes) ) which normally starts with `@{user_name/org_name}`.
@@ -56,9 +58,25 @@ Following a Unix OS approach, that beens said so we have the following alias map
 
     - [Svelte v4](https://v4.svelte.dev/)
 
+      - [TypeScript | Svelte v4 Docs](https://v4.svelte.dev/docs/typescript)
+
+      - [Svelte: Components with Typed Props | Daaang Amy](https://blog.amyndang.me/blog/typed-svelte-components/)
+
+      - [[StackOverflow] Svelte - Extend standard html elements with typescript](https://stackoverflow.com/a/75961340)
+
   - [Deprecated] [@astrojs/tailwind](https://docs.astro.build/en/guides/integrations-guide/tailwind/)
 
     - [Tailwind 4 support](https://astro.build/blog/astro-520/#tailwind-4-support) >>> [Astro TailwindCSS Integration](https://docs.astro.build/en/guides/styling/#tailwind) >>> [Install Tailwind CSS v4 with Astro](https://tailwindcss.com/docs/installation/framework-guides/astro)
+
+    - [[GitHub] tailwindlabs/tailwindcss-typography](https://github.com/tailwindlabs/tailwindcss-typography) - Beautiful typographic defaults for HTML you don't control.
+
+  - [Components | Astro Docs](https://docs.astro.build/en/basics/astro-components/)
+
+    - [Template expressions reference | Astro Docs](https://docs.astro.build/en/reference/astro-syntax/)
+
+    - [Write in Astro: the syntax ✍️ | DEV Community](https://dev.to/this-is-learning/write-in-astro-the-syntax-1j3p)
+
+    - [Astro if...else statements | Future Web Design](https://futurewebdesign.au/posts/astro-if-else-statements/)
 
 ### Editor Setup
 
