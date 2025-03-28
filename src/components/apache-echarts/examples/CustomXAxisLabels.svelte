@@ -28,14 +28,14 @@
     `${currentYear}-11-30T00:00:00.000Z`,
     `${currentYear}-12-31T00:00:00.000Z`
   ].map((date) => ({
-    date: dayjs(date).format('YYYY-MM'),
+    date,
     value: getRandomInt(MIN, MAX)
   }));
 
   const dimensions = ['date', 'value'];
 
   // https://day.js.org/docs/en/display/format
-  //const dateFormatter = (value: string) => dayjs(value).format('YYYY-MM');
+  const dateFormatter = (value: string) => dayjs(value).format('YYYY-MM');
 
   //---//
 
@@ -88,13 +88,18 @@
       showMaxLine: true
     },
     axisLabel: {
-      showMinLabel: false
+      showMinLabel: false,
 
       // https://echarts.apache.org/en/option.html#xAxis.axisLabel.formatter
-      //formatter: dateFormatter
+      formatter: dateFormatter
     },
     axisPointer: {
-      snap: true
+      snap: true,
+
+      label: {
+        // https://echarts.apache.org/en/option.html#xAxis.axisPointer.label.formatter
+        formatter: ({ value }) => dateFormatter(value as string)
+      }
     },
     axisLine: {
       onZero: false
