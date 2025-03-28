@@ -6,6 +6,11 @@
 
   import ECharts from '~/components/apache-echarts/ECharts';
 
+  import {
+    DEFAULT_RADIUS_BORDER,
+    buildBarItemStyleBorderRadius
+  } from '~/components/apache-echarts/common';
+
   let themeToggleChecked = false;
 
   $: theme = themeToggleChecked ? 'dark' : 'light';
@@ -47,7 +52,14 @@
       {
         name: 'sales',
         type: 'bar',
-        data: [5, 20, 36, 10, 10, 20]
+        data: [5, 20, 36, 10, 10, 20],
+        emphasis: {
+          itemStyle: {
+            // https://echarts.apache.org/en/option.html#series-bar.emphasis.itemStyle.color
+            color: 'inherit'
+          }
+        },
+        itemStyle: buildBarItemStyleBorderRadius(DEFAULT_RADIUS_BORDER)
       }
     ]
   };

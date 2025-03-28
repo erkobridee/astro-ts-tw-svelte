@@ -1,9 +1,25 @@
 <script lang="ts">
   // https://echarts.apache.org/handbook/en/concepts/dataset#define-data-in-dataset
 
-  import type { EChartsOption } from 'echarts';
+  import type { EChartsOption, BarSeriesOption } from 'echarts';
 
   import ECharts from '~/components/apache-echarts/ECharts';
+
+  import {
+    DEFAULT_RADIUS_BORDER,
+    buildBarItemStyleBorderRadius
+  } from '~/components/apache-echarts/common';
+
+  const BAR_SERIE: BarSeriesOption = {
+    type: 'bar',
+    emphasis: {
+      itemStyle: {
+        // https://echarts.apache.org/en/option.html#series-bar.emphasis.itemStyle.color
+        color: 'inherit'
+      }
+    },
+    itemStyle: buildBarItemStyleBorderRadius(DEFAULT_RADIUS_BORDER)
+  };
 
   const options: EChartsOption = {
     legend: {},
@@ -25,7 +41,7 @@
     yAxis: {},
     // Declare several 'bar' series,
     // every series will auto-map to each column by default.
-    series: [{ type: 'bar' }, { type: 'bar' }, { type: 'bar' }]
+    series: [BAR_SERIE, BAR_SERIE, BAR_SERIE]
   };
 </script>
 
