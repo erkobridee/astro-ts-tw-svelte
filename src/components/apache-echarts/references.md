@@ -53,7 +53,7 @@
 
       - as an one dimensional array
 
-    - [data on dataset](https://echarts.apache.org/handbook/en/concepts/dataset#define-data-in-dataset)
+    - [on dataset](https://echarts.apache.org/handbook/en/concepts/dataset#define-data-in-dataset)
 
       - like CSV array, where the first row define the columns names and from the first row defines the data of each column
 
