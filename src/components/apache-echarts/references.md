@@ -67,6 +67,8 @@
 
   - [How to change the cursor on the series? #5588 - apache/echarts](https://github.com/apache/echarts/issues/5588)
 
+    - [series-bar.cursor - options Apache ECharts Docs](https://echarts.apache.org/en/option.html#series-bar.cursor)
+
 ### How to guides
 
 - [Basic Bar Chart](https://echarts.apache.org/handbook/en/how-to/chart-types/bar/basic-bar)
