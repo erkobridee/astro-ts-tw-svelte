@@ -9,6 +9,8 @@
     BarSeriesOption
   } from 'echarts';
 
+  import * as echarts from 'echarts';
+
   import { onMount } from 'svelte';
 
   import ECharts from '~/components/apache-echarts/ECharts';
@@ -201,6 +203,12 @@
 
 <div class="relative grow">
   <div class="absolute top-0 right-0 bottom-0 left-0">
-    <ECharts id="bar-drilldown" {options} {notMerge} bind:chart></ECharts>
+    <ECharts
+      id="bar-drilldown"
+      init={echarts.init}
+      {options}
+      {notMerge}
+      bind:chart
+    ></ECharts>
   </div>
 </div>

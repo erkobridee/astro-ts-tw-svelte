@@ -9,17 +9,19 @@
   import type { EChartsProps } from './types';
 
   import { onMount } from 'svelte';
-  import * as echarts from 'echarts';
 
   // Svelte v4 way to define the component props TypeScript types
   interface $$Props extends EChartsProps {}
 
+  type ChartInitFunction = EChartsProps['init'];
   type ChartOptions = EChartsProps['options'];
   type ChartLocale = EChartsProps['locale'];
   type ChartTheme = EChartsProps['theme'];
   type ChartInitOptions = EChartsProps['initOptions'];
   type ChartNotMerge = EChartsProps['notMerge'];
   type ChartInstance = EChartsProps['chart'];
+
+  export let init: ChartInitFunction;
 
   export let options: ChartOptions = undefined;
   export let locale: ChartLocale = undefined;
@@ -37,7 +39,7 @@
 
   let element: HTMLDivElement;
 
-  $: initChart(theme, initOptions, locale);
+  $: initChart(init, theme, initOptions, locale);
   $: updateChartOptions(chart, options, notMerge);
 
   const updateChartOptions = (
@@ -59,6 +61,7 @@
   };
 
   const initChart = (
+    initFunction: ChartInitFunction,
     theme: ChartTheme,
     initOptions: ChartInitOptions = {},
     locale: ChartLocale = undefined
@@ -79,7 +82,7 @@
       };
     }
 
-    chart = echarts.init(element, theme, initOptions);
+    chart = initFunction(element, theme, initOptions);
   };
 
   const onResize = () => {
@@ -87,7 +90,7 @@
   };
 
   onMount(() => {
-    initChart(theme, initOptions, locale);
+    initChart(init, theme, initOptions, locale);
 
     const resizeObserver = new ResizeObserver(onResize);
     resizeObserver.observe(element);

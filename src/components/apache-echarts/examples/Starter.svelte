@@ -4,6 +4,8 @@
 
   import type { EChartsOption } from 'echarts';
 
+  import * as echarts from 'echarts';
+
   import ECharts from '~/components/apache-echarts/ECharts';
 
   import {
@@ -94,6 +96,7 @@
       <ECharts
         class="chart-container-starter-example"
         id="test-id-charts"
+        init={echarts.init}
         {theme}
         {options}>Loading Starter Example Chart...</ECharts
       >

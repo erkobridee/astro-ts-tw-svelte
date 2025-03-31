@@ -9,11 +9,16 @@
 import type { HTMLAttributes } from 'svelte/elements';
 
 import type {
+  init as baseInit,
   EChartsInitOpts,
-  EChartsType,
+  EChartsType as BaseEChartsType,
   EChartsOption,
   SetOptionOpts
 } from 'echarts';
+import type {
+  init as CoreInit,
+  EChartsType as CoreEChartsType
+} from 'echarts/core';
 
 //---///
 
@@ -27,6 +32,8 @@ export type EChartsPropReplaceMerge = SetOptionOpts['replaceMerge'];
 
 export interface EChartsProps
   extends OmitHandlers<HTMLAttributes<HTMLDivElement>> {
+  init: typeof baseInit | typeof CoreInit;
+
   options?: EChartsOption | undefined;
 
   // https://github.com/apache/echarts/blob/release/src/core/locale.ts
@@ -44,5 +51,5 @@ export interface EChartsProps
   transition?: SetOptionOpts['transition'];
 
   /** it's the chart instance, to allow binding it from outside */
-  chart?: EChartsType | undefined;
+  chart?: BaseEChartsType | CoreEChartsType | undefined;
 }

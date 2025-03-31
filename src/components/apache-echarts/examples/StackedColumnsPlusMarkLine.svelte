@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { EChartsOption, BarSeriesOption } from 'echarts';
 
+  import * as echarts from 'echarts';
+
   import ECharts from '~/components/apache-echarts/ECharts';
 
   import {
@@ -198,6 +200,7 @@
 
 <div class="relative grow">
   <div class="absolute top-0 right-0 bottom-0 left-0">
-    <ECharts id="stacket-columns-plus-markline" {options}></ECharts>
+    <ECharts id="stacket-columns-plus-markline" init={echarts.init} {options}
+    ></ECharts>
   </div>
 </div>

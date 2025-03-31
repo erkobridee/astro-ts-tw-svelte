@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { EChartsOption } from 'echarts';
 
+  import * as echarts from 'echarts';
+
   import dayjs from 'dayjs';
 
   import ECharts from '~/components/apache-echarts/ECharts';
@@ -137,6 +139,6 @@
 
 <div class="relative grow">
   <div class="absolute top-0 right-0 bottom-0 left-0">
-    <ECharts id="custom-x-axis" {options}></ECharts>
+    <ECharts id="custom-x-axis" init={echarts.init} {options}></ECharts>
   </div>
 </div>
