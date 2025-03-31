@@ -37,6 +37,10 @@
 
 - [Using ECharts as an NPM Package](https://echarts.apache.org/handbook/en/basics/import) - on this page is also shown how to customize and reduce the output bundle size uzing only a set of components from the Apache ECharts components
 
+  - [Shrinking Bundle Size](https://echarts.apache.org/handbook/en/basics/import#shrinking-bundle-size)
+
+    - it need to have only one definition on the project, if there's any import like `import * as echarts from 'echarts';` that will bundle all the lib
+
 ### Concepts
 
 - [Chart Container and Size](https://echarts.apache.org/handbook/en/concepts/chart-size)

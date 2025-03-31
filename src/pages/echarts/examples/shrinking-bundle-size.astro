@@ -1,0 +1,35 @@
+---
+import dayjs from 'dayjs';
+
+import Layout from '~/layouts/ApacheEChartsLayout.astro';
+
+import Example from '~/components/apache-echarts/examples/ShrinkingBundleSize.svelte';
+
+import { getRandomDecimal } from '~/utils/random';
+
+const buildYear = (subtract = 0) => {
+  let day = dayjs();
+
+  if (subtract > 0) {
+    day = day.subtract(subtract, 'year');
+  }
+
+  return day.format('YYYY');
+};
+
+const buildRandomValue = (min = 30, max = 90, fixed = 1) =>
+  getRandomDecimal(min, max, fixed);
+
+const dataSource = [
+  ['product', buildYear(2), buildYear(1), buildYear()],
+
+  ['Matcha Latte', buildRandomValue(), buildRandomValue(), buildRandomValue()],
+  ['Milk Tea', buildRandomValue(), buildRandomValue(), buildRandomValue()],
+  ['Chocolat', buildRandomValue(), buildRandomValue(), buildRandomValue()],
+  ['Brownie', buildRandomValue(), buildRandomValue(), buildRandomValue()]
+];
+---
+
+<Layout title="Example - Shrinking Bundle Size">
+  <Example {dataSource} client:load />
+</Layout>
