@@ -9,7 +9,7 @@
   import type { DailyUsage } from '~/utils/timeseries';
   import type { DailyUsageBarClick } from './common';
 
-  // import dayjs from 'dayjs';
+  import dayjs from 'dayjs';
   import * as echarts from 'echarts';
 
   import { onMount } from 'svelte';
@@ -27,7 +27,10 @@
 
   //--------------------------------------------------------------------------//
 
-  const locale = 'en-US';
+  // const locale = 'en-US';
+
+  const TOOLTIP_DATETIME_FORMAT = 'DD.MM.YYYY';
+  const XAXIS_DATETIME_FORMAT = 'ddd';
 
   export let unit: string = '';
 
@@ -73,10 +76,12 @@
     const dataLength = currentTimeSeries.length;
     const lastIndex = dataLength - 1;
 
+    /*
     const dateTimeFormat = new Intl.DateTimeFormat(locale);
     const dateTimeWeekDayFormat = new Intl.DateTimeFormat(locale, {
       weekday: 'short'
     });
+    */
 
     const data = currentTimeSeries.reduce<{
       xAxis: string[];
@@ -148,10 +153,11 @@
       formatter: (params: any) => {
         let content = '';
         (params as any[]).forEach((item) => {
+          //<span>${dateTimeFormat.format(new Date(item.data.date))}</span>
           content += `
             <div>
               <span style="display:inline-block;border-radius:10px;width:10px;height:10px;background-color:${item.color};"></span>
-              <span>${dateTimeFormat.format(new Date(item.data.date))}</span>
+              <span>${dayjs(item.data.date).format(TOOLTIP_DATETIME_FORMAT)}</span>
               <span style="float:right;margin-left:20px;font-weight:600">${item.value}</span>
             </div>
           `;
@@ -164,8 +170,8 @@
       type: 'category',
       data: data.xAxis,
       axisLabel: {
-        //formatter: (value) => dayjs(value).format('ddd'),
-        formatter: (value) => dateTimeWeekDayFormat.format(new Date(value)),
+        // formatter: (value) => dateTimeWeekDayFormat.format(new Date(value)),
+        formatter: (value) => dayjs(value).format(XAXIS_DATETIME_FORMAT),
         color: LABEL_COLOR
       },
       axisLine: {
