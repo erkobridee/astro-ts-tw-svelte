@@ -29,6 +29,10 @@
         });
         ```
 
+- [[Bug] Support on CSS Variables for color property on charts #19743 - apache/echarts](https://github.com/apache/echarts/issues/19743)
+
+  - This feature won't be added since Canvas doesn't recognize the CSS variables currently. It's suggested to use `window.getComputedStyle(DOM).getPropertyValue('--the-css-var')` to get real color values before calling `setOption`. ([comment link](https://github.com/apache/echarts/issues/19743#issuecomment-2012376099))
+
 ## Handbook
 
 - [Best Practices - Web Accessibility](https://echarts.apache.org/handbook/en/best-practices/aria)
