@@ -208,6 +208,7 @@
             type: 'average',
 
             // https://echarts.apache.org/en/option.html#series-bar.markLine.data.0.x
+            // @ts-ignore
             x: X_PADDING,
 
             lineStyle: {
@@ -234,6 +235,7 @@
             name: 'Average',
 
             // https://echarts.apache.org/en/option.html#series-bar.markLine.data.0.x
+            // @ts-ignore
             x: X_PADDING,
 
             lineStyle: {
