@@ -25,9 +25,6 @@
     DEFAULT_RADIUS_BORDER
   } from './common';
 
-  // TODO: add column hover
-  // add unit information on the top left with tooltip support
-
   //--------------------------------------------------------------------------//
 
   const locale = 'en-US';
