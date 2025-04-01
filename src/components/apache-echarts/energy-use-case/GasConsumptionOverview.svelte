@@ -15,7 +15,7 @@
 <div class="flex h-[300px] w-[600px]">
   <EnergyOverviewChart
     {timeseries}
-    unit="m3"
+    unit="m³"
     color={COLOR_GAS_CONSUMPTION}
     onclick={onChartClick}
   />
