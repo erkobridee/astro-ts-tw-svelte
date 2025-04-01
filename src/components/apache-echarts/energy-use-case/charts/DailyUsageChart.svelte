@@ -36,7 +36,7 @@
 
   export let currentColor: string = COLOR_DEFAULT;
   export let previousColor: string = COLOR_DEFAULT;
-  export let colorOpacity: number = 0.7;
+  export let colorOpacity: number = 0.55;
   export let backgroundColor: string = COLOR_GRAY_50;
 
   export let data: DailyUsage;

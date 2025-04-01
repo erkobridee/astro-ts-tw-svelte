@@ -35,7 +35,7 @@
   export let yAxisAttribute: string = 'value';
 
   export let color: string = COLOR_DEFAULT;
-  export let colorOpacity: number = 0.5;
+  export let colorOpacity: number = 0.55;
   export let backgroundColor: string = COLOR_GRAY_50;
 
   export let timeseries: TimeSerie[];
@@ -118,11 +118,14 @@
       }
     );
 
+    const X_PADDING = '2%';
+    const Y_PADDING = '10%';
+
     const grid: EChartsOption['grid'] = {
-      top: 30,
-      bottom: 30,
-      left: 10,
-      right: 10
+      top: Y_PADDING,
+      bottom: Y_PADDING,
+      left: X_PADDING,
+      right: X_PADDING
     };
 
     const tooltip: EChartsOption['tooltip'] = {
@@ -210,7 +213,7 @@
 
 <div class="relative grow">
   {#if unit}
-    <div class="absolute top-1 left-2 z-10">
+    <div class="absolute top-2 left-4 z-10">
       <span class="text-[0.7rem]" title="Unit: {unit}">{unit}</span>
     </div>
   {/if}
