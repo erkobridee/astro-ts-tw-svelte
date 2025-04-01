@@ -33,6 +33,16 @@
 
   - This feature won't be added since Canvas doesn't recognize the CSS variables currently. It's suggested to use `window.getComputedStyle(DOM).getPropertyValue('--the-css-var')` to get real color values before calling `setOption`. ([comment link](https://github.com/apache/echarts/issues/19743#issuecomment-2012376099))
 
+<!--
+custom tooltips
+
+https://webdevpuneet.com/customized-line-area-chart-apache-echarts/
+
+https://stackoverflow.com/questions/63901955/echart-series-with-different-tooltip#64297059
+
+https://stackoverflow.com/questions/79006209/echarts-line-series-to-custom-tooltip-to-group-some-lines-together-and-show-tool
+-->
+
 ## Handbook
 
 - [Best Practices - Web Accessibility](https://echarts.apache.org/handbook/en/best-practices/aria)
