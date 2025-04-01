@@ -123,11 +123,12 @@
     );
 
     const X_PADDING = '2%';
+    const Y_PADDING = 30;
 
     const grid: EChartsOption['grid'] = {
-      top: '10%',
-      bottom: '10%',
-      left: '12%',
+      top: Y_PADDING,
+      bottom: Y_PADDING,
+      left: '15%',
       right: X_PADDING
     };
 

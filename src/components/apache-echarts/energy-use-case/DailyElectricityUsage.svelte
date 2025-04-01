@@ -12,7 +12,8 @@
   };
 </script>
 
-<div class="flex h-[300px] w-[600px]">
+<!--div class="flex h-[160px] w-[450px]"-->
+<div class="flex h-[360px] w-[550px]">
   <DailyUsageChart
     {data}
     unit="kWh"
