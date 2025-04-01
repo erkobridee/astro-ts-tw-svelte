@@ -88,7 +88,7 @@
     });
 
     const dateTimeFormat = new Intl.DateTimeFormat(locale, {
-      weekday: 'short'
+      month: 'short'
     });
 
     const data = timeseries.reduce<{
