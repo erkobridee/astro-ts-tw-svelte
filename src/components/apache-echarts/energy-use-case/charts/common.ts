@@ -39,6 +39,17 @@ export const COLOR_ELECTRICITY_PRODUCTION = '#f59e0b'; // ailwind color amber 50
 export const LABEL_COLOR = '#5c6660';
 
 //----------------------------------------------------------------------------//
+// https://day.js.org/docs/en/display/format
+
+export const WEEKDAY_FORMAT = 'ddd';
+
+export const DATE_FORMAT = 'DD.MM.YYYY';
+
+export const DATETIME_FORMAT = `${DATE_FORMAT}, HH:mm:ss`;
+
+export const WEEKDAY_HOUR_FORMAT = 'dd HH:mm';
+
+//----------------------------------------------------------------------------//
 
 export const dimensions = [`startedAt`, `value`];
 

@@ -22,17 +22,18 @@
     COLOR_GRAY_50,
     LABEL_COLOR,
     DEFAULT_DAILYUSAGE_CLICK,
-    DEFAULT_RADIUS_BORDER
+    DEFAULT_RADIUS_BORDER,
+    DATE_FORMAT,
+    WEEKDAY_FORMAT
   } from './common';
 
   //--------------------------------------------------------------------------//
 
   // const locale = 'en-US';
 
-  const TOOLTIP_DATETIME_FORMAT = 'DD.MM.YYYY';
-  const XAXIS_DATETIME_FORMAT = 'ddd';
-
   export let unit: string = '';
+  export const tooltipDatetimeFormat: string = DATE_FORMAT;
+  export const xAxisDatetimeFormat: string = WEEKDAY_FORMAT;
 
   export let xAxisAttribute: string = 'startedAt';
   export let yAxisAttribute: string = 'value';
@@ -157,7 +158,7 @@
           content += `
             <div>
               <span style="display:inline-block;border-radius:10px;width:10px;height:10px;background-color:${item.color};"></span>
-              <span>${dayjs(item.data.date).format(TOOLTIP_DATETIME_FORMAT)}</span>
+              <span>${dayjs(item.data.date).format(tooltipDatetimeFormat)}</span>
               <span style="float:right;margin-left:20px;font-weight:600">${item.value}</span>
             </div>
           `;
@@ -171,7 +172,7 @@
       data: data.xAxis,
       axisLabel: {
         // formatter: (value) => dateTimeWeekDayFormat.format(new Date(value)),
-        formatter: (value) => dayjs(value).format(XAXIS_DATETIME_FORMAT),
+        formatter: (value) => dayjs(value).format(xAxisDatetimeFormat),
         color: LABEL_COLOR
       },
       axisLine: {
