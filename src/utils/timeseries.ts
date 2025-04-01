@@ -13,6 +13,20 @@ export interface TimeSerie {
   value: number;
 }
 
+export interface DailyUsage {
+  /** related to one week before */
+  previous: TimeSerie[];
+  /** related to the current week */
+  current: TimeSerie[];
+}
+
+export interface DayUsage {
+  /** related to one week before */
+  previous: TimeSerie;
+  /** related to the current week */
+  current: TimeSerie;
+}
+
 //----------------------------------------------------------------------------//
 
 export enum EnergyType {
@@ -46,8 +60,9 @@ export const generateOverviewData = (
   }
 
   let timeseries: TimeSerie[] = [];
+  let isFistItem = true;
 
-  for (let i = 0; i < amount; i++) {
+  for (let i = amount - 1; i >= 0; i--) {
     const startDate = (i > 0 ? dayjs().subtract(i, 'month') : dayjs())
       .startOf('month')
       .startOf('day');
@@ -55,8 +70,10 @@ export const generateOverviewData = (
     timeseries.push({
       startedAt: startDate.format(),
       endedAt: startDate.endOf('month').endOf('day').format(),
-      value: i === 0 ? 0 : getRandomDecimal(min, max, decimalPrecision)
+      value: isFistItem ? 0 : getRandomDecimal(min, max, decimalPrecision)
     });
+
+    isFistItem = false;
   }
 
   return timeseries;
@@ -86,5 +103,43 @@ export const generateElectricityProductionOverviewData = (
     amount,
     decimalPrecision
   );
+
+//----------------------------------------------------------------------------//
+
+export const generateElectricityDailyUsageData = (
+  amount = 7,
+  decimalPrecision = 3
+) => {
+  const min = 2;
+  const max = 20;
+
+  const data: DailyUsage = {
+    previous: [],
+    current: []
+  };
+
+  for (let i = amount - 1; i >= 0; i--) {
+    let date = (i > 0 ? dayjs().subtract(i, 'day') : dayjs()).startOf('day');
+
+    const current: TimeSerie = {
+      startedAt: date.format(),
+      endedAt: date.endOf('day').format(),
+      value: getRandomDecimal(min, max, decimalPrecision)
+    };
+
+    date = date.subtract(1, 'week').startOf('day');
+
+    const previous: TimeSerie = {
+      startedAt: date.format(),
+      endedAt: date.endOf('day').format(),
+      value: getRandomDecimal(min, max, decimalPrecision)
+    };
+
+    data.current.push(current);
+    data.previous.push(previous);
+  }
+
+  return data;
+};
 
 //----------------------------------------------------------------------------//

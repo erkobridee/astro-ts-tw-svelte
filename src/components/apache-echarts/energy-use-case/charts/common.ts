@@ -1,6 +1,6 @@
 import type { BarSeriesOption } from 'echarts';
 
-import type { TimeSerie } from '~/utils/timeseries';
+import type { TimeSerie, DayUsage } from '~/utils/timeseries';
 
 //----------------------------------------------------------------------------//
 // https://echarts.apache.org/en/option.html#color
@@ -58,3 +58,9 @@ export const buildBarItemStyleBorderRadius = (
 export type TimeSerieBarClick = (timeserie: TimeSerie) => void;
 
 export const DEFAULT_TIMESERIE_CLICK: TimeSerieBarClick = () => undefined;
+
+export type DailyUsageBarClick = (dayUsage: DayUsage) => void;
+
+export const DEFAULT_DAILYUSAGE_CLICK: DailyUsageBarClick = () => undefined;
+
+//----------------------------------------------------------------------------//
