@@ -28,6 +28,31 @@ export interface DayUsage {
 }
 
 //----------------------------------------------------------------------------//
+// using const instead of enums
+// https://gist.github.com/erkobridee/576bcba33ed5fcf26c68fb0f32efdef3
+
+export const Unit = {
+  KW: 'kW',
+  KWH: 'kWh',
+  M3: 'm³',
+  UNDEFINED: ''
+} as const satisfies Record<string, string>;
+
+export type UnitKeys = keyof typeof Unit;
+export type Units = (typeof Unit)[UnitKeys];
+
+export const Aggregation = {
+  MONTH: 'month',
+  WEEK: 'week',
+  HOUR: 'hour',
+  MINUTES: '15_minutes',
+  UNDEFINED: ''
+} as const satisfies Record<string, string>;
+
+export type AggregationKeys = keyof typeof Aggregation;
+export type Aggregations = (typeof Aggregation)[AggregationKeys];
+
+//----------------------------------------------------------------------------//
 
 export enum EnergyType {
   GAS_CONSUMPTION = 'GAS_CONSUMPTION',
