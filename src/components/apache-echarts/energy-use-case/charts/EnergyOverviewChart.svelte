@@ -57,18 +57,6 @@
     backgroundColor
   );
 
-  const defineLightColor = (color: string, colorOpacity: number) => {
-    if (!color) {
-      return '';
-    }
-
-    if (colorOpacity < 0 || colorOpacity > 1) {
-      colorOpacity = 1;
-    }
-
-    return hexToRGB(color, colorOpacity);
-  };
-
   const updateOptions = (
     timeseries: TimeSerie[],
     xAxisAttribute: string,
@@ -77,8 +65,8 @@
     colorOpacity: number,
     backgroundColor: string
   ) => {
-    const lightColor = defineLightColor(color, colorOpacity);
-    const lightLabelColor = defineLightColor(LABEL_COLOR, 0.75);
+    const lightColor = hexToRGB(color, colorOpacity);
+    const lightLabelColor = hexToRGB(LABEL_COLOR, 0.75);
 
     const timeseriesLength = timeseries.length;
     const timeseriesLastIndex = timeseriesLength - 1;

@@ -6,6 +6,14 @@ import type { TimeSerie } from '~/utils/timeseries';
 // https://echarts.apache.org/en/option.html#color
 
 export const hexToRGB = (hex: string, alpha: number | undefined = 1) => {
+  if (!hex) {
+    return '';
+  }
+
+  if (alpha < 0 || alpha > 1) {
+    alpha = 1;
+  }
+
   hex = hex.toUpperCase();
 
   const r = parseInt(hex.slice(1, 3), 16);
