@@ -18,6 +18,7 @@
 <div class="flex h-[300px] w-[600px]">
   <EnergyOverviewChart
     {timeseries}
+    unit="kWh"
     color={COLOR_ELECTRICITY_PRODUCTION}
     onclick={onChartClick}
   />

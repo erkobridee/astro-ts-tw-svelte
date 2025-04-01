@@ -9,7 +9,7 @@
   import type { TimeSerie } from '~/utils/timeseries';
   import type { TimeSerieBarClick } from './common';
 
-  import dayjs from 'dayjs';
+  // import dayjs from 'dayjs';
   import * as echarts from 'echarts';
 
   import { onMount } from 'svelte';
@@ -25,9 +25,14 @@
     DEFAULT_RADIUS_BORDER
   } from './common';
 
+  // TODO: add column hover
+  // add unit information on the top left with tooltip support
+
   //--------------------------------------------------------------------------//
 
   const locale = 'en-US';
+
+  export let unit: string = '';
 
   export let xAxisAttribute: string = 'startedAt';
   export let yAxisAttribute: string = 'value';
@@ -73,13 +78,17 @@
     backgroundColor: string
   ) => {
     const lightColor = defineLightColor(color, colorOpacity);
-    const lightLabelColor = defineLightColor(LABEL_COLOR, 0.7);
+    const lightLabelColor = defineLightColor(LABEL_COLOR, 0.75);
 
     const timeseriesLength = timeseries.length;
     const timeseriesLastIndex = timeseriesLength - 1;
 
     const numberFormat = new Intl.NumberFormat(locale, {
       maximumFractionDigits: 0
+    });
+
+    const dateTimeFormat = new Intl.DateTimeFormat(locale, {
+      weekday: 'short'
     });
 
     const data = timeseries.reduce<{
@@ -131,11 +140,26 @@
       right: 10
     };
 
+    const tooltip: EChartsOption['tooltip'] = {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow',
+        // https://echarts.apache.org/en/option.html#tooltip.axisPointer.z
+        z: 0,
+        shadowStyle: {
+          color: 'rgba(150,150,150,0.1)'
+        }
+      },
+      // do not display
+      formatter: () => ''
+    };
+
     const xAxis: EChartsOption['xAxis'] = {
       type: 'category',
       data: data.xAxis,
       axisLabel: {
-        formatter: (value) => dayjs(value).format('MMM'),
+        //formatter: (value) => dayjs(value).format('MMM'),
+        formatter: (value) => dateTimeFormat.format(new Date(value)),
         color: LABEL_COLOR
       },
       axisLine: {
@@ -148,7 +172,10 @@
 
     const yAxis: EChartsOption['yAxis'] = {
       type: 'value',
-      show: false
+      show: false,
+      max: (value) => {
+        return value.max + value.max * (15 / 100);
+      }
     };
 
     const barSerie: BarSeriesOption = {
@@ -161,6 +188,7 @@
     options = {
       backgroundColor,
       grid,
+      tooltip,
       xAxis,
       yAxis,
       series: [barSerie]
@@ -196,9 +224,22 @@
 </script>
 
 <div class="relative grow">
+  {#if unit}
+    <div class="absolute top-1 left-2 z-10">
+      <span class="text-[0.7rem]" title="Unit: {unit}">{unit}</span>
+    </div>
+  {/if}
+
   <div
     class="absolute top-0 right-0 bottom-0 left-0 overflow-hidden rounded-lg border border-gray-100"
   >
-    <ECharts init={echarts.init} {options} notMerge bind:chart></ECharts>
+    <ECharts init={echarts.init} {options} notMerge bind:chart>
+      <div class="flex h-full w-full items-center justify-center">
+        <div
+          class="h-20 w-20 animate-spin rounded-full border-4 border-t-4 border-gray-200"
+          style="border-top-color: {color};"
+        ></div>
+      </div>
+    </ECharts>
   </div>
 </div>
