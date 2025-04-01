@@ -1,4 +1,9 @@
 <script lang="ts">
+  /*
+    Another approach possible to stack bars
+    https://stackoverflow.com/questions/77415824/echarts-stacked-bar-chart-setting-borderradius-on-topmost-bar-only/77436099#77436099
+  */
+
   import type { EChartsOption, BarSeriesOption } from 'echarts';
 
   import * as echarts from 'echarts';
