@@ -16,6 +16,8 @@
 
   import ECharts from '~/components/apache-echarts/ECharts';
 
+  import ChartLoadingSpinner from './ChartLoadingSpinner.svelte';
+
   import {
     hexToRGB,
     COLOR_DEFAULT,
@@ -222,12 +224,7 @@
     class="absolute top-0 right-0 bottom-0 left-0 overflow-hidden rounded-lg border border-gray-100"
   >
     <ECharts init={echarts.init} {options} notMerge bind:chart>
-      <div class="flex h-full w-full items-center justify-center">
-        <div
-          class="h-20 w-20 animate-spin rounded-full border-4 border-t-4 border-gray-200"
-          style="border-top-color: {color};"
-        ></div>
-      </div>
+      <ChartLoadingSpinner {color} />
     </ECharts>
   </div>
 </div>
