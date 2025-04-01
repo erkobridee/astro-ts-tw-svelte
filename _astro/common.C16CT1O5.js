@@ -1,1 +1,0 @@
-const n=(s,t=1)=>{if(!s)return"";(t<0||t>1)&&(t=1),s=s.toUpperCase();const c=parseInt(s.slice(1,3),16),C=parseInt(s.slice(3,5),16),O=parseInt(s.slice(5,7),16);return`rgba(${c}, ${C}, ${O}, ${t})`},o="#f9fafb",L="#9ca3af",I="#0891b2",_="#3b82f6",R="#f59e0b",E="#5c6660",a=8,T=()=>{},r=()=>{};export{L as C,r as D,E as L,o as a,a as b,_ as c,R as d,I as e,T as f,n as h};
