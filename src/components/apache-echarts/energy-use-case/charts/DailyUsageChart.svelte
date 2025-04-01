@@ -73,7 +73,8 @@
     const dataLength = currentTimeSeries.length;
     const lastIndex = dataLength - 1;
 
-    const dateTimeFormat = new Intl.DateTimeFormat(locale, {
+    const dateTimeFormat = new Intl.DateTimeFormat(locale);
+    const dateTimeWeekDayFormat = new Intl.DateTimeFormat(locale, {
       weekday: 'short'
     });
 
@@ -92,6 +93,7 @@
 
         acc.current.push({
           value: (item as any)[yAxisAttribute],
+          date: (item as any)[xAxisAttribute],
           itemStyle: {
             borderRadius: DEFAULT_RADIUS_BORDER,
             borderWidth: 1,
@@ -102,6 +104,7 @@
 
         acc.previous.push({
           value: (previousTimeSeries[index] as any)[yAxisAttribute],
+          date: (previousTimeSeries[index] as any)[xAxisAttribute],
           itemStyle: {
             borderRadius: DEFAULT_RADIUS_BORDER,
             borderWidth: 1,
@@ -119,16 +122,18 @@
       }
     );
 
+    const X_PADDING = '2%';
+
     const grid: EChartsOption['grid'] = {
-      top: 30,
-      bottom: 30,
-      //left: 70,
+      top: '10%',
+      bottom: '10%',
       left: '12%',
-      right: 10
+      right: X_PADDING
     };
 
     const tooltip: EChartsOption['tooltip'] = {
       trigger: 'axis',
+
       axisPointer: {
         type: 'shadow',
         // https://echarts.apache.org/en/option.html#tooltip.axisPointer.z
@@ -137,8 +142,21 @@
           color: 'rgba(150,150,150,0.1)'
         }
       },
-      // do not display
-      formatter: () => ''
+
+      // https://echarts.apache.org/en/option.html#tooltip.formatter
+      formatter: (params: any) => {
+        let content = '';
+        (params as any[]).forEach((item) => {
+          content += `
+            <div>
+              <span style="display:inline-block;border-radius:10px;width:10px;height:10px;background-color:${item.color};"></span>
+              <span>${dateTimeFormat.format(new Date(item.data.date))}</span>
+              <span style="float:right;margin-left:20px;font-weight:600">${item.value}</span>
+            </div>
+          `;
+        });
+        return content;
+      }
     };
 
     const xAxis: EChartsOption['xAxis'] = {
@@ -146,7 +164,7 @@
       data: data.xAxis,
       axisLabel: {
         //formatter: (value) => dayjs(value).format('ddd'),
-        formatter: (value) => dateTimeFormat.format(new Date(value)),
+        formatter: (value) => dateTimeWeekDayFormat.format(new Date(value)),
         color: LABEL_COLOR
       },
       axisLine: {
@@ -180,7 +198,7 @@
             type: 'average',
 
             // https://echarts.apache.org/en/option.html#series-bar.markLine.data.0.x
-            x: 20,
+            x: X_PADDING,
 
             lineStyle: {
               color: currentColor,
@@ -206,7 +224,7 @@
             name: 'Average',
 
             // https://echarts.apache.org/en/option.html#series-bar.markLine.data.0.x
-            x: 20,
+            x: X_PADDING,
 
             lineStyle: {
               color: 'transparent'
