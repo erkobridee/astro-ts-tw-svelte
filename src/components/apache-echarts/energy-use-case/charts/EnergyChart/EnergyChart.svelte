@@ -26,6 +26,7 @@
   import { Unit, Aggregation } from '~/utils/timeseries';
   import {
     DEFAULT_MAXIMUM_FRACTION_DIGITS,
+    formatDateTime,
     formatWeekdayHour,
     formatNumber
   } from '~/utils/format';
@@ -207,9 +208,9 @@
     });
 
     if (
-      ([Aggregation.HOUR, Aggregation.MINUTES] as string[]).includes(
-        aggregation
-      )
+      (
+        [Aggregation.DAY, Aggregation.HOUR, Aggregation.MINUTES] as string[]
+      ).includes(aggregation)
     ) {
       chartOptions.xAxisLabelFormatter = formatWeekdayHour;
       chartOptions.tooltipFormatter = (params) => {
@@ -219,7 +220,7 @@
 
         let content = '';
 
-        content += `<div>${formatWeekdayHour(timeserie.startedAt)}</div>`;
+        content += `<div>${formatDateTime(timeserie.startedAt)}</div>`;
 
         paramsArray.forEach((item) => {
           timeserie = timeseries[item.dataIndex];
