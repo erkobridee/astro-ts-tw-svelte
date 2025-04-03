@@ -2,7 +2,7 @@ import type { DateParamType } from '~/utils/format';
 
 import dayjs from 'dayjs';
 
-import { getRandomFloat, getRandomDecimal } from '~/utils/random';
+import { getRandomInt, getRandomFloat, getRandomDecimal } from '~/utils/random';
 import {
   DEFAULT_MAXIMUM_FRACTION_DIGITS,
   formatHourStringId
@@ -41,6 +41,21 @@ export interface DayUsage {
   /** related to the current week */
   current: TimeSerie;
 }
+
+//---//
+
+export const EMPTY_TIMESERIE: TimeSerie = {
+  startedAt: '',
+  endedAt: '',
+  value: 0
+};
+
+//----------------------------------------------------------------------------//
+
+const getYesterday = () => dayjs().subtract(1, 'day').startOf('day');
+
+const isTimeInHourRange = (time: number, min: number, max?: number) =>
+  max === undefined ? time === min : time >= min && time <= max;
 
 //----------------------------------------------------------------------------//
 // using const instead of enums
@@ -106,6 +121,7 @@ export const generateElectricityDailyUsageData = (
 };
 
 //----------------------------------------------------------------------------//
+// @begin: overview data
 
 export enum EnergyType {
   GAS_CONSUMPTION = 'GAS_CONSUMPTION',
@@ -184,14 +200,9 @@ export const generateElectricityProductionOverviewData = (
     decimalPrecision
   );
 
+// @end: overview data
 //----------------------------------------------------------------------------//
-
-const getYesterday = () => dayjs().subtract(1, 'day').startOf('day');
-
-const isTimeInHourRange = (time: number, min: number, max?: number) =>
-  max === undefined ? time === min : time >= min && time <= max;
-
-//---//
+// @begin: gas consumption
 
 export const GAS_CONSUMPTION_RANGE = {
   LOWEST: {
@@ -218,6 +229,190 @@ export const isPickGasConsumption = (startedAt: DateParamType) => {
   return false;
 };
 
+export interface GasConsumptionDayData {
+  day: TimeSerie;
+  hours: TimeSerie[];
+}
+
+export const generateGasConsumptionDayData = (
+  startedAt: DateParamType = getYesterday()
+): GasConsumptionDayData => {
+  const timeUnit = 'hour';
+  const dayHours = 24;
+
+  let totalValue = 0;
+  const timeseries: TimeSerie[] = [];
+
+  for (let i = 0; i < dayHours; i++) {
+    const startDate = (
+      i > 0 ? dayjs(startedAt).add(i, timeUnit) : dayjs(startedAt)
+    ).startOf(timeUnit);
+
+    const isPickConsumption = isPickGasConsumption(startDate);
+    const { min, max } =
+      GAS_CONSUMPTION_RANGE[isPickConsumption ? 'PICK' : 'LOWEST'];
+    const value = getRandomFloat(min, max);
+    totalValue += value;
+
+    timeseries.push({
+      startedAt: startDate.format(),
+      endedAt: startDate.endOf(timeUnit).format(),
+      value
+    });
+  }
+
+  const lastIndex = timeseries.length - 1;
+
+  const day: TimeSerie = {
+    startedAt: timeseries[0].startedAt,
+    endedAt: timeseries[lastIndex].endedAt,
+    value: totalValue
+  };
+
+  return {
+    day,
+    hours: timeseries
+  };
+};
+
+// TODO: define month and weeks
+
+// TODO: define months
+
+// @end: gas consumption
+//----------------------------------------------------------------------------//
+// @begin: electricity consumption and production
+
+export interface ElectricityTimeserieData<T = TimeSerie> {
+  plain: T;
+  repartition: T;
+}
+
+export interface ElectricityDayData {
+  day: ElectricityTimeserieData;
+  hours: ElectricityTimeserieData<TimeSerie[]>;
+  minutes: ElectricityTimeserieData<TimeSerie[]>;
+}
+
+export const buildElectricityRepartitionTimeseries = (
+  { startedAt, endedAt, value }: TimeSerie,
+  anotherValue: number
+): TimeSerie => ({
+  startedAt,
+  endedAt,
+  value: anotherValue,
+  anotherValue: value - anotherValue
+});
+
+//---//
+
+export type GenerateElectricityValues = (
+  startDate: DateParamType
+) => [number, number];
+
+export const generateElectricityDayData = (
+  startedAt: DateParamType,
+  generateValues: GenerateElectricityValues
+) => {
+  const timeSlot = 15;
+  const dayQuartersOfHours = 96; // 24 hours * 4 ( quarter of hour = 15 mins )
+
+  const consumptionDayData: ElectricityDayData = {
+    day: {
+      plain: EMPTY_TIMESERIE,
+      repartition: EMPTY_TIMESERIE
+    },
+    hours: {
+      plain: [],
+      repartition: []
+    },
+    minutes: {
+      plain: [],
+      repartition: []
+    }
+  };
+
+  let hour: TimeSerie = EMPTY_TIMESERIE;
+
+  let quarterCount = 0;
+  let totalQuarterValue = 0;
+  let totalQuarterAnotherValue = 0;
+
+  let totalDayValue = 0;
+  let totalDayAnotherValue = 0;
+
+  for (let i = 0; i < dayQuartersOfHours; i++) {
+    const amount = i * timeSlot;
+
+    const startDate = (
+      i > 0 ? dayjs(startedAt).add(amount, 'm') : dayjs(startedAt)
+    ).startOf('s');
+
+    const [value, anotherValue] = generateValues(startDate);
+
+    startedAt = startDate.format();
+    const endedAt = startDate
+      .add(timeSlot - 1, 'm')
+      .endOf('s')
+      .format();
+
+    if (quarterCount === 0) {
+      hour = EMPTY_TIMESERIE;
+    } else if (quarterCount === 3) {
+      hour.endedAt = endedAt;
+      hour.value = totalQuarterValue;
+
+      consumptionDayData.hours.plain.push(hour);
+      consumptionDayData.hours.repartition.push(
+        buildElectricityRepartitionTimeseries(hour, totalQuarterAnotherValue)
+      );
+
+      totalQuarterValue = 0;
+      totalQuarterAnotherValue = 0;
+    }
+
+    totalDayValue += value;
+    totalDayAnotherValue += anotherValue;
+
+    totalQuarterValue += value;
+    totalQuarterAnotherValue += anotherValue;
+    quarterCount++;
+
+    const minute: TimeSerie = {
+      startedAt,
+      endedAt,
+      value
+    };
+
+    consumptionDayData.minutes.plain.push(minute);
+    consumptionDayData.minutes.repartition.push(
+      buildElectricityRepartitionTimeseries(minute, anotherValue)
+    );
+  }
+
+  const hours = consumptionDayData.hours.plain;
+
+  const lastHoursIndex = hours.length - 1;
+
+  const day: TimeSerie = {
+    startedAt: hours[0].startedAt,
+    endedAt: hours[lastHoursIndex].endedAt,
+    value: totalDayValue
+  };
+
+  consumptionDayData.day.plain = day;
+  consumptionDayData.day.repartition = buildElectricityRepartitionTimeseries(
+    day,
+    totalDayAnotherValue
+  );
+
+  return consumptionDayData;
+};
+
+// @end: electricity consumption and production
+//----------------------------------------------------------------------------//
+// @begin: electricity consumption
+
 export const ELECTRICITY_CONSUMPTION_RANGE = {
   LOWEST: {
     min: 0.1,
@@ -243,133 +438,127 @@ export const isPickElectricitysConsumption = (startedAt: DateParamType) => {
   return false;
 };
 
-//----------------------------------------------------------------------------//
-
-// TODO: refactor the code to also generate the day accumulation
-export const generateGasConsumptionHoursData = (
-  startedAt: DateParamType = getYesterday(),
-  decimalPrecision = DEFAULT_MAXIMUM_FRACTION_DIGITS
+export const generateElectricityConsumptionValues: GenerateElectricityValues = (
+  startDate
 ) => {
-  const timeUnit = 'hour';
-  const dayHours = 24;
+  const isPickConsumption = isPickElectricitysConsumption(startDate);
+  const { min, max } =
+    ELECTRICITY_CONSUMPTION_RANGE[isPickConsumption ? 'PICK' : 'LOWEST'];
 
-  const timeseries: TimeSerie[] = [];
+  const value = getRandomFloat(min, max);
+  const anotherValue = getRandomFloat(0, value * (3 / 5));
 
-  for (let i = 0; i < dayHours; i++) {
-    const startDate = (
-      i > 0 ? dayjs(startedAt).add(i, timeUnit) : dayjs(startedAt)
-    ).startOf(timeUnit);
-
-    const isPickConsumption = isPickGasConsumption(startDate);
-    const { min, max } =
-      GAS_CONSUMPTION_RANGE[isPickConsumption ? 'PICK' : 'LOWEST'];
-    const value = getRandomDecimal(min, max, decimalPrecision);
-
-    timeseries.push({
-      startedAt: startDate.format(),
-      endedAt: startDate.endOf(timeUnit).format(),
-      value
-    });
-  }
-
-  return timeseries;
+  return [value, anotherValue];
 };
-
-//----------------------------------------------------------------------------//
 
 export const generateElectricityConsumptionDayData = (
-  startedAt: DateParamType = getYesterday(),
-  generateRepartitions: boolean = false
-) => {
-  const timeSlot = 15;
-  const dayQuartersOfHours = 96; // 24 hours * 4 ( quarter of hour = 15 mins )
+  startedAt: DateParamType = getYesterday()
+) =>
+  generateElectricityDayData(startedAt, generateElectricityConsumptionValues);
 
-  const hours: TimeSerie[] = [];
-  const minutes: TimeSerie[] = [];
+// TODO: define month and weeks
 
-  let hour: TimeSerie = {
-    startedAt: '',
-    endedAt: '',
-    value: 0
-  };
+// TODO: define months
 
-  let quarterCount = 0;
-  let totalQuarterValue = 0;
-  let totalQuarterAnotherValue = 0;
+// @end: electricity consumption
+//----------------------------------------------------------------------------//
+// @begin: electricity production
 
-  let totalDayValue = 0;
-  let totalDayAnotherValue = 0;
+/*
+min aggregation: `15 mins`
 
-  for (let i = 0; i < dayQuartersOfHours; i++) {
-    const amount = i * timeSlot;
+- unit: `kW`
 
-    const startDate = (
-      i > 0 ? dayjs(startedAt).add(amount, 'm') : dayjs(startedAt)
-    ).startOf('s');
+> generate a wave pattern starting from `06:00`, pick between `11:00` and `14:00`, and end at `18:00`
 
-    const isPickConsumption = isPickElectricitysConsumption(startDate);
-    const { min, max } =
-      ELECTRICITY_CONSUMPTION_RANGE[isPickConsumption ? 'PICK' : 'LOWEST'];
+- Average peak sun hours: `4.5 hours per day`
 
-    const value = getRandomFloat(min, max);
-    const anotherValue = generateRepartitions
-      ? getRandomFloat(min, value * (3 / 5))
-      : undefined;
+- Amount of panels: `15`
 
-    startedAt = startDate.format();
-    const endedAt = startDate
-      .add(timeSlot - 1, 'm')
-      .endOf('s')
-      .format();
+- Average panel Wattage: `400 W`
 
-    if (quarterCount === 0) {
-      hour = {
-        startedAt,
-        endedAt: '',
-        value: 0
-      };
-    } else if (quarterCount === 3) {
-      hour.endedAt = endedAt;
-      hour.value = totalQuarterValue;
-      hour.anotherValue = generateRepartitions
-        ? totalQuarterAnotherValue
-        : undefined;
+- One Kilo Watt: `1000 W`
 
-      totalQuarterValue = 0;
-      totalQuarterAnotherValue = 0;
+- min value: `0` - night time
 
-      hours.push(hour);
-    }
+- pick value: `( ( Amount of panels ) * ( Average panel wattage ) ) / ( One Kilo Watt )`
 
-    totalDayValue += value;
-    totalDayAnotherValue += anotherValue ?? 0;
+*/
 
-    totalQuarterValue += value;
-    totalQuarterAnotherValue += anotherValue ?? 0;
-    quarterCount++;
+export const isElectricityProductionTime = (startedAt: DateParamType) => {
+  const time = Number(formatHourStringId(startedAt));
 
-    minutes.push({
-      startedAt,
-      endedAt,
-      value,
-      anotherValue
-    });
+  if (isTimeInHourRange(time, 600, 1800)) {
+    return true;
   }
 
-  const lastHoursIndex = hours.length - 1;
-
-  const day: TimeSerie = {
-    startedAt: hours[0].startedAt,
-    endedAt: hours[lastHoursIndex].endedAt,
-    value: totalDayValue,
-    anotherValue: generateRepartitions ? totalDayAnotherValue : undefined
-  };
-
-  return {
-    day,
-    hours,
-    minutes
-  };
+  return false;
 };
 
+export const generatePickElectricityProductionValue = () => {
+  const amountOfPanels = getRandomInt(15, 30);
+  const averagePanelWattage = 400;
+  const oneKiloWatt = 1000;
+  return (amountOfPanels * averagePanelWattage) / oneKiloWatt;
+};
+
+export const getElectricityProductionRange = (
+  startDate: DateParamType,
+  pickProductionValue: number
+) => {
+  const time = Number(formatHourStringId(startDate));
+
+  const midProductionValue = pickProductionValue * (2 / 4);
+  const lowProductionValue = pickProductionValue * (1 / 4);
+
+  // generate a wave pattern starting from `06:00`, pick between `10:00` and `15:00`, and end at `18:00`
+  if (time < 830) {
+    return [0, lowProductionValue];
+  }
+
+  if (time < 1000) {
+    return [lowProductionValue, midProductionValue];
+  }
+
+  if (time < 1500) {
+    return [midProductionValue, pickProductionValue];
+  }
+
+  if (time < 1645) {
+    return [lowProductionValue, midProductionValue];
+  }
+
+  return [0, lowProductionValue];
+};
+
+export const generateElectricityProductionValues =
+  (
+    pickProductionValue = generatePickElectricityProductionValue()
+  ): GenerateElectricityValues =>
+  (startDate) => {
+    if (!isElectricityProductionTime(startDate)) {
+      return [0, 0];
+    }
+
+    const [min, max] = getElectricityProductionRange(
+      startDate,
+      pickProductionValue
+    );
+
+    const value = getRandomFloat(min, max);
+    const anotherValue = getRandomFloat(0, value * (getRandomInt(4, 8) / 10));
+
+    return [value, anotherValue];
+  };
+
+export const generateElectricityProductionDayData = (
+  startedAt: DateParamType = getYesterday()
+) =>
+  generateElectricityDayData(startedAt, generateElectricityProductionValues());
+
+// TODO: define month and weeks
+
+// TODO: define months
+
+// @end: electricity production
 //----------------------------------------------------------------------------//
