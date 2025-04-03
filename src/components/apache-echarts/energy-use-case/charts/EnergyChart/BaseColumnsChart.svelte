@@ -210,6 +210,7 @@
         verticalAlign: 'bottom',
         padding: [0, -10, 2, 0],
         color: LABEL_COLOR,
+        showMinLabel: false,
         showMaxLabel: false
       },
       splitLine: {
