@@ -25,7 +25,13 @@
       onclick={onChartClick}
       color={COLOR_GAS_CONSUMPTION}
       unit={Unit.M3}
-      aggregation={Aggregation.HOUR}>Gas Consumption Actions</EnergyChart
+      aggregation={Aggregation.HOUR}
     >
+      <svelte:fragment slot="headerActions">
+        Gas Consumption header actions
+      </svelte:fragment>
+
+      <svelte:fragment slot="footer">Footer Row</svelte:fragment>
+    </EnergyChart>
   </div>
 </div>

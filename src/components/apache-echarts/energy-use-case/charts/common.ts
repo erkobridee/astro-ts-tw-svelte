@@ -40,6 +40,15 @@ export const COLOR_ELECTRICITY_PRODUCTION = '#f59e0b'; // tailwind color amber 5
 
 export const LABEL_COLOR = '#5c6660';
 
+export const LINE_COLOR = '#a3a3a3';
+
+//---//
+
+export const LINE_STYLE = {
+  type: [1, 3],
+  color: LINE_COLOR
+};
+
 //----------------------------------------------------------------------------//
 
 // LineStyleOption

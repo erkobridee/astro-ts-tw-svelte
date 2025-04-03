@@ -1,6 +1,15 @@
-<script lang="ts">
-   
+<script lang="ts" context="module">
+  export const EnergyChartType = {
+    PLAIN: 'PLAIN',
+    REPARTITION: 'REPARTITION'
+  } as const satisfies Record<string, string>;
 
+  export type EnergyChartTypeKeys = keyof typeof EnergyChartType;
+  export type EnergyChartTypes = (typeof EnergyChartType)[EnergyChartTypeKeys];
+</script>
+
+<script lang="ts">
+  import type { BarSeriesOption } from 'echarts';
   import type {
     ReferencePower,
     TimeSerie,
@@ -15,7 +24,11 @@
   import type { ChartOptions } from './BaseColumnsChart.svelte';
 
   import { Unit, Aggregation } from '~/utils/timeseries';
-  import { DEFAULT_MAXIMUM_FRACTION_DIGITS } from '~/utils/format';
+  import {
+    DEFAULT_MAXIMUM_FRACTION_DIGITS,
+    formatWeekdayHour,
+    formatNumber
+  } from '~/utils/format';
 
   import {
     COLOR_DEFAULT,
@@ -28,18 +41,23 @@
 
   //--------------------------------------------------------------------------//
 
+  type ColorProp = string | string[];
   type ReferencePowerProp = ReferencePower[] | ReferencePower | undefined;
-  type LabelProps = string[] | string;
+  type LabelProp = string[] | string;
+
+  //---//
 
   type TotalValues = [number, number];
 
   //--------------------------------------------------------------------------//
 
+  export let type: EnergyChartTypes = EnergyChartType.PLAIN;
+
   export let unit: Units = Unit.UNDEFINED;
   export let aggregation: Aggregations = Aggregation.UNDEFINED;
   export let maximumFractionDigits: number = DEFAULT_MAXIMUM_FRACTION_DIGITS;
 
-  export let color: string | string[] = COLOR_DEFAULT;
+  export let color: ColorProp = COLOR_DEFAULT;
 
   export let timeseries: TimeSerie[] = [];
 
@@ -48,7 +66,7 @@
   /** Apache ECharts Mark Line configuration */
   export let referencePowerOptions: MarkLineOptions = DEFAULT_MARKLINE_OPTIONS;
 
-  export let labels: LabelProps = ['Consumption', 'Exceedance'];
+  export let labels: LabelProp = ['Consumption', 'Exceedance'];
 
   export let onclick: TimeSerieBarClick = DEFAULT_TIMESERIE_CLICK;
 
@@ -59,9 +77,9 @@
   let totalValues: TotalValues = [0, NaN];
 
   let chartOptions: ChartOptions = {
+    color: [],
     categories: [],
     series: []
-
     // xAxisLabelFormatter
     // tooltipFormatter
   };
@@ -69,39 +87,155 @@
   //--------------------------------------------------------------------------//
 
   $: updateChartOptions(
+    type,
     unit,
     aggregation,
-    //maximumFractionDigits,
+    maximumFractionDigits,
+    color,
     timeseries,
     referencePower,
     referencePowerOptions
   );
 
   const updateChartOptions = (
+    type: EnergyChartTypes,
     unit: Units,
     aggregation: Aggregations,
-    //maximumFractionDigits: number,
+    maximumFractionDigits: number,
+    color: ColorProp,
     timeseries: TimeSerie[],
     referencePower: ReferencePowerProp,
     referencePowerOptions: MarkLineOptions
   ) => {
     isDrilldownEnabled = canDrilldown(unit, aggregation);
 
+    const hasReferencePower = !!referencePower;
+    const isRepartition = type === EnergyChartType.REPARTITION;
+
+    let valueTotal = 0;
+    let anotherValueTotal = 0;
+
+    // startedAtData -> xAxis.data
+    // valueData -> series[0].data
+    // anotherValueData -> series[1].data
+    const data = timeseries.reduce<{
+      startedAtData: string[];
+      valueData: number[];
+      anotherValueData: number[];
+    }>(
+      (acc, item) => {
+        const { startedAt, value = NaN, anotherValue = NaN } = item;
+
+        valueTotal += value ?? 0;
+        anotherValueTotal += anotherValue ?? 0;
+
+        acc.startedAtData.push(startedAt);
+
+        if (isRepartition) {
+          acc.valueData.push(value);
+          acc.anotherValueData.push(anotherValue);
+          return acc;
+        }
+
+        /*
+        if(hasReferencePower) {
+          // TODO: calculate the exceedance using the referencePower
+        }
+        */
+
+        acc.valueData.push(value);
+
+        return acc;
+      },
+      {
+        startedAtData: [],
+        valueData: [],
+        anotherValueData: []
+      }
+    );
+
+    chartOptions.color = Array.isArray(color) ? color : [color];
+    chartOptions.categories = data.startedAtData;
+
+    if (isRepartition || hasReferencePower) {
+      totalValues = [valueTotal, anotherValueTotal];
+
+      const valueBarSeries: BarSeriesOption = {
+        type: 'bar',
+        stack: 'energy',
+        data: data.valueData
+      };
+
+      // if hasReferencePower is present add markLines into the valuesBarSeries
+      // referencePower
+      // referencePowerOptions
+
+      const anotherValueBarSeries: BarSeriesOption = {
+        type: 'bar',
+        stack: 'energy',
+        data: data.anotherValueData
+      };
+
+      chartOptions.series = [valueBarSeries, anotherValueBarSeries];
+    } else {
+      totalValues = [valueTotal, NaN];
+
+      const valueBarSeries: BarSeriesOption = {
+        type: 'bar',
+        data: data.valueData
+      };
+
+      chartOptions.series = [valueBarSeries];
+    }
+
     // TODO: remove
     console.log('EnergyChart.updateChartOptions', {
+      type,
       unit,
       aggregation,
-      //maximumFractionDigits,
+      maximumFractionDigits,
 
       timeseries,
 
       isDrilldownEnabled,
 
+      hasReferencePower,
       referencePower,
-      referencePowerOptions
+      referencePowerOptions,
+
+      data
     });
 
-    // TODO: define the code logic
+    if (
+      ([Aggregation.HOUR, Aggregation.MINUTES] as string[]).includes(
+        aggregation
+      )
+    ) {
+      chartOptions.xAxisLabelFormatter = formatWeekdayHour;
+      chartOptions.tooltipFormatter = (params) => {
+        const paramsArray = params as any[];
+
+        let timeserie = timeseries[paramsArray[0].dataIndex];
+
+        let content = '';
+
+        content += `<div>${formatWeekdayHour(timeserie.startedAt)}</div>`;
+
+        paramsArray.forEach((item) => {
+          timeserie = timeseries[item.dataIndex];
+
+          content += `
+            <div>
+              <span style="display:inline-block;border-radius:10px;width:10px;height:10px;background-color:${item.color};"></span>
+              <span style="float:right;margin-left:20px;font-weight:600">${formatNumber(item.value, maximumFractionDigits)} ${unit}</span>
+            </div>
+          `;
+        });
+        return content;
+      };
+    }
+
+    // TODO: define the formatters for others aggregations
   };
 
   //--------------------------------------------------------------------------//
@@ -182,16 +316,16 @@
       {/if}
     </div>
 
-    <div><slot /></div>
+    <div><slot name="headerActions" /></div>
   </div>
 
   <div class="relative grow">
-    <div class="absolute top-0 right-0 bottom-0 left-0 bg-amber-50">
-      <BaseColumnsChart
-        {chartOptions}
-        onclick={onChartClick}
-        color={getColor(0)}
-      />
+    <div class="absolute top-0 right-0 bottom-0 left-0">
+      <BaseColumnsChart {chartOptions} onclick={onChartClick} />
     </div>
   </div>
+
+  {#if $$slots.footer}
+    <slot name="footer" />
+  {/if}
 </div>

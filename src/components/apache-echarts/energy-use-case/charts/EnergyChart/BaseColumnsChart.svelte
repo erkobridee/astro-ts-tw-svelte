@@ -1,46 +1,251 @@
 <script lang="ts" context="module">
   /* eslint-disable */
 
-  import type { BarSeriesOption } from 'echarts';
+  import type {
+    EChartsType,
+    EChartsOption,
+    BarSeriesOption,
+    TooltipComponentFormatterCallback,
+    TooltipComponentFormatterCallbackParams
+  } from 'echarts';
 
-  export type AxisLabelFormatter = string;
-  export type tooltipFormatter = (params: any) => string;
+  import {
+    LABEL_COLOR,
+    LINE_STYLE,
+    DEFAULT_CHART_CLICK,
+    DEFAULT_RADIUS_BORDER,
+    buildBarItemStyleBorderRadius
+  } from '~/components/apache-echarts/energy-use-case/charts/common';
+
+  //--------------------------------------------------------------------------//
+
+  export type ChartAxisLabelFormatter = (value: string) => string;
+  export type ChartTooltipFormatter =
+    | string
+    | TooltipComponentFormatterCallback<TooltipComponentFormatterCallbackParams>;
 
   export interface ChartOptions {
+    color: string[];
+
     /** xAxis.data */
     categories: string[];
 
     series: BarSeriesOption[];
 
-    // xAxisLabelFormatter
-    // tooltipFormatter
+    xAxisLabelFormatter?: ChartAxisLabelFormatter;
+    tooltipFormatter?: ChartTooltipFormatter;
   }
+
+  //--------------------------------------------------------------------------//
+
+  type StackInfo = Record<
+    string,
+    {
+      stackStart: number[];
+      stackEnd: number[];
+    }
+  >;
+
+  // map to know which bar entry needs to have the border radius
+  const buildStackInfo = (series: BarSeriesOption[]) => {
+    const stackInfo: StackInfo = {};
+
+    for (let i = 0; i < series[0].data!.length; ++i) {
+      for (let j = 0; j < series.length; ++j) {
+        const serie = series[j];
+
+        const stackName = serie.stack;
+        if (!stackName) {
+          continue;
+        }
+
+        if (!stackInfo[stackName]) {
+          stackInfo[stackName] = {
+            stackStart: [],
+            stackEnd: []
+          };
+        }
+
+        const info = stackInfo[stackName];
+        const data = serie.data![i];
+
+        if (data && !isNaN(data as number)) {
+          if (info.stackStart[i] == null) {
+            info.stackStart[i] = j;
+          }
+
+          info.stackEnd[i] = j;
+        }
+      }
+    }
+
+    return stackInfo;
+  };
+
+  const addBorderRadiusToBars = (
+    series: BarSeriesOption[]
+  ): EChartsOption['series'] => {
+    const stackInfo = buildStackInfo(series);
+
+    for (let i = 0; i < series.length; ++i) {
+      const serie = series[i];
+
+      if (!serie.stack) {
+        serie.itemStyle = buildBarItemStyleBorderRadius(DEFAULT_RADIUS_BORDER);
+
+        continue;
+      }
+
+      const data = serie.data!;
+      const dataLength = data.length;
+
+      const info = stackInfo[serie.stack];
+
+      for (let j = 0; j < dataLength; ++j) {
+        // const isStart = info.stackStart[j] === i;
+        const isEnd = info.stackEnd[j] === i;
+
+        data[j] = {
+          value: data[j],
+          itemStyle: buildBarItemStyleBorderRadius(
+            isEnd ? DEFAULT_RADIUS_BORDER : 0
+          )
+        } as any;
+      }
+    }
+
+    return series;
+  };
+
+  //--------------------------------------------------------------------------//
 </script>
 
 <script lang="ts">
+  import * as echarts from 'echarts';
+
+  import { onMount } from 'svelte';
+
   import {
     COLOR_DEFAULT,
     type ChartClick
   } from '~/components/apache-echarts/energy-use-case/charts/common';
 
-  import { DEFAULT_CHART_CLICK } from '~/components/apache-echarts/energy-use-case/charts/common';
+  import ECharts from '~/components/apache-echarts/ECharts';
+  import ChartLoadingSpinner from '~/components/apache-echarts/energy-use-case/charts/ChartLoadingSpinner.svelte';
 
   //--------------------------------------------------------------------------//
-
-  export let color: string = COLOR_DEFAULT;
 
   export let chartOptions: ChartOptions;
 
   export let onclick: ChartClick = DEFAULT_CHART_CLICK;
 
+  let chart: EChartsType;
+  let options: EChartsOption = {};
+
   //--------------------------------------------------------------------------//
 
-  // TODO: build the echarts.options
+  $: color = chartOptions.color[0] ?? COLOR_DEFAULT;
 
-  // it should contains the basic columns charts definitions
+  //--------------------------------------------------------------------------//
+
+  $: updateOptions(chartOptions);
+
+  const updateOptions = (chartOptions: ChartOptions) => {
+    const { color, categories, series, xAxisLabelFormatter, tooltipFormatter } =
+      chartOptions;
+
+    // TODO: remove
+    console.log(chartOptions);
+
+    const tooltip: EChartsOption['tooltip'] = {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow',
+        // https://echarts.apache.org/en/option.html#tooltip.axisPointer.z
+        z: 0,
+        shadowStyle: {
+          color: 'rgba(150,150,150,0.1)'
+        }
+      },
+      formatter: tooltipFormatter
+    };
+
+    const grid: EChartsOption['grid'] = {
+      containLabel: true,
+      left: 10,
+      right: 10,
+      top: 10,
+      bottom: 10
+    };
+
+    const xAxis: EChartsOption['xAxis'] = {
+      type: 'category',
+      data: categories,
+      axisLabel: {
+        color: LABEL_COLOR,
+        formatter: xAxisLabelFormatter
+      },
+      axisTick: {
+        show: true, // TODO: change to false
+        alignWithLabel: true
+      },
+      axisLine: {
+        lineStyle: LINE_STYLE
+      },
+      splitLine: {
+        show: true,
+        lineStyle: LINE_STYLE,
+        showMinLine: false,
+        showMaxLine: false,
+        interval: 2
+      }
+    };
+
+    const yAxis: EChartsOption['yAxis'] = {
+      type: 'value',
+      position: 'right',
+      axisLabel: {
+        verticalAlign: 'bottom',
+        padding: [0, -10, 2, 0],
+        color: LABEL_COLOR,
+        showMaxLabel: false
+      },
+      splitLine: {
+        lineStyle: LINE_STYLE,
+        showMaxLine: false
+      }
+    };
+
+    //---//
+
+    options = {
+      color,
+      tooltip,
+      grid,
+      xAxis,
+      yAxis,
+      series: addBorderRadiusToBars(series)
+    };
+  };
+
+  //--------------------------------------------------------------------------//
+
+  onMount(() => {
+    // https://echarts.apache.org/en/api.html#echartsInstance.on
+    chart.on('click', onclick);
+
+    console.log('BaseColumnsChart - mounted', { chart });
+
+    return () => {
+      // https://echarts.apache.org/en/api.html#echartsInstance.off
+      chart.off('click', onclick);
+
+      console.log('BaseColumnsChart - destroyed', { chart });
+    };
+  });
 </script>
 
-<div class="flex flex-col gap-2">
+<!--div class="flex h-full flex-col gap-2 bg-amber-50">
   <div><strong>TODO:</strong> define the BaseColumnChart</div>
 
   <div>
@@ -50,5 +255,15 @@
     ></span>
   </div>
 
-  <pre><code>{JSON.stringify({ color, chartOptions }, null, 2)}</code></pre>
-</div>
+  <div class="h-[150px] w-[200px] bg-gray-100">
+    <ChartLoadingSpinner {color} />
+  </div>
+
+  <div class="w-full grow overflow-auto bg-green-100">
+    <pre><code>{JSON.stringify(chartOptions, null, 2)}</code></pre>
+  </div>
+</div-->
+
+<ECharts init={echarts.init} {options} notMerge bind:chart>
+  <ChartLoadingSpinner {color} />
+</ECharts>
