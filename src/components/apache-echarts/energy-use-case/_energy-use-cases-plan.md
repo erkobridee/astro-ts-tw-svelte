@@ -173,7 +173,7 @@ min aggregation: `15 mins`
 
 - unit: `kW`
 
-> generate a wave pattern starting from `07:00`, pick between `11:00` and `14:00`, and end at `18:00`
+> generate a wave pattern starting from `06:00`, pick between `10:00` and `15:00`, and end at `18:00`
 
 - Average peak sun hours: `4.5 hours per day`
 
