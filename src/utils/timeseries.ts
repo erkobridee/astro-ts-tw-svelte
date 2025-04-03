@@ -74,6 +74,7 @@ export type Units = (typeof Unit)[UnitKeys];
 export const Aggregation = {
   MONTH: 'month',
   WEEK: 'week',
+  DAY: 'day',
   HOUR: 'hour',
   MINUTES: '15_minutes',
   UNDEFINED: ''
@@ -310,6 +311,7 @@ export type GenerateElectricityValues = (
   startDate: DateParamType
 ) => [number, number];
 
+// TODO: fix the code logic
 export const generateElectricityDayData = (
   startedAt: DateParamType,
   generateValues: GenerateElectricityValues
