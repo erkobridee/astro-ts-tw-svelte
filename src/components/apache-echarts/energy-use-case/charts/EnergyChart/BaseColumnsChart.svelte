@@ -178,12 +178,14 @@
       bottom: 10
     };
 
+    const categoriesLenght = categories.length;
     const xAxis: EChartsOption['xAxis'] = {
       type: 'category',
       data: categories,
       axisLabel: {
         color: LABEL_COLOR,
-        formatter: xAxisLabelFormatter
+        formatter: xAxisLabelFormatter,
+        showMinLabel: categoriesLenght < 50
       },
       axisTick: {
         show: true, // TODO: change to false
@@ -197,7 +199,7 @@
         lineStyle: LINE_STYLE,
         showMinLine: false,
         showMaxLine: false,
-        interval: 2
+        interval: categoriesLenght > 50 ? 10 : 2
       }
     };
 
@@ -244,25 +246,6 @@
     };
   });
 </script>
-
-<!--div class="flex h-full flex-col gap-2 bg-amber-50">
-  <div><strong>TODO:</strong> define the BaseColumnChart</div>
-
-  <div>
-    <strong>color:</strong>
-    <span
-      style="display:inline-block;border-radius:10px;width:10px;height:10px;background-color:{color};"
-    ></span>
-  </div>
-
-  <div class="h-[150px] w-[200px] bg-gray-100">
-    <ChartLoadingSpinner {color} />
-  </div>
-
-  <div class="w-full grow overflow-auto bg-green-100">
-    <pre><code>{JSON.stringify(chartOptions, null, 2)}</code></pre>
-  </div>
-</div-->
 
 <ECharts init={echarts.init} {options} notMerge bind:chart>
   <ChartLoadingSpinner {color} />
