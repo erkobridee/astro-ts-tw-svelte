@@ -188,7 +188,7 @@
         showMinLabel: categoriesLenght < 50
       },
       axisTick: {
-        show: true, // TODO: change to false
+        show: false,
         alignWithLabel: true
       },
       axisLine: {
