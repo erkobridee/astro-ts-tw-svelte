@@ -320,7 +320,6 @@ export const generateElectricityDayData = (
   generateValues: GenerateElectricityValues
 ) => {
   const timeSlot = 15;
-  const dayQuartersOfHours = 96; // 24 hours * 4 ( quarter of hour = 15 mins )
 
   const consumptionDayData: ElectricityDayData = {
     day: {
