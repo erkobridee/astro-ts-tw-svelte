@@ -19,7 +19,8 @@
 
   //--------------------------------------------------------------------------//
 
-  export type ChartAxisLabelFormatter = (value: string) => string;
+  export type ChartXAxisLabelFormatter = (value: string) => string;
+  export type ChartYAxisLabelFormatter = (value: number) => string;
   export type ChartTooltipFormatter =
     | string
     | TooltipComponentFormatterCallback<TooltipComponentFormatterCallbackParams>;
@@ -32,7 +33,8 @@
 
     series: BarSeriesOption[];
 
-    xAxisLabelFormatter?: ChartAxisLabelFormatter;
+    xAxisLabelFormatter?: string | ChartXAxisLabelFormatter;
+    yAxisLabelFormatter?: string | ChartYAxisLabelFormatter;
     tooltipFormatter?: ChartTooltipFormatter;
   }
 
@@ -133,6 +135,8 @@
   import ECharts from '~/components/apache-echarts/ECharts';
   import ChartLoadingSpinner from '~/components/apache-echarts/energy-use-case/charts/ChartLoadingSpinner.svelte';
 
+  import { formatNumber } from '~/utils/format';
+
   //--------------------------------------------------------------------------//
 
   export let chartOptions: ChartOptions;
@@ -151,8 +155,14 @@
   $: updateOptions(chartOptions);
 
   const updateOptions = (chartOptions: ChartOptions) => {
-    const { color, categories, series, xAxisLabelFormatter, tooltipFormatter } =
-      chartOptions;
+    const {
+      color,
+      categories,
+      series,
+      xAxisLabelFormatter,
+      yAxisLabelFormatter = (value) => formatNumber(value),
+      tooltipFormatter
+    } = chartOptions;
 
     // TODO: remove
     console.log(chartOptions);
@@ -211,7 +221,8 @@
         padding: [0, -10, 2, 0],
         color: LABEL_COLOR,
         showMinLabel: false,
-        showMaxLabel: false
+        showMaxLabel: false,
+        formatter: yAxisLabelFormatter
       },
       splitLine: {
         lineStyle: LINE_STYLE,
