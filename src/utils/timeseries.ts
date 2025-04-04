@@ -1,12 +1,17 @@
 import type { DateParamType } from '~/utils/format';
 
 import dayjs from 'dayjs';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 
 import { getRandomInt, getRandomFloat, getRandomDecimal } from '~/utils/random';
 import {
   DEFAULT_MAXIMUM_FRACTION_DIGITS,
+  formatMonthStringId,
+  formatDayStringId,
   formatHourStringId
 } from '~/utils/format';
+
+dayjs.extend(isSameOrBefore);
 
 //----------------------------------------------------------------------------//
 
@@ -53,6 +58,10 @@ export const EMPTY_TIMESERIE: TimeSerie = {
 //----------------------------------------------------------------------------//
 
 const getYesterday = () => dayjs().subtract(1, 'day').startOf('day');
+
+const getLastMonth = () => dayjs().subtract(1, 'month').startOf('day');
+
+const getLastYear = () => dayjs().subtract(1, 'year').startOf('day');
 
 const isTimeInHourRange = (time: number, min: number, max?: number) =>
   max === undefined ? time === min : time >= min && time <= max;
@@ -280,9 +289,108 @@ export const generateGasConsumptionDayData = (
   };
 };
 
-// TODO: define month and weeks
+export interface GasConsumptionMonthData {
+  month: TimeSerie;
+  weeks: TimeSerie[];
+  days: TimeSerie[];
+  hoursMap: Record<string, TimeSerie[]>;
+}
 
-// TODO: define months
+export const generateGasConsumptionMonthData = (
+  monthReference: DateParamType = getLastMonth()
+): GasConsumptionMonthData => {
+  let startDate = dayjs(monthReference).startOf('month').startOf('day');
+  const endDate = startDate.endOf('month').endOf('day');
+
+  const data: GasConsumptionMonthData = {
+    month: {
+      startedAt: startDate.format(),
+      endedAt: endDate.format(),
+      value: 0
+    },
+    weeks: [],
+    days: [],
+    hoursMap: {}
+  };
+
+  let week: TimeSerie = { ...EMPTY_TIMESERIE, startedAt: startDate.format() };
+
+  let totalWeekValue = 0;
+  let totalValue = 0;
+
+  do {
+    const stringId = formatDayStringId(startDate);
+    const { day, hours } = generateGasConsumptionDayData(startDate);
+
+    const { value } = day;
+    totalWeekValue += value;
+    totalValue += value;
+
+    data.days.push(day);
+    data.hoursMap[stringId] = hours;
+
+    const nextDay = startDate.add(1, 'day').startOf('day');
+
+    if (startDate.day() === 6 || startDate.isSame(endDate, 'day')) {
+      week.endedAt = startDate.endOf('day').format();
+      week.value = totalWeekValue;
+      data.weeks.push(week);
+
+      totalWeekValue = 0;
+      week = { ...EMPTY_TIMESERIE, startedAt: nextDay.format() };
+    }
+
+    startDate = nextDay;
+  } while (startDate.isSameOrBefore(endDate));
+
+  data.month.endedAt = endDate.format();
+  data.month.value = totalValue;
+
+  return data;
+};
+
+export interface GasConsumptionData {
+  months: TimeSerie[];
+  weeks: TimeSerie[];
+  weeksMap: Record<string, TimeSerie[]>;
+  daysMap: Record<string, TimeSerie[]>;
+  hoursMap: Record<string, TimeSerie[]>;
+}
+
+export const generateGasConsumptionData = (
+  monthReference: DateParamType = getLastYear()
+): GasConsumptionData => {
+  let startDate = dayjs(monthReference).startOf('year').startOf('day');
+  const endDate = startDate.endOf('year').endOf('day');
+
+  const data: GasConsumptionData = {
+    months: [],
+    weeks: [],
+    weeksMap: {},
+    daysMap: {},
+    hoursMap: {}
+  };
+
+  do {
+    let stringId = formatMonthStringId(startDate);
+
+    const { month, weeks, days, hoursMap } =
+      generateGasConsumptionMonthData(startDate);
+
+    data.months.push(month);
+
+    data.weeks = [...data.weeks, ...weeks];
+
+    data.weeksMap[stringId] = weeks;
+    data.daysMap[stringId] = days;
+
+    data.hoursMap = { ...data.hoursMap, ...hoursMap };
+
+    startDate = startDate.add(1, 'month');
+  } while (startDate.isSameOrBefore(endDate));
+
+  return data;
+};
 
 // @end: gas consumption
 //----------------------------------------------------------------------------//

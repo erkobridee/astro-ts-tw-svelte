@@ -27,7 +27,9 @@
   import {
     DEFAULT_MAXIMUM_FRACTION_DIGITS,
     formatDateTime,
+    formatDate,
     formatWeekdayHour,
+    formatMonth,
     formatNumber
   } from '~/utils/format';
 
@@ -242,34 +244,46 @@
       data
     });
 
-    if (
-      (
-        [Aggregation.DAY, Aggregation.HOUR, Aggregation.MINUTES] as string[]
-      ).includes(aggregation)
-    ) {
-      chartOptions.xAxisLabelFormatter = formatWeekdayHour;
-      chartOptions.tooltipFormatter = (params) => {
-        const paramsArray = params as any[];
+    //---//
 
-        let timeserie = timeseries[paramsArray[0].dataIndex];
+    let formatAxisLabel = formatWeekdayHour;
+    let formatTooltipHeaderFn = (timeserie: TimeSerie) =>
+      formatDateTime(timeserie.startedAt);
 
-        let content = '';
-
-        content += `<div>${formatDateTime(timeserie.startedAt)}</div>`;
-
-        paramsArray.forEach((item) => {
-          timeserie = timeseries[item.dataIndex];
-
-          content += buildTooltipBarItem({
-            color: item.color,
-            value: `${formatNumber(item.value, maximumFractionDigits)} ${unit}`
-          });
-        });
-        return content;
-      };
+    switch (aggregation) {
+      case Aggregation.MONTH:
+        formatAxisLabel = formatMonth;
+        formatTooltipHeaderFn = (timeserie: TimeSerie) =>
+          formatMonth(timeserie.startedAt);
+        break;
+      case Aggregation.WEEK:
+        formatAxisLabel = timeseries.length > 4 ? formatMonth : formatDate;
+        formatTooltipHeaderFn = (timeserie: TimeSerie) =>
+          `${formatDate(timeserie.startedAt)} - ${formatDate(timeserie.endedAt)}`;
+        break;
     }
 
-    // TODO: define the formatters for others aggregations
+    chartOptions.xAxisLabelFormatter = formatAxisLabel;
+
+    chartOptions.tooltipFormatter = (params) => {
+      const paramsArray = params as any[];
+
+      let timeserie = timeseries[paramsArray[0].dataIndex];
+
+      let content = '';
+
+      content += `<div>${formatTooltipHeaderFn(timeserie)}</div>`;
+
+      paramsArray.forEach((item) => {
+        timeserie = timeseries[item.dataIndex];
+
+        content += buildTooltipBarItem({
+          color: item.color,
+          value: `${formatNumber(item.value, maximumFractionDigits)} ${unit}`
+        });
+      });
+      return content;
+    };
   };
 
   //--------------------------------------------------------------------------//

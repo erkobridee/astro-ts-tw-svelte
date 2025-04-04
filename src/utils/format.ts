@@ -17,9 +17,15 @@ export type DayjsFormat = (param: DayjsFormatParam) => string;
 
 export const STRING_ID_FORMAT = 'YYYYMMDDHHmmss';
 
+export const STRING_MONTH_ID_FORMAT = 'YYYYMM';
+
+export const STRING_DAY_ID_FORMAT = 'YYYYMMDD';
+
 export const STRING_HOUR_ID_FORMAT = 'HHmm';
 
 export const ISO_DATE_FORMAT = 'YYYY-MM-DD';
+
+export const ISO_MONTH_FORMAT = 'YYYY-MM';
 
 export const DATE_FORMAT = 'DD.MM.YYYY';
 
@@ -45,6 +51,14 @@ export const formatDateTimeStringId = (date: DateParamType) =>
 export const formatDatesToStringIds = (...dates: DateParamType[]) =>
   dates.map(formatDateTimeStringId).join(':');
 
+/** returns a given date formatted as YYYYMM */
+export const formatMonthStringId = (date: DateParamType) =>
+  dayjs(date).format(STRING_MONTH_ID_FORMAT);
+
+/** returns a given date formatted as YYYYMMDD */
+export const formatDayStringId = (date: DateParamType) =>
+  dayjs(date).format(STRING_DAY_ID_FORMAT);
+
 /** returns a given date formatted as HHmm */
 export const formatHourStringId = (date: DateParamType) =>
   dayjs(date).format(STRING_HOUR_ID_FORMAT);
@@ -67,6 +81,9 @@ export const dayjsFormat: DayjsFormat = ({
 
 export const toISODate = (date: DateParamType) =>
   dayjs(date).format(ISO_DATE_FORMAT);
+
+export const toISOMonth = (date: DateParamType) =>
+  dayjs(date).format(ISO_MONTH_FORMAT);
 
 export const formatDateTime = (date: DateParamType) =>
   dayjs(date).format(DATE_TIME_FORMAT);

@@ -1,5 +1,9 @@
 <script lang="ts">
-  import type { TimeSerie } from '~/utils/timeseries';
+  import type {
+    Aggregations,
+    GasConsumptionData,
+    TimeSerie
+  } from '~/utils/timeseries';
 
   import EnergyChart from '~/components/apache-echarts/energy-use-case/charts/EnergyChart/EnergyChart.svelte';
 
@@ -11,7 +15,11 @@
 
   //--------------------------------------------------------------------------//
 
-  export let timeseries: TimeSerie[] = [];
+  export let data: GasConsumptionData;
+
+  //export let timeseries: TimeSerie[] = [];
+
+  const aggregation: Aggregations = Aggregation.WEEK;
 
   let showAverage = false;
 
@@ -25,15 +33,31 @@
 <div class="relative grow">
   <div class="absolute top-0 right-0 bottom-0 left-0">
     <EnergyChart
-      {timeseries}
+      timeseries={data.weeks}
       showAverageMarkline={showAverage}
       onclick={onChartClick}
       color={COLOR_GAS_CONSUMPTION}
       unit={Unit.M3}
-      aggregation={Aggregation.HOUR}
+      {aggregation}
     >
       <svelte:fragment slot="headerActions">
-        Gas Consumption header actions
+        <ul class="flex-inline flex gap-2">
+          <li>
+            <button class="font-semibold">Months</button>
+            <span>/</span>
+          </li>
+          <li>
+            <button>Weeks</button>
+            <span>/</span>
+          </li>
+          <li>
+            <button>Days</button>
+            <span>/</span>
+          </li>
+          <li>
+            <button>Hours</button>
+          </li>
+        </ul>
       </svelte:fragment>
 
       <svelte:fragment slot="footer">
