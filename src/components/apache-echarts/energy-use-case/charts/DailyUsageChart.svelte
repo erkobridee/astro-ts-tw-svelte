@@ -5,11 +5,9 @@
     ECElementEvent,
     BarSeriesOption
   } from 'echarts';
-
   import type { DailyUsage } from '~/utils/timeseries';
   import type { DailyUsageBarClick } from './common';
 
-  import dayjs from 'dayjs';
   import * as echarts from 'echarts';
 
   import { onMount } from 'svelte';
@@ -17,6 +15,12 @@
   import ECharts from '~/components/apache-echarts/ECharts';
 
   import { hexToRGB } from '~/utils/colors';
+  import {
+    formatNumber,
+    dayjsFormat,
+    DATE_FORMAT,
+    WEEKDAY_SHORT_FORMAT
+  } from '~/utils/format';
 
   import ChartLoadingSpinner from './ChartLoadingSpinner.svelte';
 
@@ -26,8 +30,7 @@
     LABEL_COLOR,
     DEFAULT_DAILYUSAGE_CLICK,
     DEFAULT_RADIUS_BORDER,
-    DATE_FORMAT,
-    WEEKDAY_FORMAT
+    buildTooltipBarItem
   } from './common';
 
   //--------------------------------------------------------------------------//
@@ -36,7 +39,7 @@
 
   export let unit: string = '';
   export const tooltipDatetimeFormat: string = DATE_FORMAT;
-  export const xAxisDatetimeFormat: string = WEEKDAY_FORMAT;
+  export const xAxisDatetimeFormat: string = WEEKDAY_SHORT_FORMAT;
 
   export let xAxisAttribute: string = 'startedAt';
   export let yAxisAttribute: string = 'value';
@@ -79,13 +82,6 @@
       dailyUsageData;
     const dataLength = currentTimeSeries.length;
     const lastIndex = dataLength - 1;
-
-    /*
-    const dateTimeFormat = new Intl.DateTimeFormat(locale);
-    const dateTimeWeekDayFormat = new Intl.DateTimeFormat(locale, {
-      weekday: 'short'
-    });
-    */
 
     const data = currentTimeSeries.reduce<{
       xAxis: string[];
@@ -157,14 +153,14 @@
       formatter: (params: any) => {
         let content = '';
         (params as any[]).forEach((item) => {
-          //<span>${dateTimeFormat.format(new Date(item.data.date))}</span>
-          content += `
-            <div>
-              <span style="display:inline-block;border-radius:10px;width:10px;height:10px;background-color:${item.color};"></span>
-              <span>${dayjs(item.data.date).format(tooltipDatetimeFormat)}</span>
-              <span style="float:right;margin-left:20px;font-weight:600">${item.value}</span>
-            </div>
-          `;
+          content += buildTooltipBarItem({
+            color: item.color,
+            label: dayjsFormat({
+              date: item.data.date,
+              template: tooltipDatetimeFormat
+            }),
+            value: formatNumber(item.value)
+          });
         });
         return content;
       }
@@ -174,8 +170,8 @@
       type: 'category',
       data: data.xAxis,
       axisLabel: {
-        // formatter: (value) => dateTimeWeekDayFormat.format(new Date(value)),
-        formatter: (value) => dayjs(value).format(xAxisDatetimeFormat),
+        formatter: (value) =>
+          dayjsFormat({ date: value, template: xAxisDatetimeFormat }),
         color: LABEL_COLOR
       },
       axisLine: {

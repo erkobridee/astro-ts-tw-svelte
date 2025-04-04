@@ -69,24 +69,6 @@ export const DEFAULT_MARKLINE_OPTIONS: MarkLineOptions = {
 };
 
 //----------------------------------------------------------------------------//
-// https://day.js.org/docs/en/display/format
-
-// TODO: remove and use the functions from utils/format.ts
-
-export const WEEKDAY_FORMAT = 'ddd';
-
-export const DATE_FORMAT = 'DD.MM.YYYY';
-
-export const DATETIME_FORMAT = `${DATE_FORMAT}, HH:mm:ss`;
-
-export const WEEKDAY_HOUR_FORMAT = 'dd HH:mm';
-
-//----------------------------------------------------------------------------//
-
-// TODO: review - it seems that could be remove
-export const dimensions = [`startedAt`, `value`];
-
-//----------------------------------------------------------------------------//
 
 export const DEFAULT_RADIUS_BORDER = 8;
 
@@ -96,6 +78,34 @@ export const buildBarItemStyleBorderRadius = (
 ): BarSeriesOption['itemStyle'] => ({
   borderRadius: [topBorder, topBorder, bottomBorder, bottomBorder]
 });
+
+//----------------------------------------------------------------------------//
+
+export interface BuildTooltipBarItemParam {
+  color?: string;
+  label?: string;
+  value: any;
+}
+
+export type BuildTooltipBarItem = (param: BuildTooltipBarItemParam) => string;
+
+export const buildTooltipBarItem: BuildTooltipBarItem = ({
+  color,
+  label,
+  value
+}) => {
+  let content = '<div>';
+  if (color) {
+    content += `<span style="display:inline-block;border-radius:10px;width:10px;height:10px;background-color:${color};"></span>`;
+  }
+  if (label) {
+    content += `<span>${label}</span>`;
+  }
+  content += `<span style="float:right;margin-left:20px;font-weight:600">${value}</span>`;
+  content += '</div>';
+
+  return content;
+};
 
 //----------------------------------------------------------------------------//
 
