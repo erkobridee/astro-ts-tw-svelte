@@ -96,7 +96,7 @@ export const buildTooltipBarItem: BuildTooltipBarItem = ({
 }) => {
   let content = '<div>';
   if (color) {
-    content += `<span style="display:inline-block;border-radius:10px;width:10px;height:10px;background-color:${color};"></span>`;
+    content += `<span style="display:inline-block;border-radius:10px;width:10px;height:10px;margin-right:5px;background-color:${color};"></span>`;
   }
   if (label) {
     content += `<span>${label}</span>`;
