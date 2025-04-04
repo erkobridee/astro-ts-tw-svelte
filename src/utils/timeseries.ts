@@ -96,13 +96,22 @@ export type AggregationKeys = keyof typeof Aggregation;
 export type Aggregations = (typeof Aggregation)[AggregationKeys];
 
 export const EnergyType = {
+  GAS: 'GAS',
+  ELECTRICITY: 'ELECTRICITY'
+} as const satisfies Record<string, string>;
+
+export type EnergyTypeKeys = keyof typeof EnergyType;
+export type EnergyTypes = (typeof EnergyType)[EnergyTypeKeys];
+
+export const EnergyServiceType = {
   GAS_CONSUMPTION: 'GAS_CONSUMPTION',
   ELECTRICITY_CONSUMPTION: 'ELECTRICITY_CONSUMPTION',
   ELECTRICITY_PRODUCTION: 'ELECTRICITY_PRODUCTION'
 } as const satisfies Record<string, string>;
 
-export type EnergyTypeKeys = keyof typeof EnergyType;
-export type EnergyTypes = (typeof EnergyType)[EnergyTypeKeys];
+export type EnergyServiceTypeKeys = keyof typeof EnergyServiceType;
+export type EnergyServiceTypes =
+  (typeof EnergyServiceType)[EnergyServiceTypeKeys];
 
 //----------------------------------------------------------------------------//
 
@@ -146,23 +155,23 @@ export const generateElectricityDailyUsageData = (
 // @begin: overview data
 
 export const generateOverviewData = (
-  energyType: EnergyTypes = EnergyType.ELECTRICITY_CONSUMPTION,
+  energyServiceType: EnergyServiceTypes = EnergyServiceType.ELECTRICITY_CONSUMPTION,
   amount = 6,
   decimalPrecision = DEFAULT_MAXIMUM_FRACTION_DIGITS
 ) => {
   let min = 1;
   let max = 10;
 
-  switch (energyType) {
-    case EnergyType.GAS_CONSUMPTION:
+  switch (energyServiceType) {
+    case EnergyServiceType.GAS_CONSUMPTION:
       min = 1000;
       max = 30000;
       break;
-    case EnergyType.ELECTRICITY_PRODUCTION:
+    case EnergyServiceType.ELECTRICITY_PRODUCTION:
       min = 1;
       max = 15;
       break;
-    case EnergyType.ELECTRICITY_CONSUMPTION:
+    case EnergyServiceType.ELECTRICITY_CONSUMPTION:
     default:
       min = 10;
       max = 40;
@@ -192,14 +201,19 @@ export const generateOverviewData = (
 export const generateGasConsumptionOverviewData = (
   amount = 6,
   decimalPrecision = DEFAULT_MAXIMUM_FRACTION_DIGITS
-) => generateOverviewData(EnergyType.GAS_CONSUMPTION, amount, decimalPrecision);
+) =>
+  generateOverviewData(
+    EnergyServiceType.GAS_CONSUMPTION,
+    amount,
+    decimalPrecision
+  );
 
 export const generateElectricityConsumptionOverviewData = (
   amount = 6,
   decimalPrecision = DEFAULT_MAXIMUM_FRACTION_DIGITS
 ) =>
   generateOverviewData(
-    EnergyType.ELECTRICITY_CONSUMPTION,
+    EnergyServiceType.ELECTRICITY_CONSUMPTION,
     amount,
     decimalPrecision
   );
@@ -209,7 +223,7 @@ export const generateElectricityProductionOverviewData = (
   decimalPrecision = DEFAULT_MAXIMUM_FRACTION_DIGITS
 ) =>
   generateOverviewData(
-    EnergyType.ELECTRICITY_PRODUCTION,
+    EnergyServiceType.ELECTRICITY_PRODUCTION,
     amount,
     decimalPrecision
   );
