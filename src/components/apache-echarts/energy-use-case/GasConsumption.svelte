@@ -26,7 +26,7 @@
   <div class="absolute top-0 right-0 bottom-0 left-0">
     <EnergyChart
       {timeseries}
-      {showAverage}
+      showAverageMarkline={showAverage}
       onclick={onChartClick}
       color={COLOR_GAS_CONSUMPTION}
       unit={Unit.M3}

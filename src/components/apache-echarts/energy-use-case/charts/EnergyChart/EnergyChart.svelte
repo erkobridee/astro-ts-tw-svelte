@@ -34,7 +34,9 @@
   import {
     COLOR_DEFAULT,
     DEFAULT_TIMESERIE_CLICK,
+    DEFAULT_MARKLINE_SYMBOL,
     DEFAULT_MARKLINE_OPTIONS,
+    DEFAULT_MARKLINE_AVERAGE,
     buildTooltipBarItem
   } from '~/components/apache-echarts/energy-use-case/charts/common';
 
@@ -54,7 +56,7 @@
   //--------------------------------------------------------------------------//
 
   export let type: EnergyChartTypes = EnergyChartType.PLAIN;
-  export let showAverage: boolean = false;
+  export let showAverageMarkline: boolean = false;
 
   export let unit: Units = Unit.UNDEFINED;
   export let aggregation: Aggregations = Aggregation.UNDEFINED;
@@ -91,7 +93,7 @@
 
   $: updateChartOptions(
     type,
-    showAverage,
+    showAverageMarkline,
     unit,
     aggregation,
     maximumFractionDigits,
@@ -103,7 +105,7 @@
 
   const updateChartOptions = (
     type: EnergyChartTypes,
-    showAverage: boolean,
+    showAverageMarkline: boolean,
     unit: Units,
     aggregation: Aggregations,
     maximumFractionDigits: number,
@@ -193,19 +195,30 @@
       chartOptions.series = [valueBarSeries];
     }
 
-    if (showAverage) {
-      chartOptions.series.forEach((barSeriesOption) => {
-        barSeriesOption.markLine = {
-          symbol: ['none', 'none'],
-          data: [{ type: 'average' }]
-        };
-      });
-    }
+    chartOptions.series.forEach((barSeriesOption) => {
+      if (showAverageMarkline) {
+        let markline = barSeriesOption.markLine;
+
+        if (markline) {
+          const { symbol = DEFAULT_MARKLINE_SYMBOL, data = [] } = markline;
+
+          barSeriesOption.markLine = {
+            symbol,
+            data: [...data, DEFAULT_MARKLINE_AVERAGE]
+          };
+        } else {
+          barSeriesOption.markLine = {
+            symbol: DEFAULT_MARKLINE_SYMBOL,
+            data: [DEFAULT_MARKLINE_AVERAGE]
+          };
+        }
+      }
+    });
 
     // TODO: remove
     console.log('EnergyChart.updateChartOptions', {
       type,
-      showAverage,
+      showAverageMarkline,
       unit,
       aggregation,
       maximumFractionDigits,
