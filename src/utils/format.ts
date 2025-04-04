@@ -1,16 +1,4 @@
 import dayjs from 'dayjs';
-//----------------------------------------------------------------------------//
-
-export const DEFAULT_MAXIMUM_FRACTION_DIGITS = 3;
-
-export const formatNumber = (
-  value: number,
-  maximumFractionDigits = DEFAULT_MAXIMUM_FRACTION_DIGITS,
-  locales: Intl.LocalesArgument = navigator?.language
-) =>
-  new Intl.NumberFormat(locales, {
-    maximumFractionDigits
-  }).format(value);
 
 //----------------------------------------------------------------------------//
 // https://day.js.org/docs/en/display/format
@@ -72,5 +60,18 @@ export const formatDateOrDash = (date?: DateParamType | null) =>
 
 export const formatDateTimeOrDash = (date?: DateParamType | null): string =>
   date ? formatDateTime(date) : '-';
+
+//----------------------------------------------------------------------------//
+
+export const DEFAULT_MAXIMUM_FRACTION_DIGITS = 3;
+
+export const formatNumber = (
+  value: number,
+  maximumFractionDigits = DEFAULT_MAXIMUM_FRACTION_DIGITS,
+  locales: Intl.LocalesArgument = navigator?.language
+) =>
+  new Intl.NumberFormat(locales, {
+    maximumFractionDigits
+  }).format(value);
 
 //----------------------------------------------------------------------------//
