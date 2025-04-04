@@ -1,0 +1,1 @@
+const e=(s,r=1)=>{if(!s)return"";(r<0||r>1)&&(r=1),s=s.toUpperCase();const t=parseInt(s.slice(1,3),16),n=parseInt(s.slice(3,5),16),c=parseInt(s.slice(5,7),16);return`rgba(${t}, ${n}, ${c}, ${r})`};export{e as h};
