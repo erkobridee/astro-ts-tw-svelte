@@ -386,7 +386,7 @@ export const generateGasConsumptionData = (
   };
 
   do {
-    let stringId = formatMonthStringId(startDate);
+    let stringId = formatDayStringId(startDate);
 
     const { month, weeks, days, hoursMap } =
       generateGasConsumptionMonthData(startDate);

@@ -1,27 +1,35 @@
 <script lang="ts">
-  import type { AggregationLevelSelectionClick } from '~/components/apache-echarts/energy-use-case/AggregationLevelSelection';
+  import type {
+    AggregationLevelSelectionClick,
+    AggregationLevelSelectionLayouts
+  } from '~/components/apache-echarts/energy-use-case/AggregationLevelSelection';
   import type {
     Aggregations,
     GasConsumptionData,
     TimeSerie
   } from '~/utils/timeseries';
 
+  import dayjs from 'dayjs';
+
   import EnergyChart from '~/components/apache-echarts/energy-use-case/charts/EnergyChart/EnergyChart.svelte';
-  import AggregationLevelSelection from '~/components/apache-echarts/energy-use-case/AggregationLevelSelection';
+  import AggregationLevelSelection, {
+    AggregationLevelSelectionLayout
+  } from '~/components/apache-echarts/energy-use-case/AggregationLevelSelection';
   import Toggle from '~/components/apache-echarts/Toggle.svelte';
 
   import { COLOR_GAS_CONSUMPTION } from '~/components/apache-echarts/energy-use-case/charts/common';
 
-  import { Unit, Aggregation } from '~/utils/timeseries';
-  import { formatDate } from '~/utils/format';
+  import { EnergyType, Unit, Aggregation } from '~/utils/timeseries';
+  import { formatDate, formatDayStringId } from '~/utils/format';
 
   //--------------------------------------------------------------------------//
 
   export let data: GasConsumptionData;
 
   let aggregation: Aggregations = Aggregation.MONTH;
+  let aggregationSelectionLayout: AggregationLevelSelectionLayouts =
+    AggregationLevelSelectionLayout.YEAR;
 
-  let isYearLevel = false;
   let showAverage = false;
 
   let dataStartedAt: string;
@@ -31,21 +39,18 @@
 
   const updateTimeseries = (data: GasConsumptionData) => {
     aggregation = Aggregation.MONTH;
-    isYearLevel = true;
+    aggregationSelectionLayout = AggregationLevelSelectionLayout.YEAR;
     timeseries = data.months;
-    dataStartedAt = formatDate(timeseries[0].startedAt);
+    dataStartedAt = timeseries[0].startedAt;
   };
 
   //--------------------------------------------------------------------------//
 
   const onAggregationLevelSelectionClick: AggregationLevelSelectionClick = (
     selectedAggregation,
-    isYearLevelClick
+    selectedLayout
   ) => {
-    // TODO: remove
-    console.log({ selectedAggregation, isYearLevelClick });
-
-    if (isYearLevelClick) {
+    if (selectedLayout === AggregationLevelSelectionLayout.YEAR) {
       switch (selectedAggregation) {
         case Aggregation.MONTH:
           timeseries = data.months;
@@ -55,18 +60,63 @@
           break;
       }
 
-      dataStartedAt = formatDate(timeseries[0].startedAt);
+      dataStartedAt = timeseries[0].startedAt;
       aggregation = selectedAggregation;
-      isYearLevel = isYearLevelClick;
+      aggregationSelectionLayout = selectedLayout;
 
       return;
     }
 
-    // TODO: define the code logic to select the items below the year level
+    const stringId = formatDayStringId(dayjs(dataStartedAt).startOf('month'));
+    switch (selectedAggregation) {
+      case Aggregation.WEEK:
+        timeseries = data.weeksMap[stringId];
+        break;
+      case Aggregation.DAY:
+        timeseries = data.daysMap[stringId];
+        break;
+    }
+
+    dataStartedAt = timeseries[0].startedAt;
+    aggregation = selectedAggregation;
   };
 
   const onChartClick = (timeserie: TimeSerie) => {
-    console.log('GasConsumption.onChartClick timeserie:', timeserie);
+    const { startedAt } = timeserie;
+    let stringId = formatDayStringId(startedAt);
+
+    if (aggregationSelectionLayout === AggregationLevelSelectionLayout.YEAR) {
+      switch (aggregation) {
+        case Aggregation.MONTH:
+          aggregation = Aggregation.WEEK;
+          timeseries = data.weeksMap[stringId];
+          break;
+        case Aggregation.WEEK:
+          stringId = formatDayStringId(dayjs(startedAt).startOf('month'));
+          aggregation = Aggregation.DAY;
+          timeseries = data.daysMap[stringId];
+          break;
+      }
+
+      dataStartedAt = timeseries[0].startedAt;
+      aggregationSelectionLayout = AggregationLevelSelectionLayout.MONTH;
+
+      return;
+    }
+
+    switch (aggregation) {
+      case Aggregation.WEEK:
+        stringId = formatDayStringId(dayjs(startedAt).startOf('month'));
+        aggregation = Aggregation.DAY;
+        timeseries = data.daysMap[stringId];
+        break;
+      case Aggregation.DAY:
+        aggregation = Aggregation.HOUR;
+        timeseries = data.hoursMap[stringId];
+        break;
+    }
+
+    dataStartedAt = timeseries[0].startedAt;
   };
 </script>
 
@@ -82,8 +132,9 @@
     >
       <svelte:fragment slot="headerActions">
         <AggregationLevelSelection
-          {isYearLevel}
           {aggregation}
+          energyType={EnergyType.GAS}
+          layout={aggregationSelectionLayout}
           onclick={onAggregationLevelSelectionClick}
         />
       </svelte:fragment>
@@ -97,7 +148,7 @@
           />
           <div class="flex items-center gap-1 text-sm">
             <span>Data started at:</span>
-            <span class="font-semibold">{dataStartedAt}</span>
+            <span class="font-semibold">{formatDate(dataStartedAt)}</span>
           </div>
         </div>
       </svelte:fragment>

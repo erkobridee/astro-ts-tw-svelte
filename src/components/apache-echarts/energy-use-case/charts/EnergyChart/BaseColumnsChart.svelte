@@ -195,7 +195,7 @@
       axisLabel: {
         color: LABEL_COLOR,
         formatter: xAxisLabelFormatter,
-        showMinLabel: categoriesLenght < 50
+        showMinLabel: categoriesLenght < 30
       },
       axisTick: {
         show: false,

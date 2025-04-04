@@ -203,6 +203,10 @@
         const avgMarkline: any = {
           type: 'average',
           label: {
+            padding: [0, 0, 0, -5],
+            shadowColor: 'white',
+            shadowBlur: 2,
+            shadowOffsetY: 2,
             fontWeight: 'bold',
             formatter: (params: any) =>
               formatNumber(params.value, maximumFractionDigits)
@@ -257,9 +261,14 @@
           formatMonth(timeserie.startedAt);
         break;
       case Aggregation.WEEK:
-        formatAxisLabel = timeseries.length > 4 ? formatMonth : formatDate;
+        formatAxisLabel = timeseries.length > 6 ? formatMonth : formatDate;
         formatTooltipHeaderFn = (timeserie: TimeSerie) =>
           `${formatDate(timeserie.startedAt)} - ${formatDate(timeserie.endedAt)}`;
+        break;
+      case Aggregation.DAY:
+        formatAxisLabel = formatDate;
+        formatTooltipHeaderFn = (timeserie: TimeSerie) =>
+          formatDate(timeserie.startedAt);
         break;
     }
 
