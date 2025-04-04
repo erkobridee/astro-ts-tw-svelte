@@ -1,0 +1,1 @@
+import{d as t}from"./dayjs.min.Cbbdfn5l.js";const r="DD.MM.YYYY",s="HH:mm",M="MMM",n="dd HH:mm",f=o=>t(o).format(`${r}, ${s}`),e=o=>t(o).format(M),A=o=>t(o).format(n),T=3,_=(o,a=T,m=navigator?.language)=>new Intl.NumberFormat(m,{maximumFractionDigits:a}).format(o);export{T as D,_ as a,A as b,f as c,e as f};
