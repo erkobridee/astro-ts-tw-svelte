@@ -8,6 +8,8 @@
 
   import ECharts from '~/components/apache-echarts/ECharts';
 
+  import Toggle from '~/components/apache-echarts/Toggle.svelte';
+
   import {
     DEFAULT_RADIUS_BORDER,
     buildBarItemStyleBorderRadius
@@ -71,24 +73,12 @@
   <div class="flex items-center justify-end gap-2">
     <span>Theme</span>
 
-    <label
-      for="themeToggle"
-      class="inline-flex cursor-pointer items-center rounded-md p-2 text-gray-800"
-    >
-      <input
-        id="themeToggle"
-        type="checkbox"
-        class="peer hidden"
-        bind:checked={themeToggleChecked}
-      />
-
-      <span class="rounded-l-md bg-blue-400 px-4 py-2 peer-checked:bg-gray-300"
-        >light</span
-      >
-      <span class="rounded-r-md bg-gray-300 px-4 py-2 peer-checked:bg-blue-400"
-        >dark</span
-      >
-    </label>
+    <Toggle
+      id="themeToggle"
+      layout="labels"
+      label={['light', 'dark']}
+      bind:checked={themeToggleChecked}
+    />
   </div>
 
   <div class="relative grow">
