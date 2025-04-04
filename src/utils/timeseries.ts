@@ -83,6 +83,15 @@ export const Aggregation = {
 export type AggregationKeys = keyof typeof Aggregation;
 export type Aggregations = (typeof Aggregation)[AggregationKeys];
 
+export const EnergyType = {
+  GAS_CONSUMPTION: 'GAS_CONSUMPTION',
+  ELECTRICITY_CONSUMPTION: 'ELECTRICITY_CONSUMPTION',
+  ELECTRICITY_PRODUCTION: 'ELECTRICITY_PRODUCTION'
+} as const satisfies Record<string, string>;
+
+export type EnergyTypeKeys = keyof typeof EnergyType;
+export type EnergyTypes = (typeof EnergyType)[EnergyTypeKeys];
+
 //----------------------------------------------------------------------------//
 
 export const generateElectricityDailyUsageData = (
@@ -124,16 +133,8 @@ export const generateElectricityDailyUsageData = (
 //----------------------------------------------------------------------------//
 // @begin: overview data
 
-export enum EnergyType {
-  GAS_CONSUMPTION = 'GAS_CONSUMPTION',
-  ELECTRICITY_CONSUMPTION = 'ELECTRICITY_CONSUMPTION',
-  ELECTRICITY_PRODUCTION = 'ELECTRICITY_PRODUCTION'
-}
-
-//---//
-
 export const generateOverviewData = (
-  energyType: EnergyType = EnergyType.ELECTRICITY_CONSUMPTION,
+  energyType: EnergyTypes = EnergyType.ELECTRICITY_CONSUMPTION,
   amount = 6,
   decimalPrecision = DEFAULT_MAXIMUM_FRACTION_DIGITS
 ) => {
