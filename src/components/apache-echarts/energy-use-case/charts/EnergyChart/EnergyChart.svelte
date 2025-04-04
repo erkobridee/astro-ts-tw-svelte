@@ -227,6 +227,8 @@
           };
         }
       }
+
+      barSeriesOption.cursor = isDrilldownEnabled ? 'zoom-in' : 'default';
     });
 
     // TODO: remove
