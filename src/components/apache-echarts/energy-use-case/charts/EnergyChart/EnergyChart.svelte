@@ -54,6 +54,7 @@
   //--------------------------------------------------------------------------//
 
   export let type: EnergyChartTypes = EnergyChartType.PLAIN;
+  export let showAverage: boolean = false;
 
   export let unit: Units = Unit.UNDEFINED;
   export let aggregation: Aggregations = Aggregation.UNDEFINED;
@@ -90,6 +91,7 @@
 
   $: updateChartOptions(
     type,
+    showAverage,
     unit,
     aggregation,
     maximumFractionDigits,
@@ -101,6 +103,7 @@
 
   const updateChartOptions = (
     type: EnergyChartTypes,
+    showAverage: boolean,
     unit: Units,
     aggregation: Aggregations,
     maximumFractionDigits: number,
@@ -190,9 +193,19 @@
       chartOptions.series = [valueBarSeries];
     }
 
+    if (showAverage) {
+      chartOptions.series.forEach((barSeriesOption) => {
+        barSeriesOption.markLine = {
+          symbol: ['none', 'none'],
+          data: [{ type: 'average' }]
+        };
+      });
+    }
+
     // TODO: remove
     console.log('EnergyChart.updateChartOptions', {
       type,
+      showAverage,
       unit,
       aggregation,
       maximumFractionDigits,
