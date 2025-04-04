@@ -57,6 +57,9 @@ const getYesterday = () => dayjs().subtract(1, 'day').startOf('day');
 const isTimeInHourRange = (time: number, min: number, max?: number) =>
   max === undefined ? time === min : time >= min && time <= max;
 
+const dateToTimeIdNumber = (startedAt: DateParamType) =>
+  Number(formatHourStringId(startedAt));
+
 //----------------------------------------------------------------------------//
 // using const instead of enums
 // https://gist.github.com/erkobridee/576bcba33ed5fcf26c68fb0f32efdef3
@@ -218,7 +221,7 @@ export const GAS_CONSUMPTION_RANGE = {
 };
 
 export const isPickGasConsumption = (startedAt: DateParamType) => {
-  const time = Number(formatHourStringId(startedAt));
+  const time = dateToTimeIdNumber(startedAt);
 
   if (
     isTimeInHourRange(time, 700, 800) ||
@@ -312,7 +315,6 @@ export type GenerateElectricityValues = (
   startDate: DateParamType
 ) => [number, number];
 
-// TODO: fix the code logic
 export const generateElectricityDayData = (
   startedAt: DateParamType,
   generateValues: GenerateElectricityValues
@@ -344,13 +346,10 @@ export const generateElectricityDayData = (
   let totalDayValue = 0;
   let totalDayAnotherValue = 0;
 
-  for (let i = 0; i < dayQuartersOfHours; i++) {
-    const amount = i * timeSlot;
+  let startDate = dayjs(startedAt).startOf('day');
+  const endDate = startDate.add(1, 'day').startOf('day');
 
-    const startDate = (
-      i > 0 ? dayjs(startedAt).add(amount, 'm') : dayjs(startedAt)
-    ).startOf('s');
-
+  do {
     const [value, anotherValue] = generateValues(startDate);
 
     startedAt = startDate.format();
@@ -391,9 +390,15 @@ export const generateElectricityDayData = (
     consumptionDayData.minutes.repartition.push(
       buildElectricityRepartitionTimeseries(minute, anotherValue)
     );
-  }
+
+    startDate = startDate.add(timeSlot, 'minutes');
+  } while (startDate.isBefore(endDate));
 
   const hours = consumptionDayData.hours.plain;
+
+  if (hours.length === 0) {
+    return consumptionDayData;
+  }
 
   const lastHoursIndex = hours.length - 1;
 
@@ -428,7 +433,7 @@ export const ELECTRICITY_CONSUMPTION_RANGE = {
 };
 
 export const isPickElectricitysConsumption = (startedAt: DateParamType) => {
-  const time = Number(formatHourStringId(startedAt));
+  const time = dateToTimeIdNumber(startedAt);
 
   if (
     isTimeInHourRange(time, 600, 815) ||
@@ -489,7 +494,7 @@ min aggregation: `15 mins`
 */
 
 export const isElectricityProductionTime = (startedAt: DateParamType) => {
-  const time = Number(formatHourStringId(startedAt));
+  const time = dateToTimeIdNumber(startedAt);
 
   if (isTimeInHourRange(time, 600, 1800)) {
     return true;
@@ -509,7 +514,7 @@ export const getElectricityProductionRange = (
   startDate: DateParamType,
   pickProductionValue: number
 ) => {
-  const time = Number(formatHourStringId(startDate));
+  const time = dateToTimeIdNumber(startDate);
 
   const midProductionValue = pickProductionValue * (2 / 4);
   const lowProductionValue = pickProductionValue * (1 / 4);
