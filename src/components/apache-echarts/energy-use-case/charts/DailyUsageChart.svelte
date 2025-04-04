@@ -16,10 +16,11 @@
 
   import ECharts from '~/components/apache-echarts/ECharts';
 
+  import { hexToRGB } from '~/utils/colors';
+
   import ChartLoadingSpinner from './ChartLoadingSpinner.svelte';
 
   import {
-    hexToRGB,
     COLOR_DEFAULT,
     COLOR_GRAY_50,
     LABEL_COLOR,
