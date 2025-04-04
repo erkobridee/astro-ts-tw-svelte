@@ -5,6 +5,16 @@ import dayjs from 'dayjs';
 
 export type DateParamType = dayjs.Dayjs | Date | string | number;
 
+export interface DayjsFormatParam {
+  date?: DateParamType | null;
+  template?: string;
+  defaultValue?: string;
+}
+
+export type DayjsFormat = (param: DayjsFormatParam) => string;
+
+//---//
+
 export const STRING_ID_FORMAT = 'YYYYMMDDHHmmss';
 
 export const STRING_HOUR_ID_FORMAT = 'HHmm';
@@ -15,9 +25,13 @@ export const DATE_FORMAT = 'DD.MM.YYYY';
 
 export const TIME_FORMAT = 'HH:mm';
 
+export const DATE_TIME_FORMAT = `${DATE_FORMAT}, ${TIME_FORMAT}`;
+
 export const MONTH_SHORT_FORMAT = 'MMM';
 
 export const MONTH_FORMAT = 'MM.YYYY';
+
+export const WEEKDAY_SHORT_FORMAT = 'ddd';
 
 export const WEEKDAY_HOUR_FORMAT = 'dd HH:mm';
 
@@ -37,11 +51,25 @@ export const formatHourStringId = (date: DateParamType) =>
 
 //---//
 
+export const dayjsFormat: DayjsFormat = ({
+  date,
+  template,
+  defaultValue = ''
+}) => {
+  if (!date) {
+    return defaultValue;
+  }
+
+  return dayjs(date).format(template);
+};
+
+//---//
+
 export const toISODate = (date: DateParamType) =>
   dayjs(date).format(ISO_DATE_FORMAT);
 
 export const formatDateTime = (date: DateParamType) =>
-  dayjs(date).format(`${DATE_FORMAT}, ${TIME_FORMAT}`);
+  dayjs(date).format(DATE_TIME_FORMAT);
 
 export const formatDate = (date: DateParamType) =>
   dayjs(date).format(DATE_FORMAT);
@@ -52,19 +80,22 @@ export const formatMonthShort = (date: DateParamType) =>
 export const formatMonth = (date: DateParamType) =>
   dayjs(date).format(MONTH_FORMAT);
 
+export const formatWeekdayShort = (date: DateParamType) =>
+  dayjs(date).format(WEEKDAY_SHORT_FORMAT);
+
 export const formatWeekdayHour = (date: DateParamType) =>
   dayjs(date).format(WEEKDAY_HOUR_FORMAT);
 
 //---//
 
 export const formatDateOrEmpty = (date?: DateParamType | null) =>
-  date ? dayjs(date).format(DATE_FORMAT) : '';
+  dayjsFormat({ date, template: DATE_FORMAT, defaultValue: '' });
 
 export const formatDateOrDash = (date?: DateParamType | null) =>
-  date ? formatDateOrEmpty(date) : '-';
+  dayjsFormat({ date, template: DATE_FORMAT, defaultValue: '-' });
 
-export const formatDateTimeOrDash = (date?: DateParamType | null): string =>
-  date ? formatDateTime(date) : '-';
+export const formatDateTimeOrDash = (date?: DateParamType | null) =>
+  dayjsFormat({ date, template: DATE_TIME_FORMAT, defaultValue: '-' });
 
 //----------------------------------------------------------------------------//
 
