@@ -39,7 +39,7 @@
       <svelte:fragment slot="footer">
         <Toggle
           id="showAverageToggle"
-          label="show average"
+          label="show average mark line"
           bind:checked={showAverage}
         />
       </svelte:fragment>

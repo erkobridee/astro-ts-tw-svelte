@@ -28,6 +28,21 @@ export const LINE_STYLE = {
 
 //----------------------------------------------------------------------------//
 
+/*
+  apache echarts - mark line examples:
+
+    https://echarts.apache.org/examples/en/editor.html?c=line-marker
+
+      // customized
+      https://echarts.apache.org/examples/en/editor.html?c=line-marker&code=PYBwLglsB2AEC8sDeAoWtJgDYFMBcya6GOAHmAQOQAqOAtiDgE4CGYArkzrAMIAWLaAHNuEOGD7cewOmKGwA6jhwBrSkQC-AGiJhgwLJBAFUxDEwhCRTKi1IQAzuvTaiuEdAAmJ1-j0GAI2BSEyJ0Bz5gAHcCMCZ2HB0zADMcNk58QjN0TzYWAC19OlDs4gBPAEF7BwBJLzIqaBgcZ2zfbNywFgA1CBwY5FguFk8AeWgsMoJkliwHbnazOhYhCABjajLGEwwtzIBtSiwxFq1YSgCWJkoAXVhF4i4HPS4fJOyHFgA3HAra5ZEPjC90071IVUcJWIYD2VDWbBwQmATDKlHe6CC7C8VzKAHEWMZYDM5olgZ0WARDgBZGBo87UBJ0yhKTxM6h8dhMgBiFiZAGU2PysbdQURKtUoX5YecvrNGejYHZHAAZFgBHBYSXEZLI5ZgMDMKhIWVYBIaWAABp4rRcovCzD6DkpwNM2WgLDomUoAAlLJJnmjgVLtudjtBTkHYOTKQBGAAMZxjMcTAGZE8nYDGAEyJnOwACcNwV6GWTBUAAVgGIKFlSlG8s668QkLsQ5RlqQ6e7PVQqXZKPdi9kWzC27JoF2PV6qWIBxpI-gbpGHiWriplSctWZo7B9iPpZRvswVqdYN2vRUvkI50vSvOzA9XWZz1RldEcAGh6OvWGI6Ud_sGYALR5nmACsZxprAeZxkWkalhWVbQDWT4dA2u4ti-5yABYqgAA5oAcvJ0iaCQECBZzghKmZnOKkKwEBMYAHRgfct5tEOCEbuGW7EABC7Nq2XpHqwIiTj25yXteg58eg-zScQAD08mwDgXhyegqFNuEZR0EEmrnE04aBpp2QUbRlACmARnGeUEJOrAAAsalSdZsCKbA6qrNATkaZpDjabpcIQEway4FZLlYGqGrccZIDAA4ECQDAVDPFcllDsZOpMHqBo2Ocfadk5LjpXWpl2TQHJhdZNF2fZxWlFhlC4YAG1mAJ0ONqafemmsaU3XEJ1tqLigGgANxAA
+
+    https://echarts.apache.org/examples/en/editor.html?c=line-markline
+
+    https://echarts.apache.org/examples/en/editor.html?c=bar1
+
+    https://echarts.apache.org/examples/en/editor.html?c=candlestick-sh
+*/
+
 // LineStyleOption
 // https://github.com/apache/echarts/blob/b1a237448b11bcb326c3a61339c369c9ccded5ed/src/util/types.ts#L936
 
@@ -69,28 +84,6 @@ export const DEFAULT_MARKLINE_OPTIONS: MarkLineOptions = {
   color: DEFAULT_MARKLINE_COLOR,
   width: DEFAULT_MARKLINE_WIDTH,
   type: DEFAULT_MARKLINE_TYPE
-};
-
-/*
-  examples:
-
-    https://echarts.apache.org/examples/en/editor.html?c=line-marker
-
-      // customized
-      https://echarts.apache.org/examples/en/editor.html?c=line-marker&code=PYBwLglsB2AEC8sDeAoWtJgDYFMBcya6GOAHmAQOQAqOAtiDgE4CGYArkzrAMIAWLaAHNuEOGD7cewOmKGwA6jhwBrSkQC-AGiJhgwLJBAFUxDEwhCRTKi1IQAzuvTaiuEdAAmJ1-j0GAI2BSEyJ0Bz5gAHcCMCZ2HB0zADMcNk58QjN0TzYWAC19OlDs4gBPAEF7BwBJLzIqaBgcZ2zfbNywFgA1CBwY5FguFk8AeWgsMoJkliwHbnazOhYhCABjajLGEwwtzIBtSiwxFq1YSgCWJkoAXVhF4i4HPS4fJOyHFgA3HAra5ZEPjC90071IVUcJWIYD2VDWbBwQmATDKlHe6CC7C8VzKAHEWMZYDM5olgZ0WARDgBZGBo87UBJ0yhKTxM6h8dhMgBiFiZAGU2PysbdQURKtUoX5YecvrNGejYHZHAAZFgBHBYSXEZLI5ZgMDMKhIWVYBIaWAABp4rRcovCzD6DkpwNM2WgLDomUoAAlLJJnmjgVLtudjtBTkHYOTKQBGAAMZxjMcTAGZE8nYDGAEyJnOwACcNwV6GWTBUAAVgGIKFlSlG8s668QkLsQ5RlqQ6e7PVQqXZKPdi9kWzC27JoF2PV6qWIBxpI-gbpGHiWriplSctWZo7B9iPpZRvswVqdYN2vRUvkI50vSvOzA9XWZz1RldEcAGh6OvWGI6Ud_sGYALR5nmACsZxprAeZxkWkalhWVbQDWT4dA2u4ti-5yABYqgAA5oAcvJ0iaCQECBZzghKmZnOKkKwEBMYAHRgfct5tEOCEbuGW7EABC7Nq2XpHqwIiTj25yXteg58eg-zScQAD08mwDgXhyegqFNuEZR0EEmrnE04aBpp2QUbRlACmARnGeUEJOrAAAsalSdZsCKbA6qrNATkaZpDjabpcIQEway4FZLlYGqGrccZIDAA4ECQDAVDPFcllDsZOpMHqBo2Ocfadk5LjpXWpl2TQHJhdZNF2fZxWlFhlC4YAG1mAJ0ONqafemmsaU3XEJ1tqLigGgANxAA
-
-    https://echarts.apache.org/examples/en/editor.html?c=line-markline
-
-    https://echarts.apache.org/examples/en/editor.html?c=bar1
-
-    https://echarts.apache.org/examples/en/editor.html?c=candlestick-sh
-*/
-
-export const DEFAULT_MARKLINE_AVERAGE: any = {
-  type: 'average',
-  label: {
-    fontWeight: 'bold'
-  }
 };
 
 //----------------------------------------------------------------------------//

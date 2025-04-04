@@ -36,7 +36,6 @@
     DEFAULT_TIMESERIE_CLICK,
     DEFAULT_MARKLINE_SYMBOL,
     DEFAULT_MARKLINE_OPTIONS,
-    DEFAULT_MARKLINE_AVERAGE,
     buildTooltipBarItem
   } from '~/components/apache-echarts/energy-use-case/charts/common';
 
@@ -199,17 +198,26 @@
       if (showAverageMarkline) {
         let markline = barSeriesOption.markLine;
 
+        const avgMarkline: any = {
+          type: 'average',
+          label: {
+            fontWeight: 'bold',
+            formatter: (params: any) =>
+              formatNumber(params.value, maximumFractionDigits)
+          }
+        };
+
         if (markline) {
           const { symbol = DEFAULT_MARKLINE_SYMBOL, data = [] } = markline;
 
           barSeriesOption.markLine = {
             symbol,
-            data: [...data, DEFAULT_MARKLINE_AVERAGE]
+            data: [...data, avgMarkline]
           };
         } else {
           barSeriesOption.markLine = {
             symbol: DEFAULT_MARKLINE_SYMBOL,
-            data: [DEFAULT_MARKLINE_AVERAGE]
+            data: [avgMarkline]
           };
         }
       }
