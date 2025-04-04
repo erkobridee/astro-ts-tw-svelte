@@ -34,7 +34,8 @@
   import {
     COLOR_DEFAULT,
     DEFAULT_TIMESERIE_CLICK,
-    DEFAULT_MARKLINE_OPTIONS
+    DEFAULT_MARKLINE_OPTIONS,
+    buildTooltipBarItem
   } from '~/components/apache-echarts/energy-use-case/charts/common';
 
   import BaseColumnsChart from './BaseColumnsChart.svelte';
@@ -225,12 +226,10 @@
         paramsArray.forEach((item) => {
           timeserie = timeseries[item.dataIndex];
 
-          content += `
-            <div>
-              <span style="display:inline-block;border-radius:10px;width:10px;height:10px;background-color:${item.color};"></span>
-              <span style="float:right;margin-left:20px;font-weight:600">${formatNumber(item.value, maximumFractionDigits)} ${unit}</span>
-            </div>
-          `;
+          content += buildTooltipBarItem({
+            color: item.color,
+            value: `${formatNumber(item.value, maximumFractionDigits)} ${unit}`
+          });
         });
         return content;
       };
