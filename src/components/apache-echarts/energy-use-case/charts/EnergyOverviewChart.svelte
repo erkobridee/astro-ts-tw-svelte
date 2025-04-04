@@ -9,7 +9,6 @@
   import type { TimeSerie } from '~/utils/timeseries';
   import type { TimeSerieBarClick } from './common';
 
-  // import dayjs from 'dayjs';
   import * as echarts from 'echarts';
 
   import { onMount } from 'svelte';
@@ -17,6 +16,7 @@
   import ECharts from '~/components/apache-echarts/ECharts';
 
   import { hexToRGB } from '~/utils/colors';
+  import { formatMonthShort } from '~/utils/format';
 
   import ChartLoadingSpinner from './ChartLoadingSpinner.svelte';
 
@@ -73,10 +73,6 @@
 
     const numberFormat = new Intl.NumberFormat(locale, {
       maximumFractionDigits: 0
-    });
-
-    const dateTimeFormat = new Intl.DateTimeFormat(locale, {
-      month: 'short'
     });
 
     const data = timeseries.reduce<{
@@ -149,8 +145,7 @@
       type: 'category',
       data: data.xAxis,
       axisLabel: {
-        //formatter: (value) => dayjs(value).format('MMM'),
-        formatter: (value) => dateTimeFormat.format(new Date(value)),
+        formatter: formatMonthShort,
         color: LABEL_COLOR
       },
       axisLine: {

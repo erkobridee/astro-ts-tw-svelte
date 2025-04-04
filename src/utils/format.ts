@@ -15,6 +15,8 @@ export const DATE_FORMAT = 'DD.MM.YYYY';
 
 export const TIME_FORMAT = 'HH:mm';
 
+export const MONTH_SHORT_FORMAT = 'MMM';
+
 export const MONTH_FORMAT = 'MM.YYYY';
 
 export const WEEKDAY_HOUR_FORMAT = 'dd HH:mm';
@@ -43,6 +45,9 @@ export const formatDateTime = (date: DateParamType) =>
 
 export const formatDate = (date: DateParamType) =>
   dayjs(date).format(DATE_FORMAT);
+
+export const formatMonthShort = (date: DateParamType) =>
+  dayjs(date).format(MONTH_SHORT_FORMAT);
 
 export const formatMonth = (date: DateParamType) =>
   dayjs(date).format(MONTH_FORMAT);
