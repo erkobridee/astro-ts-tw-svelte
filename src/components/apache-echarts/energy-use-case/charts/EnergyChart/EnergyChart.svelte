@@ -147,7 +147,15 @@
 
         /*
         if(hasReferencePower) {
-          // TODO: calculate the exceedance using the referencePower and add it info the acc.valueData.push(value);
+          const exceedance = value - referencePower;
+
+          if(exceedance > 0) {
+            acc.valueData.push(referencePower);
+            acc.anotherValueData.push(exceedance)
+          } else {
+            acc.valueData.push(value);
+            acc.anotherValueData.push(0)
+          }
         }
         */
 
@@ -168,16 +176,15 @@
     if (isRepartition || hasReferencePower) {
       totalValues = [valueTotal, anotherValueTotal];
 
+      // if hasReferencePower is present add markLines
+      // referencePower
+      // referencePowerOptions
       const valueBarSeries: BarSeriesOption = {
         type: 'bar',
         stack: 'energy',
         name: labels[0],
         data: data.valueData
       };
-
-      // if hasReferencePower is present add markLines into the valuesBarSeries
-      // referencePower
-      // referencePowerOptions
 
       const anotherValueBarSeries: BarSeriesOption = {
         type: 'bar',
