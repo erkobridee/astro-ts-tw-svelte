@@ -316,10 +316,13 @@ export const generateGasConsumptionMonthData = (
   let startDate = dayjs(monthReference).startOf('month').startOf('day');
   const endDate = startDate.endOf('month').endOf('day');
 
+  const startedAt = startDate.format();
+  const endedAt = endDate.format();
+
   const data: GasConsumptionMonthData = {
     month: {
-      startedAt: startDate.format(),
-      endedAt: endDate.format(),
+      startedAt,
+      endedAt,
       value: 0
     },
     weeks: [],
@@ -327,7 +330,7 @@ export const generateGasConsumptionMonthData = (
     hoursMap: {}
   };
 
-  let week: TimeSerie = { ...EMPTY_TIMESERIE, startedAt: startDate.format() };
+  let week: TimeSerie = { ...EMPTY_TIMESERIE, startedAt };
 
   let totalWeekValue = 0;
   let totalValue = 0;
@@ -357,7 +360,6 @@ export const generateGasConsumptionMonthData = (
     startDate = nextDay;
   } while (startDate.isSameOrBefore(endDate));
 
-  data.month.endedAt = endDate.format();
   data.month.value = totalValue;
 
   return data;
@@ -372,9 +374,9 @@ export interface GasConsumptionData {
 }
 
 export const generateGasConsumptionData = (
-  monthReference: DateParamType = getLastYear()
+  yearReference: DateParamType = getLastYear()
 ): GasConsumptionData => {
-  let startDate = dayjs(monthReference).startOf('year').startOf('day');
+  let startDate = dayjs(yearReference).startOf('year').startOf('day');
   const endDate = startDate.endOf('year').endOf('day');
 
   const data: GasConsumptionData = {
@@ -420,6 +422,25 @@ export interface ElectricityDayData {
   hours: ElectricityTimeserieData<TimeSerie[]>;
   minutes: ElectricityTimeserieData<TimeSerie[]>;
 }
+
+export interface ElectricityMonthData {
+  month: ElectricityTimeserieData;
+  weeks: ElectricityTimeserieData<TimeSerie[]>;
+  days: ElectricityTimeserieData<TimeSerie[]>;
+  hoursMap: Record<string, ElectricityTimeserieData<TimeSerie[]>>;
+  minutesMap: Record<string, ElectricityTimeserieData<TimeSerie[]>>;
+}
+
+export interface ElectricityData {
+  months: ElectricityTimeserieData<TimeSerie[]>;
+  weeks: ElectricityTimeserieData<TimeSerie[]>;
+  weeksMap: Record<string, ElectricityTimeserieData<TimeSerie[]>>;
+  daysMap: Record<string, ElectricityTimeserieData<TimeSerie[]>>;
+  hoursMap: Record<string, ElectricityTimeserieData<TimeSerie[]>>;
+  minutesMap: Record<string, ElectricityTimeserieData<TimeSerie[]>>;
+}
+
+//---//
 
 export const buildElectricityRepartitionTimeseries = (
   { startedAt, endedAt, value }: TimeSerie,
@@ -538,6 +559,166 @@ export const generateElectricityDayData = (
   return consumptionDayData;
 };
 
+export const generateElectricityMonthData = (
+  monthReference: DateParamType = getLastMonth(),
+  generateValues: GenerateElectricityValues
+) => {
+  let startDate = dayjs(monthReference).startOf('month').startOf('day');
+  const endDate = startDate.endOf('month').endOf('day');
+
+  const startedAt = startDate.format();
+  const endedAt = endDate.format();
+
+  const data: ElectricityMonthData = {
+    month: {
+      plain: {
+        startedAt,
+        endedAt,
+        value: 0
+      },
+      repartition: {
+        startedAt,
+        endedAt,
+        value: 0
+      }
+    },
+    weeks: {
+      plain: [],
+      repartition: []
+    },
+    days: {
+      plain: [],
+      repartition: []
+    },
+    hoursMap: {},
+    minutesMap: {}
+  };
+
+  let week: ElectricityTimeserieData = {
+    plain: { ...EMPTY_TIMESERIE, startedAt },
+    repartition: { ...EMPTY_TIMESERIE, startedAt }
+  };
+
+  let totalWeekPlainValue = 0;
+  let totalWeekPlainAnotherValue = 0;
+  let totalWeekRepartitionValue = 0;
+  let totalWeekRepartitionAnotherValue = 0;
+
+  let totalPlainValue = 0;
+  let totalPlainAnotherValue = 0;
+  let totalRepartitionValue = 0;
+  let totalRepartitionAnotherValue = 0;
+
+  do {
+    const stringId = formatDayStringId(startDate);
+    const { day, hours, minutes } = generateElectricityDayData(
+      startDate,
+      generateValues
+    );
+
+    const { plain: plainDay, repartition: repartitionDay } = day;
+    const { value: plainDayValue, anotherValue: plainDayAnotherValue = 0 } =
+      plainDay;
+    const {
+      value: repartitionDayValue,
+      anotherValue: repartitionDayAnotherValue = 0
+    } = repartitionDay;
+
+    totalWeekPlainValue += plainDayValue;
+    totalWeekPlainAnotherValue += plainDayAnotherValue;
+    totalWeekRepartitionValue += repartitionDayValue;
+    totalWeekRepartitionAnotherValue += repartitionDayAnotherValue;
+
+    totalPlainValue += plainDayValue;
+    totalPlainAnotherValue += plainDayAnotherValue;
+    totalRepartitionValue += repartitionDayValue;
+    totalRepartitionAnotherValue += repartitionDayAnotherValue;
+
+    data.days.plain.push(plainDay);
+    data.days.repartition.push(repartitionDay);
+
+    data.hoursMap[stringId] = hours;
+    data.minutesMap[stringId] = minutes;
+
+    const nextDay = startDate.add(1, 'day').startOf('day');
+
+    if (startDate.day() === 6 || startDate.isSame(endDate, 'day')) {
+      const weekStartedAt = nextDay.format();
+      const weekEndedAt = startDate.endOf('day').format();
+
+      week.plain.endedAt = weekEndedAt;
+      week.plain.value = totalWeekPlainValue;
+      week.plain.anotherValue = totalWeekPlainAnotherValue;
+      data.weeks.plain.push(week.plain);
+
+      week.repartition.endedAt = weekEndedAt;
+      week.repartition.value = totalWeekRepartitionValue;
+      week.repartition.anotherValue = totalWeekRepartitionAnotherValue;
+      data.weeks.repartition.push(week.repartition);
+
+      totalWeekPlainValue = 0;
+      totalWeekPlainAnotherValue = 0;
+      totalWeekRepartitionValue = 0;
+      totalWeekRepartitionAnotherValue = 0;
+
+      week = {
+        plain: { ...EMPTY_TIMESERIE, startedAt: weekStartedAt },
+        repartition: { ...EMPTY_TIMESERIE, startedAt: weekStartedAt }
+      };
+    }
+
+    startDate = nextDay;
+  } while (startDate.isSameOrBefore(endDate));
+
+  data.month.plain.value = totalPlainValue;
+  data.month.plain.anotherValue = totalPlainAnotherValue;
+
+  data.month.repartition.value = totalRepartitionValue;
+  data.month.repartition.anotherValue = totalRepartitionAnotherValue;
+
+  return data;
+};
+
+export const generateElectricityData = (
+  yearReference: DateParamType = getLastYear(),
+  generateValues: GenerateElectricityValues
+) => {
+  let startDate = dayjs(yearReference).startOf('year').startOf('day');
+  const endDate = startDate.endOf('year').endOf('day');
+
+  const data: ElectricityData = {
+    months: { plain: [], repartition: [] },
+    weeks: { plain: [], repartition: [] },
+    weeksMap: {},
+    daysMap: {},
+    hoursMap: {},
+    minutesMap: {}
+  };
+
+  do {
+    let stringId = formatDayStringId(startDate);
+
+    const { month, weeks, days, hoursMap, minutesMap } =
+      generateElectricityMonthData(startDate, generateValues);
+
+    data.months.plain.push(month.plain);
+    data.months.repartition.push(month.repartition);
+
+    data.weeks.plain = [...data.weeks.plain, ...weeks.plain];
+    data.weeks.repartition = [...data.weeks.repartition, ...weeks.repartition];
+
+    data.weeksMap[stringId] = weeks;
+    data.daysMap[stringId] = days;
+
+    data.hoursMap = { ...data.hoursMap, ...hoursMap };
+    data.minutesMap = { ...data.minutesMap, ...minutesMap };
+
+    startDate = startDate.add(1, 'month');
+  } while (startDate.isSameOrBefore(endDate));
+
+  return data;
+};
+
 // @end: electricity consumption and production
 //----------------------------------------------------------------------------//
 // @begin: electricity consumption
@@ -575,7 +756,13 @@ export const generateElectricityConsumptionValues: GenerateElectricityValues = (
     ELECTRICITY_CONSUMPTION_RANGE[isPickConsumption ? 'PICK' : 'LOWEST'];
 
   const value = getRandomFloat(min, max);
-  const anotherValue = getRandomFloat(0, value * (3 / 5));
+
+  const baseCalcValue = Math.floor(value / getRandomInt(5, 10));
+
+  const anotherValue = getRandomFloat(
+    0,
+    baseCalcValue * (getRandomInt(1, 3) / 5)
+  );
 
   return [value, anotherValue];
 };
@@ -585,34 +772,22 @@ export const generateElectricityConsumptionDayData = (
 ) =>
   generateElectricityDayData(startedAt, generateElectricityConsumptionValues);
 
-// TODO: define month and weeks
+export const generateElectricityConsumptionMonthData = (
+  monthReference: DateParamType = getLastMonth()
+) =>
+  generateElectricityMonthData(
+    monthReference,
+    generateElectricityConsumptionValues
+  );
 
-// TODO: define months
+export const generateElectricityConsumptionData = (
+  yearReference: DateParamType = getLastYear()
+) =>
+  generateElectricityData(yearReference, generateElectricityConsumptionValues);
 
 // @end: electricity consumption
 //----------------------------------------------------------------------------//
 // @begin: electricity production
-
-/*
-min aggregation: `15 mins`
-
-- unit: `kW`
-
-> generate a wave pattern starting from `06:00`, pick between `11:00` and `14:00`, and end at `18:00`
-
-- Average peak sun hours: `4.5 hours per day`
-
-- Amount of panels: `15`
-
-- Average panel Wattage: `400 W`
-
-- One Kilo Watt: `1000 W`
-
-- min value: `0` - night time
-
-- pick value: `( ( Amount of panels ) * ( Average panel wattage ) ) / ( One Kilo Watt )`
-
-*/
 
 export const isElectricityProductionTime = (startedAt: DateParamType) => {
   const time = dateToTimeIdNumber(startedAt);
@@ -685,9 +860,18 @@ export const generateElectricityProductionDayData = (
 ) =>
   generateElectricityDayData(startedAt, generateElectricityProductionValues());
 
-// TODO: define month and weeks
+export const generateElectricityProductionMonthData = (
+  monthReference: DateParamType = getLastMonth()
+) =>
+  generateElectricityMonthData(
+    monthReference,
+    generateElectricityProductionValues()
+  );
 
-// TODO: define months
+export const generateElectricityProductionData = (
+  yearReference: DateParamType = getLastYear()
+) =>
+  generateElectricityData(yearReference, generateElectricityProductionValues());
 
 // @end: electricity production
 //----------------------------------------------------------------------------//

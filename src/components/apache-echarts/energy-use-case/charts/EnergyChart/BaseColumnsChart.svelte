@@ -40,81 +40,14 @@
 
   //--------------------------------------------------------------------------//
 
-  type StackInfo = Record<
-    string,
-    {
-      stackStart: number[];
-      stackEnd: number[];
-    }
-  >;
-
-  // map to know which bar entry needs to have the border radius
-  const buildStackInfo = (series: BarSeriesOption[]) => {
-    const stackInfo: StackInfo = {};
-
-    for (let i = 0; i < series[0].data!.length; ++i) {
-      for (let j = 0; j < series.length; ++j) {
-        const serie = series[j];
-
-        const stackName = serie.stack;
-        if (!stackName) {
-          continue;
-        }
-
-        if (!stackInfo[stackName]) {
-          stackInfo[stackName] = {
-            stackStart: [],
-            stackEnd: []
-          };
-        }
-
-        const info = stackInfo[stackName];
-        const data = serie.data![i];
-
-        if (data && !isNaN(data as number)) {
-          if (info.stackStart[i] == null) {
-            info.stackStart[i] = j;
-          }
-
-          info.stackEnd[i] = j;
-        }
-      }
-    }
-
-    return stackInfo;
-  };
-
   const addBorderRadiusToBars = (
     series: BarSeriesOption[]
   ): EChartsOption['series'] => {
-    const stackInfo = buildStackInfo(series);
+    const lastSeries = series.length - 1;
 
-    for (let i = 0; i < series.length; ++i) {
-      const serie = series[i];
-
-      if (!serie.stack) {
-        serie.itemStyle = buildBarItemStyleBorderRadius(DEFAULT_RADIUS_BORDER);
-
-        continue;
-      }
-
-      const data = serie.data!;
-      const dataLength = data.length;
-
-      const info = stackInfo[serie.stack];
-
-      for (let j = 0; j < dataLength; ++j) {
-        // const isStart = info.stackStart[j] === i;
-        const isEnd = info.stackEnd[j] === i;
-
-        data[j] = {
-          value: data[j],
-          itemStyle: buildBarItemStyleBorderRadius(
-            isEnd ? DEFAULT_RADIUS_BORDER : 0
-          )
-        } as any;
-      }
-    }
+    series[lastSeries].itemStyle = buildBarItemStyleBorderRadius(
+      DEFAULT_RADIUS_BORDER
+    );
 
     return series;
   };
@@ -154,7 +87,7 @@
 
   //--------------------------------------------------------------------------//
 
-  $: color = chartOptions.color[0] ?? COLOR_DEFAULT;
+  $: color = chartOptions.color[1] ?? chartOptions.color[0] ?? COLOR_DEFAULT;
 
   //--------------------------------------------------------------------------//
 
@@ -194,9 +127,6 @@
 
       return false;
     })();
-
-    // TODO: remove
-    console.log({ isTinyScreen, chartOptions });
 
     const tooltip: EChartsOption['tooltip'] = {
       trigger: 'axis',

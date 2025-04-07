@@ -147,7 +147,7 @@
 
         /*
         if(hasReferencePower) {
-          // TODO: calculate the exceedance using the referencePower
+          // TODO: calculate the exceedance using the referencePower and add it info the acc.valueData.push(value);
         }
         */
 
@@ -171,6 +171,7 @@
       const valueBarSeries: BarSeriesOption = {
         type: 'bar',
         stack: 'energy',
+        name: labels[0],
         data: data.valueData
       };
 
@@ -181,6 +182,7 @@
       const anotherValueBarSeries: BarSeriesOption = {
         type: 'bar',
         stack: 'energy',
+        name: labels[1],
         data: data.anotherValueData
       };
 
