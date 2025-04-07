@@ -265,7 +265,7 @@
           formatMonth(timeserie.startedAt);
         break;
       case Aggregation.WEEK:
-        formatAxisLabel = timeseries.length > 6 ? formatMonth : formatDate;
+        formatAxisLabel = formatDate;
         formatTooltipHeaderFn = (timeserie: TimeSerie) =>
           `${formatDate(timeserie.startedAt)} - ${formatDate(timeserie.endedAt)}`;
         break;
