@@ -227,7 +227,10 @@
         color: LABEL_COLOR,
         formatter: xAxisLabelFormatter,
         hideOverlap: true,
-        showMinLabel: isTinyScreen && categories.length > 10 ? false : true
+        showMinLabel:
+          (isTinyScreen && categories.length > 10) || categories.length > 12
+            ? false
+            : true
       },
       axisTick: {
         show: false,
@@ -275,15 +278,39 @@
 
   //--------------------------------------------------------------------------//
 
+  let barName = '';
+
+  const onInnerClick: ChartClick = (event) => {
+    if (!isTinyScreen) {
+      onclick(event);
+      return;
+    }
+
+    /*
+      on mobile screens, the first click won't call the event handler function from the
+      parent to be able to display the tooltip, and if the user click again on the same bar
+      that will call the event handler from the parent
+     */
+    const currentBarName = event.name;
+
+    if (barName && currentBarName === barName) {
+      onclick(event);
+      barName = '';
+      return;
+    }
+
+    barName = currentBarName;
+  };
+
   onMount(() => {
     // https://echarts.apache.org/en/api.html#echartsInstance.on
-    chart.on('click', onclick);
+    chart.on('click', onInnerClick);
 
     console.log('BaseColumnsChart - mounted', { chart });
 
     return () => {
       // https://echarts.apache.org/en/api.html#echartsInstance.off
-      chart.off('click', onclick);
+      chart.off('click', onInnerClick);
 
       console.log('BaseColumnsChart - destroyed', { chart });
     };
