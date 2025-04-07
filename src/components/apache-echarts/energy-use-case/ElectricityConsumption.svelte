@@ -12,11 +12,32 @@
   } from '~/components/apache-echarts/energy-use-case/charts/EnergyChart/EnergyChart.svelte';
 
   import {
+    COLOR_ELECTRICITY_EXCEEDANCE,
     COLOR_ELECTRICITY_SHARED,
     COLOR_ELECTRICITY_CONSUMPTION
   } from '~/components/apache-echarts/energy-use-case/charts/common';
 
   import { Unit, Aggregation } from '~/utils/timeseries';
+
+  //--------------------------------------------------------------------------//
+
+  const LABELS_MAP = {
+    [`${EnergyChartType.PLAIN}`]: ['Consumption', 'Exceedance'],
+    [`${EnergyChartType.PLAIN}_EXCEEDANCE`]: ['Consumption', 'Exceedance'],
+    [`${EnergyChartType.REPARTITION}`]: ['Shared with me', 'Bought from market']
+  };
+
+  const COLORS_MAP = {
+    [`${EnergyChartType.PLAIN}`]: [COLOR_ELECTRICITY_CONSUMPTION],
+    [`${EnergyChartType.PLAIN}_EXCEEDANCE`]: [
+      COLOR_ELECTRICITY_CONSUMPTION,
+      COLOR_ELECTRICITY_EXCEEDANCE
+    ],
+    [`${EnergyChartType.REPARTITION}`]: [
+      COLOR_ELECTRICITY_SHARED,
+      COLOR_ELECTRICITY_CONSUMPTION
+    ]
+  };
 
   //--------------------------------------------------------------------------//
 
@@ -35,12 +56,13 @@
     // TODO: remove
     console.log('ElectricityConsumption.updateTimeSeries', data);
 
-    color = [COLOR_ELECTRICITY_SHARED, COLOR_ELECTRICITY_CONSUMPTION];
-    labels = ['Shared with me', 'Bought from market'];
     unit = Unit.KWH;
     aggregation = Aggregation.MONTH;
     timeseries = data.months.repartition;
     type = EnergyChartType.REPARTITION;
+
+    color = COLORS_MAP[type];
+    labels = LABELS_MAP[type];
   };
 
   //--------------------------------------------------------------------------//

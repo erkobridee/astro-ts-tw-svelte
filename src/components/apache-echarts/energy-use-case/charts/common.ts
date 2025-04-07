@@ -18,6 +18,8 @@ export const COLOR_DEFAULT = '#6b7280'; // tailwind color gray 500
 
 export const COLOR_GAS_CONSUMPTION = '#0891b2'; // tailwind color cyan 600
 
+export const COLOR_ELECTRICITY_EXCEEDANCE = '#fb923c'; // tailwind color orange 400
+
 export const COLOR_ELECTRICITY_SHARED = '#10b981'; // tailwind color emerald 500
 
 export const COLOR_ELECTRICITY_CONSUMPTION = '#3b82f6'; // tailwind color blue 500
