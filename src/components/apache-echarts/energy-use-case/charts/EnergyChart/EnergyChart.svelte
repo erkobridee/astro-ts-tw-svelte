@@ -285,18 +285,30 @@
 
       let timeserie = timeseries[paramsArray[0].dataIndex];
 
+      let total = 0;
       let content = '';
 
       content += `<div>${formatTooltipHeaderFn(timeserie)}</div>`;
 
-      paramsArray.forEach((item) => {
+      paramsArray.reverse().forEach((item) => {
         timeserie = timeseries[item.dataIndex];
+
+        const value = item.value;
+
+        total += value;
 
         content += buildTooltipBarItem({
           color: item.color,
-          value: `${formatNumber(item.value, maximumFractionDigits)} ${unit}`
+          value: `${formatNumber(value, maximumFractionDigits)} ${unit}`
         });
       });
+
+      if (isRepartition) {
+        content += `<div style="padding-top: 5px;"><hr>`;
+        content += `<span style="float:right;margin-left:20px;font-weight:600">${formatNumber(total, maximumFractionDigits)} ${unit}</span>`;
+        content += `</div>`;
+      }
+
       return content;
     };
   };
