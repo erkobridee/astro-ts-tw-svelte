@@ -52,4 +52,6 @@ export interface EChartsProps
 
   /** it's the chart instance, to allow binding it from outside */
   chart?: BaseEChartsType | CoreEChartsType | undefined;
+
+  chartContainerDOMRect?: DOMRectReadOnly | undefined;
 }

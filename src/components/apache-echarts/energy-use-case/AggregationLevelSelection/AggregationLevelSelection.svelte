@@ -124,7 +124,7 @@
       onclick(selectedAggregation, layout);
 </script>
 
-<div class="flex-inline flex items-center gap-4">
+<div class="flex flex-col gap-4 md:flex-row md:items-center">
   <AggregationLevelButtonsGroup label="Year" list={yearLevelButtons} />
 
   <AggregationLevelButtonsGroup label="Month" list={monthLevelButtons} />

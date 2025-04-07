@@ -203,11 +203,13 @@
         const avgMarkline: any = {
           type: 'average',
           label: {
-            padding: [0, 0, 0, -5],
-            shadowColor: 'white',
-            shadowBlur: 2,
-            shadowOffsetY: 2,
             fontWeight: 'bold',
+            position: 'insideEndTop',
+            backgroundColor: 'white',
+            padding: 2,
+            borderRadius: 5,
+            textBorderColor: 'white',
+            textBorderWidth: 3,
             formatter: (params: any) =>
               formatNumber(params.value, maximumFractionDigits)
           }
@@ -351,8 +353,10 @@
   };
 </script>
 
-<div class="flex h-full grow flex-col gap-2">
-  <div class="flex items-center justify-between">
+<div class="flex min-h-full grow flex-col gap-2">
+  <div
+    class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-0"
+  >
     <div class="flex items-center gap-4">
       {#if timeseries.length > 0}
         <DisplayTotal
@@ -378,7 +382,7 @@
     <div><slot name="headerActions" /></div>
   </div>
 
-  <div class="relative grow">
+  <div class="relative min-h-[300px] grow">
     <div class="absolute top-0 right-0 bottom-0 left-0">
       <BaseColumnsChart {chartOptions} onclick={onChartClick} />
     </div>

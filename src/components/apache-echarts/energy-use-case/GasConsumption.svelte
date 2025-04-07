@@ -140,7 +140,9 @@
       </svelte:fragment>
 
       <svelte:fragment slot="footer">
-        <div class="flex items-center justify-between">
+        <div
+          class="flex flex-col justify-between gap-4 md:flex-row md:items-center md:gap-0"
+        >
           <Toggle
             id="showAverageToggle"
             label="show average mark line"

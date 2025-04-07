@@ -3,6 +3,13 @@ import type { BarSeriesOption, ECElementEvent } from 'echarts';
 import type { TimeSerie, DayUsage } from '~/utils/timeseries';
 
 //----------------------------------------------------------------------------//
+
+// https://yesviz.com/viewport/
+// https://screensizes.net/smartphones
+export const TINY_SCREEN_MAX_WIDTH = 412; // pixels
+export const TINY_SCREEN_MAX_HEIGHT = 915; // pixeds
+
+//----------------------------------------------------------------------------//
 // https://v3.tailwindcss.com/docs/customizing-colors
 
 export const COLOR_GRAY_50 = '#f9fafb'; // tailwind color gray 50

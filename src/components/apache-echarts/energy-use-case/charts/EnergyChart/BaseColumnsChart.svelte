@@ -129,6 +129,8 @@
 
   import {
     COLOR_DEFAULT,
+    TINY_SCREEN_MAX_WIDTH,
+    TINY_SCREEN_MAX_HEIGHT,
     type ChartClick
   } from '~/components/apache-echarts/energy-use-case/charts/common';
 
@@ -139,6 +141,8 @@
 
   //--------------------------------------------------------------------------//
 
+  export let isTinyScreen = false;
+
   export let chartOptions: ChartOptions;
 
   export let onclick: ChartClick = DEFAULT_CHART_CLICK;
@@ -146,15 +150,20 @@
   let chart: EChartsType;
   let options: EChartsOption = {};
 
+  let chartContainerDOMRect: DOMRectReadOnly | undefined = undefined;
+
   //--------------------------------------------------------------------------//
 
   $: color = chartOptions.color[0] ?? COLOR_DEFAULT;
 
   //--------------------------------------------------------------------------//
 
-  $: updateOptions(chartOptions);
+  $: updateOptions(chartOptions, chartContainerDOMRect);
 
-  const updateOptions = (chartOptions: ChartOptions) => {
+  const updateOptions = (
+    chartOptions: ChartOptions,
+    chartContainerDOMRect: DOMRectReadOnly | undefined
+  ) => {
     const {
       color,
       categories,
@@ -164,8 +173,30 @@
       tooltipFormatter
     } = chartOptions;
 
+    isTinyScreen = (() => {
+      if (!chartContainerDOMRect) {
+        return false;
+      }
+
+      const { width, height } = chartContainerDOMRect;
+
+      // https://developer.mozilla.org/en-US/docs/Web/API/Screen/orientation
+      switch (screen.orientation.angle) {
+        case 0:
+          return (
+            width <= TINY_SCREEN_MAX_WIDTH && height <= TINY_SCREEN_MAX_HEIGHT
+          );
+        case 90:
+          return (
+            width <= TINY_SCREEN_MAX_HEIGHT && height <= TINY_SCREEN_MAX_WIDTH
+          );
+      }
+
+      return false;
+    })();
+
     // TODO: remove
-    console.log(chartOptions);
+    console.log({ isTinyScreen, chartOptions });
 
     const tooltip: EChartsOption['tooltip'] = {
       trigger: 'axis',
@@ -182,10 +213,10 @@
 
     const grid: EChartsOption['grid'] = {
       containLabel: true,
-      left: 10,
-      right: 10,
-      top: 10,
-      bottom: 10
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0
     };
 
     const categoriesLenght = categories.length;
@@ -195,7 +226,8 @@
       axisLabel: {
         color: LABEL_COLOR,
         formatter: xAxisLabelFormatter,
-        showMinLabel: categoriesLenght < 30
+        hideOverlap: true,
+        showMinLabel: isTinyScreen && categories.length > 10 ? false : true
       },
       axisTick: {
         show: false,
@@ -229,7 +261,6 @@
         showMaxLine: false
       }
     };
-
     //---//
 
     options = {
@@ -259,6 +290,12 @@
   });
 </script>
 
-<ECharts init={echarts.init} {options} notMerge bind:chart>
+<ECharts
+  init={echarts.init}
+  {options}
+  notMerge
+  bind:chart
+  bind:chartContainerDOMRect
+>
   <ChartLoadingSpinner {color} />
 </ECharts>

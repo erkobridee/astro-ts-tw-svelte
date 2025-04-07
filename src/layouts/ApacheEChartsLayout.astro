@@ -21,7 +21,7 @@ const pageTitle = title ? `${title} | ${TITLE}` : TITLE;
   @reference "tailwindcss";
 
   .page-content {
-    @apply flex min-h-screen flex-col gap-4 divide-y divide-gray-300 p-10;
+    @apply flex min-h-screen flex-col gap-4 divide-y divide-gray-300 p-4 lg:p-10;
   }
 
   .header {
@@ -71,7 +71,7 @@ const pageTitle = title ? `${title} | ${TITLE}` : TITLE;
       </div>
     </div>
 
-    <div class="relative flex h-full grow flex-col">
+    <div class="relative flex min-h-full grow flex-col">
       <slot />
     </div>
   </div>
