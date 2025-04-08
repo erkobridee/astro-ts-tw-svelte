@@ -1,15 +1,25 @@
 <script lang="ts">
   import type {
+    AggregationLevelSelectionClick,
+    AggregationLevelSelectionLayouts
+  } from '~/components/apache-echarts/energy-use-case/AggregationLevelSelection';
+  import type {
     Aggregations,
     Units,
     TimeSerie,
+    ElectricityTimeserieData,
     ElectricityData
   } from '~/utils/timeseries';
+
+  import dayjs from 'dayjs';
 
   import EnergyChart, {
     type EnergyChartTypes,
     EnergyChartType
   } from '~/components/apache-echarts/energy-use-case/charts/EnergyChart/EnergyChart.svelte';
+  import AggregationLevelSelection, {
+    AggregationLevelSelectionLayout
+  } from '~/components/apache-echarts/energy-use-case/AggregationLevelSelection';
 
   import Toggle from '~/components/apache-echarts/Toggle.svelte';
   import ButtonsToggle from '~/components/apache-echarts/ButtonsToggle.svelte';
@@ -20,8 +30,8 @@
     COLOR_ELECTRICITY_CONSUMPTION
   } from '~/components/apache-echarts/energy-use-case/charts/common';
 
-  import { Unit, Aggregation } from '~/utils/timeseries';
-  import { formatDate /*, formatDayStringId */ } from '~/utils/format';
+  import { EnergyType, Unit, Aggregation } from '~/utils/timeseries';
+  import { formatDate, formatDayStringId } from '~/utils/format';
 
   //--------------------------------------------------------------------------//
 
@@ -49,7 +59,10 @@
   let color = [COLOR_ELECTRICITY_CONSUMPTION];
   let labels: string[] = ['Consumption', 'Exceedance'];
   let unit: Units = Unit.KWH;
+
   let aggregation: Aggregations = Aggregation.MONTH;
+  let aggregationSelectionLayout: AggregationLevelSelectionLayouts =
+    AggregationLevelSelectionLayout.YEAR;
 
   let showAverage = false;
   let dataStartedAt: string;
@@ -67,47 +80,133 @@
     dataStartedAt = timeseries[0].startedAt;
     color = COLORS_MAP[type];
     labels = LABELS_MAP[type];
+
+    // TODO: remove
+    console.log('ElectricityConsumption.onData', data);
+  };
+
+  //---//
+
+  const readTimeseries = <T = TimeSerie,>(
+    data: ElectricityTimeserieData<T>
+  ) => {
+    const dataType =
+      type === EnergyChartType.REPARTITION ? 'repartition' : 'plain';
+    return data[dataType];
   };
 
   //---//
 
   const onTypeChange = (selectedType: string) => {
     type = selectedType as EnergyChartTypes;
+    unit = Unit.KWH;
 
     showAverage = false;
+    aggregation = Aggregation.MONTH;
+    aggregationSelectionLayout = AggregationLevelSelectionLayout.YEAR;
 
-    updateTimeseries();
-  };
-
-  //---//
-
-  const updateTimeseries = () => {
-    unit = aggregation === Aggregation.MINUTES ? Unit.KW : Unit.KWH;
-
-    timeseries =
-      data.months[
-        type === EnergyChartType.REPARTITION ? 'repartition' : 'plain'
-      ];
-
+    timeseries = readTimeseries(data.months);
     dataStartedAt = timeseries[0].startedAt;
 
     color = COLORS_MAP[type];
     labels = LABELS_MAP[type];
-
-    // TODO: remove
-    console.log('ElectricityConsumption.updateTimeseries', {
-      type,
-      aggregation,
-      color,
-      labels,
-      data
-    });
   };
 
   //--------------------------------------------------------------------------//
 
+  const onAggregationLevelSelectionClick: AggregationLevelSelectionClick = (
+    selectedAggregation,
+    selectedLayout
+  ) => {
+    unit = Unit.KWH;
+
+    if (selectedLayout === AggregationLevelSelectionLayout.YEAR) {
+      switch (selectedAggregation) {
+        case Aggregation.MONTH:
+          timeseries = readTimeseries(data.months);
+          break;
+        case Aggregation.WEEK:
+          timeseries = readTimeseries(data.weeks);
+          break;
+      }
+
+      dataStartedAt = timeseries[0].startedAt;
+      aggregation = selectedAggregation;
+      aggregationSelectionLayout = selectedLayout;
+
+      return;
+    }
+
+    const stringId = formatDayStringId(dayjs(dataStartedAt).startOf('month'));
+    switch (selectedAggregation) {
+      case Aggregation.WEEK:
+        timeseries = readTimeseries(data.weeksMap[stringId]);
+        break;
+      case Aggregation.DAY:
+        timeseries = readTimeseries(data.daysMap[stringId]);
+        break;
+      case Aggregation.HOUR:
+        timeseries = readTimeseries(data.hoursMap[stringId]);
+        break;
+    }
+
+    dataStartedAt = timeseries[0].startedAt;
+    aggregation = selectedAggregation;
+    aggregationSelectionLayout = selectedLayout;
+  };
+
   const onChartClick = (timeserie: TimeSerie) => {
-    console.log('ElectricityConsumption.onChartClick timeserie:', timeserie);
+    const { startedAt } = timeserie;
+    let stringId = formatDayStringId(startedAt);
+
+    // TODO: remove
+    console.log('ElectricityConsumption.onChartClick timeserie', timeserie);
+
+    if (aggregationSelectionLayout === AggregationLevelSelectionLayout.YEAR) {
+      switch (aggregation) {
+        case Aggregation.MONTH:
+          aggregation = Aggregation.WEEK;
+          timeseries = readTimeseries(data.weeksMap[stringId]);
+          break;
+        case Aggregation.WEEK:
+          stringId = formatDayStringId(dayjs(startedAt).startOf('month'));
+          aggregation = Aggregation.DAY;
+          timeseries = readTimeseries(data.daysMap[stringId]);
+          break;
+      }
+
+      dataStartedAt = timeseries[0].startedAt;
+      aggregationSelectionLayout = AggregationLevelSelectionLayout.MONTH;
+
+      return;
+    }
+
+    switch (aggregation) {
+      case Aggregation.WEEK:
+        stringId = formatDayStringId(dayjs(startedAt).startOf('month'));
+        aggregation = Aggregation.DAY;
+        timeseries = readTimeseries(data.daysMap[stringId]);
+        break;
+      case Aggregation.DAY:
+        aggregation = Aggregation.HOUR;
+        timeseries = readTimeseries(data.hoursMap[stringId]);
+        break;
+      case Aggregation.HOUR:
+        aggregation = Aggregation.MINUTES;
+        timeseries = readTimeseries(data.minutesMap[stringId]);
+        unit = Unit.KW;
+        break;
+    }
+
+    dataStartedAt = timeseries[0].startedAt;
+
+    if (
+      ([Aggregation.HOUR, Aggregation.MINUTES] as string[]).includes(
+        aggregation
+      )
+    ) {
+      aggregationSelectionLayout = AggregationLevelSelectionLayout.DAY;
+    }
   };
 </script>
 
@@ -124,7 +223,12 @@
       onclick={onChartClick}
     >
       <svelte:fragment slot="headerActions">
-        Electricity Consumption header actions
+        <AggregationLevelSelection
+          {aggregation}
+          energyType={EnergyType.ELECTRICITY}
+          layout={aggregationSelectionLayout}
+          onclick={onAggregationLevelSelectionClick}
+        />
       </svelte:fragment>
 
       <svelte:fragment slot="footer">

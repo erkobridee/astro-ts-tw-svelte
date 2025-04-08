@@ -54,7 +54,14 @@
       }
     ];
 
-    if (layout === AggregationLevelSelectionLayout.MONTH) {
+    if (
+      (
+        [
+          AggregationLevelSelectionLayout.MONTH,
+          AggregationLevelSelectionLayout.DAY
+        ] as string[]
+      ).includes(layout)
+    ) {
       monthLevelButtons = [
         {
           label: 'Weeks',
@@ -100,16 +107,19 @@
             Aggregation.HOUR,
             AggregationLevelSelectionLayout.DAY
           )
-        },
-        {
+        }
+      ];
+
+      if (aggregation === Aggregation.MINUTES) {
+        dayLevelButtons.push({
           label: 'Minutes',
           isSelected: aggregation === Aggregation.MINUTES,
           onclick: onInnerClick(
             Aggregation.MINUTES,
             AggregationLevelSelectionLayout.DAY
           )
-        }
-      ];
+        });
+      }
     }
   };
 
