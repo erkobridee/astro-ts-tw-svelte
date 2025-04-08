@@ -7,6 +7,8 @@
 
   export type EnergyChartTypeKeys = keyof typeof EnergyChartType;
   export type EnergyChartTypes = (typeof EnergyChartType)[EnergyChartTypeKeys];
+
+  export type { ChartDataZoomOptions } from './BaseColumnsChart.svelte';
 </script>
 
 <script lang="ts">

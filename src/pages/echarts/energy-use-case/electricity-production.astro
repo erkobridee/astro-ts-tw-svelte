@@ -3,15 +3,11 @@ import Layout from '~/layouts/ApacheEChartsLayout.astro';
 
 import Example from '~/components/apache-echarts/energy-use-case/ElectricityProduction.svelte';
 
-import {
-  type TimeSerie,
-  generateElectricityProductionDayData
-} from '~/utils/timeseries';
+import { generateElectricityProductionData } from '~/utils/timeseries';
 
-const timeseries: TimeSerie[] =
-  generateElectricityProductionDayData().minutes.plain;
+const data = generateElectricityProductionData();
 ---
 
 <Layout title="Energy Use Case - Electricity Production">
-  <Example {timeseries} client:load />
+  <Example {data} client:load />
 </Layout>
