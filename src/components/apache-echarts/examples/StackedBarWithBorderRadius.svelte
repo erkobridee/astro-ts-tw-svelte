@@ -101,7 +101,22 @@
         const info = stackInfo[stackName];
         const data = serie.data![i];
 
-        if (data && data !== EMPTY_ENTRY) {
+        // https://echarts.apache.org/en/option.html#series-bar.data
+        // empty value: '-' or null or undefined or NaN
+        const isPresent = (() => {
+          if (!data || data === null) {
+            return false;
+          }
+
+          switch (typeof data) {
+            case 'number':
+              return !isNaN(data);
+            case 'string':
+              return data !== '-';
+          }
+        })();
+
+        if (isPresent) {
           if (info.stackStart[i] == null) {
             info.stackStart[i] = j;
           }
