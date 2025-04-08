@@ -51,7 +51,7 @@
   //--------------------------------------------------------------------------//
 
   let type: EnergyChartTypes = EnergyChartType.PLAIN;
-  let color = [COLOR_ELECTRICITY_PRODUCTION];
+  let color = COLORS_MAP[type];
   let labels: string[] = LABELS_MAP[type];
   let unit: Units = Unit.KWH;
 
@@ -82,6 +82,9 @@
     dataZoomOptions = {
       showAll: false
     };
+
+    // TODO: remove
+    console.log('ElectricityProduction.onData', data);
   };
 
   //---//

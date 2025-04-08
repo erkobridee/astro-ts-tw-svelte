@@ -37,13 +37,13 @@
 
   const LABELS_MAP = {
     [`${EnergyChartType.PLAIN}`]: ['Consumption', 'Exceedance'],
-    [`${EnergyChartType.PLAIN}_EXCEEDANCE`]: ['Consumption', 'Exceedance'],
+    [`${EnergyChartType.EXCEEDANCE}`]: ['Consumption', 'Exceedance'],
     [`${EnergyChartType.REPARTITION}`]: ['Shared with me', 'Bought from market']
   };
 
   const COLORS_MAP = {
     [`${EnergyChartType.PLAIN}`]: [COLOR_ELECTRICITY_CONSUMPTION],
-    [`${EnergyChartType.PLAIN}_EXCEEDANCE`]: [
+    [`${EnergyChartType.EXCEEDANCE}`]: [
       COLOR_ELECTRICITY_CONSUMPTION,
       COLOR_ELECTRICITY_EXCEEDANCE
     ],
@@ -56,8 +56,8 @@
   //--------------------------------------------------------------------------//
 
   let type: EnergyChartTypes = EnergyChartType.PLAIN;
-  let color = [COLOR_ELECTRICITY_CONSUMPTION];
-  let labels: string[] = ['Consumption', 'Exceedance'];
+  let color = COLORS_MAP[type];
+  let labels: string[] = LABELS_MAP[type];
   let unit: Units = Unit.KWH;
 
   let aggregation: Aggregations = Aggregation.MONTH;
@@ -76,6 +76,7 @@
     type = EnergyChartType.PLAIN;
     unit = Unit.KWH;
     aggregation = Aggregation.MONTH;
+    aggregationSelectionLayout = AggregationLevelSelectionLayout.YEAR;
     timeseries = data.months.plain;
     dataStartedAt = timeseries[0].startedAt;
     color = COLORS_MAP[type];
