@@ -128,9 +128,11 @@
       </svelte:fragment>
 
       <svelte:fragment slot="footer">
-        <div class="flex items-center justify-between pt-2">
-          <div class="flex items-center gap-4">
-            <div class="flex items-center gap-2">
+        <div
+          class="flex flex-col-reverse items-center gap-4 py-4 lg:flex-row lg:justify-between lg:gap-0 lg:py-2"
+        >
+          <div class="flex flex-col items-center gap-4 lg:flex-row">
+            <div class="flex flex-col items-center gap-2 md:flex-row">
               <span>Consumption</span>
 
               <ButtonsToggle
