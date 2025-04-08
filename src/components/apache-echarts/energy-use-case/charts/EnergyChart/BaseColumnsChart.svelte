@@ -165,6 +165,9 @@
 
   //--------------------------------------------------------------------------//
 
+  const CLICK_EVENT = 'click';
+  const MOUSE_EVENT = 'mousemove';
+
   export let isTinyScreen = false;
 
   export let chartOptions: ChartOptions;
@@ -175,6 +178,9 @@
   let options: EChartsOption = {};
 
   let chartContainerDOMRect: DOMRectReadOnly | undefined = undefined;
+
+  let barName = '';
+  let barOverName = '';
 
   //--------------------------------------------------------------------------//
 
@@ -196,6 +202,9 @@
       yAxisLabelFormatter = (value) => formatNumber(value),
       tooltipFormatter
     } = chartOptions;
+
+    barName = '';
+    barOverName = '';
 
     isTinyScreen = (() => {
       if (!chartContainerDOMRect) {
@@ -299,12 +308,6 @@
 
   //--------------------------------------------------------------------------//
 
-  const CLICK_EVENT = 'click';
-  const MOUSE_EVENT = 'mousemove';
-
-  let barName = '';
-  let barOverName = '';
-
   const onInnerMouseDef: ChartMouseMove = (event) => {
     if (!isTinyScreen || event.event?.type !== MOUSE_EVENT) {
       return;
@@ -313,13 +316,15 @@
     barOverName = event.name;
   };
 
-  const onInnerMouse = debounce(onInnerMouseDef);
+  const onInnerMouse = debounce(onInnerMouseDef, 500);
 
   const onInnerClick: ChartClick = (event) => {
     if (!isTinyScreen) {
       onclick(event);
       return;
     }
+
+    onInnerMouse.cleanup();
 
     /*
       on mobile screens, the first click won't call the event handler function from the
@@ -332,9 +337,10 @@
       (barName && currentBarName === barName) ||
       (barOverName && currentBarName === barOverName)
     ) {
-      onclick(event);
       barName = '';
       barOverName = '';
+
+      onclick(event);
       return;
     }
 
