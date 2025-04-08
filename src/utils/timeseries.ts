@@ -3,10 +3,14 @@ import type { DateParamType } from '~/utils/format';
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 
-import { getRandomInt, getRandomFloat, getRandomDecimal } from '~/utils/random';
+import {
+  getRandomBoolean,
+  getRandomInt,
+  getRandomFloat,
+  getRandomDecimal
+} from '~/utils/random';
 import {
   DEFAULT_MAXIMUM_FRACTION_DIGITS,
-  formatMonthStringId,
   formatDayStringId,
   formatHourStringId
 } from '~/utils/format';
@@ -54,6 +58,16 @@ export const EMPTY_TIMESERIE: TimeSerie = {
   endedAt: '',
   value: 0
 };
+
+//----------------------------------------------------------------------------//
+
+const valuePercentage = (value: number, percente: number) =>
+  percente <= 0 ? value : value * (percente / 100);
+
+/*
+const Percentage = (value: number, percente: number) =>
+  percente <= 0 ? value : value + valuePercentage(value, percente);
+*/
 
 //----------------------------------------------------------------------------//
 
@@ -445,12 +459,25 @@ export interface ElectricityData {
 export const buildElectricityRepartitionTimeseries = (
   { startedAt, endedAt, value }: TimeSerie,
   anotherValue: number
-): TimeSerie => ({
-  startedAt,
-  endedAt,
-  value: anotherValue,
-  anotherValue: value - anotherValue
-});
+): TimeSerie => {
+  const newAnotherValue = value - anotherValue;
+
+  if (newAnotherValue < 0) {
+    return {
+      startedAt,
+      endedAt,
+      value: 0,
+      anotherValue: newAnotherValue
+    };
+  }
+
+  return {
+    startedAt,
+    endedAt,
+    value: anotherValue,
+    anotherValue: newAnotherValue
+  };
+};
 
 //---//
 
@@ -481,7 +508,6 @@ export const generateElectricityDayData = (
 
   let hour: TimeSerie = EMPTY_TIMESERIE;
 
-  let quarterCount = 0;
   let totalQuarterValue = 0;
   let totalQuarterAnotherValue = 0;
 
@@ -500,27 +526,29 @@ export const generateElectricityDayData = (
       .endOf('s')
       .format();
 
-    if (quarterCount === 0) {
-      hour = EMPTY_TIMESERIE;
-    } else if (quarterCount === 3) {
-      hour.endedAt = endedAt;
-      hour.value = totalQuarterValue;
-
-      consumptionDayData.hours.plain.push(hour);
-      consumptionDayData.hours.repartition.push(
-        buildElectricityRepartitionTimeseries(hour, totalQuarterAnotherValue)
-      );
-
-      totalQuarterValue = 0;
-      totalQuarterAnotherValue = 0;
-    }
-
     totalDayValue += value;
     totalDayAnotherValue += anotherValue;
 
     totalQuarterValue += value;
     totalQuarterAnotherValue += anotherValue;
-    quarterCount++;
+
+    switch (startDate.format('mm')) {
+      case '00':
+        hour = { ...EMPTY_TIMESERIE, startedAt };
+        break;
+      case '45':
+        hour.endedAt = endedAt;
+        hour.value = totalQuarterValue;
+
+        consumptionDayData.hours.plain.push(hour);
+        consumptionDayData.hours.repartition.push(
+          buildElectricityRepartitionTimeseries(hour, totalQuarterAnotherValue)
+        );
+
+        totalQuarterValue = 0;
+        totalQuarterAnotherValue = 0;
+        break;
+    }
 
     const minute: TimeSerie = {
       startedAt,
@@ -757,12 +785,9 @@ export const generateElectricityConsumptionValues: GenerateElectricityValues = (
 
   const value = getRandomFloat(min, max);
 
-  const baseCalcValue = Math.floor(value / getRandomInt(5, 10));
-
-  const anotherValue = getRandomFloat(
-    0,
-    baseCalcValue * (getRandomInt(1, 3) / 5)
-  );
+  const anotherValue = getRandomBoolean()
+    ? valuePercentage(value, getRandomInt(10, 30))
+    : 0;
 
   return [value, anotherValue];
 };
