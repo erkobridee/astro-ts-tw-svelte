@@ -11,6 +11,7 @@
     EnergyChartType
   } from '~/components/apache-echarts/energy-use-case/charts/EnergyChart/EnergyChart.svelte';
 
+  import Toggle from '~/components/apache-echarts/Toggle.svelte';
   import ButtonsToggle from '~/components/apache-echarts/ButtonsToggle.svelte';
 
   import {
@@ -50,6 +51,7 @@
   let unit: Units = Unit.KWH;
   let aggregation: Aggregations = Aggregation.MONTH;
 
+  let showAverage = false;
   let dataStartedAt: string;
   let timeseries: TimeSerie[] = [];
 
@@ -71,6 +73,8 @@
 
   const onTypeChange = (selectedType: string) => {
     type = selectedType as EnergyChartTypes;
+
+    showAverage = false;
 
     updateTimeseries();
   };
@@ -116,6 +120,7 @@
       {unit}
       {aggregation}
       {timeseries}
+      showAverageMarkline={showAverage}
       onclick={onChartClick}
     >
       <svelte:fragment slot="headerActions">
@@ -124,23 +129,33 @@
 
       <svelte:fragment slot="footer">
         <div class="flex items-center justify-between pt-2">
-          <div class="flex items-center gap-2">
-            <span>Consumption</span>
+          <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2">
+              <span>Consumption</span>
 
-            <ButtonsToggle
-              name="buttons-toggle"
-              selected={type}
-              onchange={onTypeChange}
-              list={[
-                { label: 'Measured', value: EnergyChartType.PLAIN },
-                { label: 'Repartition', value: EnergyChartType.REPARTITION },
-                {
-                  label: 'Exceedance',
-                  value: EnergyChartType.EXCEEDANCE,
-                  disabled: true
-                }
-              ]}
-            />
+              <ButtonsToggle
+                name="buttons-toggle"
+                selected={type}
+                onchange={onTypeChange}
+                list={[
+                  { label: 'Measured', value: EnergyChartType.PLAIN },
+                  { label: 'Repartition', value: EnergyChartType.REPARTITION },
+                  {
+                    label: 'Exceedance',
+                    value: EnergyChartType.EXCEEDANCE,
+                    disabled: true
+                  }
+                ]}
+              />
+            </div>
+
+            {#if type === EnergyChartType.PLAIN}
+              <Toggle
+                id="showAverageToggle"
+                label="show average mark line"
+                bind:checked={showAverage}
+              />
+            {/if}
           </div>
 
           <div class="flex items-center gap-1 text-sm">
