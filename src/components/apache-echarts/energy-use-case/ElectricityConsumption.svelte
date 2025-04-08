@@ -11,6 +11,8 @@
     EnergyChartType
   } from '~/components/apache-echarts/energy-use-case/charts/EnergyChart/EnergyChart.svelte';
 
+  import Toggle from '~/components/apache-echarts/Toggle.svelte';
+
   import {
     COLOR_ELECTRICITY_EXCEEDANCE,
     COLOR_ELECTRICITY_SHARED,
@@ -18,6 +20,7 @@
   } from '~/components/apache-echarts/energy-use-case/charts/common';
 
   import { Unit, Aggregation } from '~/utils/timeseries';
+  import { formatDate /*, formatDayStringId */ } from '~/utils/format';
 
   //--------------------------------------------------------------------------//
 
@@ -44,25 +47,63 @@
   let type: EnergyChartTypes = EnergyChartType.PLAIN;
   let color = [COLOR_ELECTRICITY_CONSUMPTION];
   let labels: string[] = ['Consumption', 'Exceedance'];
-  let unit: Units = Unit.KW;
-  let aggregation: Aggregations = Aggregation.MINUTES;
+  let unit: Units = Unit.KWH;
+  let aggregation: Aggregations = Aggregation.MONTH;
+
+  let dataStartedAt: string;
   let timeseries: TimeSerie[] = [];
 
   export let data: ElectricityData;
 
-  $: updateTimeSeries(data);
+  $: onData(data);
 
-  const updateTimeSeries = (data: ElectricityData) => {
-    // TODO: remove
-    console.log('ElectricityConsumption.updateTimeSeries', data);
-
+  const onData = (data: ElectricityData) => {
+    type = EnergyChartType.PLAIN;
     unit = Unit.KWH;
     aggregation = Aggregation.MONTH;
-    timeseries = data.months.repartition;
-    type = EnergyChartType.REPARTITION;
+    timeseries = data.months.plain;
+    dataStartedAt = timeseries[0].startedAt;
+    color = COLORS_MAP[type];
+    labels = LABELS_MAP[type];
+  };
+
+  //---//
+
+  let isRepartitionSelected = false;
+
+  $: updateType(isRepartitionSelected);
+
+  const updateType = (isRepartitionSelected: boolean) => {
+    type = isRepartitionSelected
+      ? EnergyChartType.REPARTITION
+      : EnergyChartType.PLAIN;
+
+    updateTimeseries();
+  };
+
+  //---//
+
+  const updateTimeseries = () => {
+    unit = aggregation === Aggregation.MINUTES ? Unit.KW : Unit.KWH;
+
+    timeseries =
+      data.months[
+        type === EnergyChartType.REPARTITION ? 'repartition' : 'plain'
+      ];
+
+    dataStartedAt = timeseries[0].startedAt;
 
     color = COLORS_MAP[type];
     labels = LABELS_MAP[type];
+
+    // TODO: remove
+    console.log('ElectricityConsumption.updateTimeseries', {
+      type,
+      aggregation,
+      color,
+      labels,
+      data
+    });
   };
 
   //--------------------------------------------------------------------------//
@@ -87,7 +128,25 @@
         Electricity Consumption header actions
       </svelte:fragment>
 
-      <svelte:fragment slot="footer">Footer Row</svelte:fragment>
+      <svelte:fragment slot="footer">
+        <div class="flex items-center justify-between pt-2">
+          <div class="flex items-center gap-2">
+            <span>Consumption</span>
+
+            <Toggle
+              id="chartTypeToggle"
+              layout="labels"
+              label={['Measured', 'Repartition']}
+              bind:checked={isRepartitionSelected}
+            />
+          </div>
+
+          <div class="flex items-center gap-1 text-sm">
+            <span>Data started at:</span>
+            <span class="font-semibold">{formatDate(dataStartedAt)}</span>
+          </div>
+        </div>
+      </svelte:fragment>
     </EnergyChart>
   </div>
 </div>

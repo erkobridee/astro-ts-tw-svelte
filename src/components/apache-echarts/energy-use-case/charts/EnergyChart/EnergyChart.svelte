@@ -371,7 +371,21 @@
 <div class="flex min-h-full grow flex-col gap-2">
   <div class="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:justify-between">
     <div class="flex justify-center gap-4 md:items-center md:justify-start">
-      {#if timeseries.length > 0}
+      {#if Array.isArray(labels)}
+        {#each labels as label, index (index)}
+          {@const totalValue = totalValues[index]}
+
+          {#if !isNaN(totalValue)}
+            <DisplayTotal
+              {label}
+              value={totalValues[index]}
+              valueColor={getColor(index)}
+              {unit}
+              {maximumFractionDigits}
+            />
+          {/if}
+        {/each}
+      {:else}
         <DisplayTotal
           label={getLabel(0)}
           value={totalValues[0]}
@@ -379,16 +393,6 @@
           {unit}
           {maximumFractionDigits}
         />
-
-        {#if totalValues[1]}
-          <DisplayTotal
-            label={getLabel(1)}
-            value={totalValues[1]}
-            valueColor={getColor(1)}
-            {unit}
-            {maximumFractionDigits}
-          />
-        {/if}
       {/if}
     </div>
 
