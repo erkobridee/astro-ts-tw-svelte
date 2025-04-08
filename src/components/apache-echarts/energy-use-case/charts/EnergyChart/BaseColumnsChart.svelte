@@ -311,10 +311,17 @@
       series: addBorderRadiusToBars(series)
     };
 
-    if (isTinyScreen && categoriesLenght > 12) {
+    const sliderWindowSize = 12;
+    if (isTinyScreen && categoriesLenght > sliderWindowSize) {
       grid.bottom = 55;
 
-      const startValue = categories[categoriesLenght - 13];
+      // the minimum amount to display should be the halp of slider window size value
+      const total = categoriesLenght;
+      const value = sliderWindowSize / 2;
+      const minSpan = (value * 100) / total;
+
+      const lastIndex = categoriesLenght - 1;
+      const startValue = categories[lastIndex - sliderWindowSize];
       const end = 100;
 
       // https://echarts.apache.org/en/option.html#dataZoom
@@ -322,13 +329,15 @@
         {
           type: 'inside',
           startValue,
-          end
+          end,
+          minSpan
         },
         {
           show: true,
           type: 'slider',
           startValue,
           end,
+          minSpan,
           labelFormatter: dataZoomLabelFormatter
         }
       ];
