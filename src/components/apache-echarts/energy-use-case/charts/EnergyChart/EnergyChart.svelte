@@ -1,7 +1,8 @@
 <script lang="ts" context="module">
   export const EnergyChartType = {
     PLAIN: 'PLAIN',
-    REPARTITION: 'REPARTITION'
+    REPARTITION: 'REPARTITION',
+    EXCEEDANCE: 'EXCEEDANCE'
   } as const satisfies Record<string, string>;
 
   export type EnergyChartTypeKeys = keyof typeof EnergyChartType;

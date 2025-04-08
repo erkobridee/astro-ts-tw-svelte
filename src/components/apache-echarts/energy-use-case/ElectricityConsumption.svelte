@@ -11,7 +11,7 @@
     EnergyChartType
   } from '~/components/apache-echarts/energy-use-case/charts/EnergyChart/EnergyChart.svelte';
 
-  import Toggle from '~/components/apache-echarts/Toggle.svelte';
+  import ButtonsToggle from '~/components/apache-echarts/ButtonsToggle.svelte';
 
   import {
     COLOR_ELECTRICITY_EXCEEDANCE,
@@ -69,14 +69,8 @@
 
   //---//
 
-  let isRepartitionSelected = false;
-
-  $: updateType(isRepartitionSelected);
-
-  const updateType = (isRepartitionSelected: boolean) => {
-    type = isRepartitionSelected
-      ? EnergyChartType.REPARTITION
-      : EnergyChartType.PLAIN;
+  const onTypeChange = (selectedType: string) => {
+    type = selectedType as EnergyChartTypes;
 
     updateTimeseries();
   };
@@ -133,11 +127,19 @@
           <div class="flex items-center gap-2">
             <span>Consumption</span>
 
-            <Toggle
-              id="chartTypeToggle"
-              layout="labels"
-              label={['Measured', 'Repartition']}
-              bind:checked={isRepartitionSelected}
+            <ButtonsToggle
+              name="buttons-toggle"
+              selected={type}
+              onchange={onTypeChange}
+              list={[
+                { label: 'Measured', value: EnergyChartType.PLAIN },
+                { label: 'Repartition', value: EnergyChartType.REPARTITION },
+                {
+                  label: 'Exceedance',
+                  value: EnergyChartType.EXCEEDANCE,
+                  disabled: true
+                }
+              ]}
             />
           </div>
 
