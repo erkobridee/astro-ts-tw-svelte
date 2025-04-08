@@ -359,13 +359,7 @@
 
   //--------------------------------------------------------------------------//
 
-  // TODO: review
   const onChartClick: ChartClick = (event) => {
-    console.log('EnergyChart.onChartClick', {
-      isDrilldownEnabled,
-      event
-    });
-
     if (!event.data) {
       return;
     }
