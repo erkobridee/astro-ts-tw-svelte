@@ -875,7 +875,9 @@ export const generateElectricityProductionValues =
     );
 
     const value = getRandomFloat(min, max);
-    const anotherValue = getRandomFloat(0, value * (getRandomInt(4, 8) / 10));
+    const anotherValue = getRandomBoolean()
+      ? valuePercentage(value, getRandomInt(10, 60))
+      : 0;
 
     return [value, anotherValue];
   };

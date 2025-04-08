@@ -19,14 +19,23 @@
 
   //--------------------------------------------------------------------------//
 
-  export type ChartXAxisLabelFormatter = (value: string) => string;
-  export type ChartYAxisLabelFormatter = (value: number) => string;
-  export type ChartTooltipFormatter =
-    TooltipComponentFormatterCallback<TooltipComponentFormatterCallbackParams>;
+  export interface ChartDataZoomOptions {
+    show?: boolean;
+    windowSize?: number;
+    minWindowSize?: number;
+
+    /** once defining the data zoom if it's true that will selectt all the slider */
+    showAll?: boolean;
+  }
   export type ChartDataZoomLabelFormatter = (
     value: number,
     valueStr: string
   ) => string;
+
+  export type ChartXAxisLabelFormatter = (value: string) => string;
+  export type ChartYAxisLabelFormatter = (value: number) => string;
+  export type ChartTooltipFormatter =
+    TooltipComponentFormatterCallback<TooltipComponentFormatterCallbackParams>;
 
   export interface ChartOptions {
     color: string[];
@@ -39,8 +48,18 @@
     xAxisLabelFormatter?: string | ChartXAxisLabelFormatter;
     yAxisLabelFormatter?: string | ChartYAxisLabelFormatter;
     tooltipFormatter?: string | ChartTooltipFormatter;
+
     dataZoomLabelFormatter?: string | ChartDataZoomLabelFormatter;
+    dataZoomOptions?: ChartDataZoomOptions;
   }
+
+  //--------------------------------------------------------------------------//
+
+  export const DEFAULT_DATA_ZOOM_OPTIONS: ChartDataZoomOptions = {
+    show: false,
+    windowSize: 12,
+    showAll: false
+  };
 
   //--------------------------------------------------------------------------//
 
@@ -205,8 +224,18 @@
       xAxisLabelFormatter,
       yAxisLabelFormatter = (value) => formatNumber(value),
       tooltipFormatter,
-      dataZoomLabelFormatter
+      dataZoomLabelFormatter,
+      dataZoomOptions = {}
     } = chartOptions;
+
+    const {
+      show: dataZoomShow = DEFAULT_DATA_ZOOM_OPTIONS.show!,
+      windowSize: dataZoomWindowSize = DEFAULT_DATA_ZOOM_OPTIONS.windowSize!,
+      minWindowSize: dataZoomMinWindowSize = dataZoomWindowSize
+        ? Math.floor(dataZoomWindowSize / 2)
+        : undefined,
+      showAll: dataZoomShowAll = DEFAULT_DATA_ZOOM_OPTIONS.showAll!
+    } = dataZoomOptions as Required<ChartDataZoomOptions>;
 
     barName = '';
     barOverName = '';
@@ -311,18 +340,24 @@
       series: addBorderRadiusToBars(series)
     };
 
-    const sliderWindowSize = 12;
-    if (isTinyScreen && categoriesLenght > sliderWindowSize) {
+    if (
+      dataZoomShow ||
+      (isTinyScreen && categoriesLenght > dataZoomWindowSize)
+    ) {
       grid.bottom = 55;
 
       // the minimum amount to display should be the halp of slider window size value
-      const total = categoriesLenght;
-      const value = sliderWindowSize / 2;
-      const minSpan = (value * 100) / total;
+      const minSpan = dataZoomMinWindowSize
+        ? (dataZoomMinWindowSize * 100) / categoriesLenght
+        : undefined;
 
-      const lastIndex = categoriesLenght - 1;
-      const startValue = categories[lastIndex - sliderWindowSize];
       const end = 100;
+      let startValue = categories[0];
+
+      if (!dataZoomShowAll) {
+        const lastIndex = categoriesLenght - 1;
+        startValue = categories[lastIndex - dataZoomWindowSize];
+      }
 
       // https://echarts.apache.org/en/option.html#dataZoom
       options.dataZoom = [

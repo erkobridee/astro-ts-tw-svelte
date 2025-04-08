@@ -22,7 +22,10 @@
     TimeSerieBarClick,
     MarkLineOptions
   } from '~/components/apache-echarts/energy-use-case/charts/common';
-  import type { ChartOptions } from './BaseColumnsChart.svelte';
+  import type {
+    ChartOptions,
+    ChartDataZoomOptions
+  } from './BaseColumnsChart.svelte';
 
   import { Unit, Aggregation } from '~/utils/timeseries';
   import {
@@ -50,6 +53,7 @@
   type ColorProp = string | string[];
   type ReferencePowerProp = ReferencePower[] | ReferencePower | undefined;
   type LabelProp = string[] | string;
+  type DataZoomOptionsProp = ChartDataZoomOptions | undefined;
 
   //---//
 
@@ -63,6 +67,7 @@
   export let unit: Units = Unit.UNDEFINED;
   export let aggregation: Aggregations = Aggregation.UNDEFINED;
   export let maximumFractionDigits: number = DEFAULT_MAXIMUM_FRACTION_DIGITS;
+  export let dataZoomOptions: DataZoomOptionsProp = undefined;
 
   export let color: ColorProp = COLOR_DEFAULT;
 
@@ -90,6 +95,7 @@
     // xAxisLabelFormatter
     // tooltipFormatter
     // dataZoomLabelFormatter
+    // dataZoomOptions
   };
 
   //--------------------------------------------------------------------------//
@@ -100,6 +106,7 @@
     unit,
     aggregation,
     maximumFractionDigits,
+    dataZoomOptions,
     color,
     timeseries,
     referencePower,
@@ -112,6 +119,7 @@
     unit: Units,
     aggregation: Aggregations,
     maximumFractionDigits: number,
+    dataZoomOptions: DataZoomOptionsProp,
     color: ColorProp,
     timeseries: TimeSerie[],
     referencePower: ReferencePowerProp,
@@ -322,6 +330,7 @@
     };
 
     chartOptions.dataZoomLabelFormatter = (_, value) => formatAxisLabel(value);
+    chartOptions.dataZoomOptions = dataZoomOptions;
   };
 
   //--------------------------------------------------------------------------//

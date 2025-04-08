@@ -23,6 +23,9 @@
     <EnergyChart
       {timeseries}
       onclick={onChartClick}
+      dataZoomOptions={{
+        showAll: true
+      }}
       color={COLOR_ELECTRICITY_PRODUCTION}
       unit={Unit.KW}
       aggregation={Aggregation.MINUTES}
