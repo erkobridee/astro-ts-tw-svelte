@@ -137,7 +137,7 @@
       return;
     }
 
-    const stringId = formatDayStringId(dayjs(dataStartedAt).startOf('month'));
+    let stringId = formatDayStringId(dayjs(dataStartedAt).startOf('month'));
     switch (selectedAggregation) {
       case Aggregation.WEEK:
         timeseries = readTimeseries(data.weeksMap[stringId]);
@@ -146,6 +146,7 @@
         timeseries = readTimeseries(data.daysMap[stringId]);
         break;
       case Aggregation.HOUR:
+        stringId = formatDayStringId(dataStartedAt);
         timeseries = readTimeseries(data.hoursMap[stringId]);
         break;
     }
