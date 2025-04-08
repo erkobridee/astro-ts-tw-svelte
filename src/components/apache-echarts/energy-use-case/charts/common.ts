@@ -139,9 +139,13 @@ export const buildTooltipBarItem: BuildTooltipBarItem = ({
 //----------------------------------------------------------------------------//
 
 // https://echarts.apache.org/handbook/en/concepts/event/
+export type ChartMouseMove = (event: ECElementEvent) => void;
+
 export type ChartClick = (event: ECElementEvent) => void;
 
 export const DEFAULT_CHART_CLICK: ChartClick = () => undefined;
+
+//---//
 
 export type TimeSerieBarClick = (timeserie: TimeSerie) => void;
 

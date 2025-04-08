@@ -153,13 +153,15 @@
     COLOR_DEFAULT,
     TINY_SCREEN_MAX_WIDTH,
     TINY_SCREEN_MAX_HEIGHT,
-    type ChartClick
+    type ChartClick,
+    type ChartMouseMove
   } from '~/components/apache-echarts/energy-use-case/charts/common';
 
   import ECharts from '~/components/apache-echarts/ECharts';
   import ChartLoadingSpinner from '~/components/apache-echarts/energy-use-case/charts/ChartLoadingSpinner.svelte';
 
   import { formatNumber } from '~/utils/format';
+  import { debounce } from '~/utils/debounce';
 
   //--------------------------------------------------------------------------//
 
@@ -297,7 +299,21 @@
 
   //--------------------------------------------------------------------------//
 
+  const CLICK_EVENT = 'click';
+  const MOUSE_EVENT = 'mousemove';
+
   let barName = '';
+  let barOverName = '';
+
+  const onInnerMouseDef: ChartMouseMove = (event) => {
+    if (!isTinyScreen || event.event?.type !== MOUSE_EVENT) {
+      return;
+    }
+
+    barOverName = event.name;
+  };
+
+  const onInnerMouse = debounce(onInnerMouseDef);
 
   const onInnerClick: ChartClick = (event) => {
     if (!isTinyScreen) {
@@ -312,25 +328,34 @@
      */
     const currentBarName = event.name;
 
-    if (barName && currentBarName === barName) {
+    if (
+      (barName && currentBarName === barName) ||
+      (barOverName && currentBarName === barOverName)
+    ) {
       onclick(event);
       barName = '';
+      barOverName = '';
       return;
     }
 
     barName = currentBarName;
+    barOverName = '';
   };
 
   onMount(() => {
     // https://echarts.apache.org/en/api.html#echartsInstance.on
-    chart.on('click', onInnerClick);
+    chart.on(CLICK_EVENT, 'series', onInnerClick);
+    chart.on(MOUSE_EVENT, 'series', onInnerMouse);
 
+    // TODO: remove
     console.log('BaseColumnsChart - mounted', { chart });
 
     return () => {
       // https://echarts.apache.org/en/api.html#echartsInstance.off
-      chart.off('click', onInnerClick);
+      chart.off(CLICK_EVENT, onInnerClick);
+      chart.off(MOUSE_EVENT, onInnerMouse);
 
+      // TODO: remove
       console.log('BaseColumnsChart - destroyed', { chart });
     };
   });

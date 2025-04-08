@@ -13,7 +13,7 @@
   export let maximumFractionDigits: number = DEFAULT_MAXIMUM_FRACTION_DIGITS;
 </script>
 
-<div class="flex items-center gap-2">
+<div class="flex flex-col md:flex-row md:items-center md:gap-2">
   <span>{label}</span>
 
   <div class="text-sm font-semibold" style="color: {valueColor};">

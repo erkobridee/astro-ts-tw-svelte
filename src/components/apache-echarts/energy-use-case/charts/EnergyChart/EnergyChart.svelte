@@ -375,10 +375,8 @@
 </script>
 
 <div class="flex min-h-full grow flex-col gap-2">
-  <div
-    class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-0"
-  >
-    <div class="flex items-center gap-4">
+  <div class="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:justify-between">
+    <div class="flex justify-center gap-4 md:items-center md:justify-start">
       {#if timeseries.length > 0}
         <DisplayTotal
           label={getLabel(0)}
@@ -403,7 +401,7 @@
     <div><slot name="headerActions" /></div>
   </div>
 
-  <div class="relative min-h-[300px] grow">
+  <div class="relative min-h-[200px] grow">
     <div class="absolute top-0 right-0 bottom-0 left-0">
       <BaseColumnsChart {chartOptions} onclick={onChartClick} />
     </div>
