@@ -1,5 +1,7 @@
 <script lang="ts">
-  import type { EChartsOption, BarSeriesOption } from 'echarts';
+  import type { EChartsType, EChartsOption, BarSeriesOption } from 'echarts';
+
+  import { onMount } from 'svelte';
 
   import * as echarts from 'echarts';
 
@@ -12,6 +14,10 @@
     DEFAULT_RADIUS_BORDER,
     buildBarItemStyleBorderRadius
   } from '~/components/apache-echarts/common';
+
+  //--------------------------------------------------------------------------//
+
+  let chart: EChartsType;
 
   //---//
 
@@ -196,11 +202,41 @@
     yAxis,
     series
   };
+
+  //--------------------------------------------------------------------------//
+  // https://echarts.apache.org/handbook/en/concepts/event#event-of-component-interaction
+
+  onMount(() => {
+    const onLegendSelectChanged = (params: any) => {
+      // State if legend is selected.
+      const isSelected = params.selected[params.name];
+
+      // print in the console.
+      console.log(
+        (isSelected ? 'Selected' : 'Not Selected') + 'legend' + params.name
+      );
+
+      // print for all legends.
+      console.log('all legends', params.selected);
+
+      console.log(params);
+    };
+
+    chart.on('legendselectchanged', onLegendSelectChanged);
+
+    return () => {
+      chart.off('legendselectchanged', onLegendSelectChanged);
+    };
+  });
 </script>
 
 <div class="relative grow">
   <div class="absolute top-0 right-0 bottom-0 left-0">
-    <ECharts id="stacket-columns-plus-markline" init={echarts.init} {options}
-    ></ECharts>
+    <ECharts
+      id="stacket-columns-plus-markline"
+      init={echarts.init}
+      {options}
+      bind:chart
+    />
   </div>
 </div>
