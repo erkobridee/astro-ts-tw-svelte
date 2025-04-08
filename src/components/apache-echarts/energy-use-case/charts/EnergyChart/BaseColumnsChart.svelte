@@ -22,8 +22,11 @@
   export type ChartXAxisLabelFormatter = (value: string) => string;
   export type ChartYAxisLabelFormatter = (value: number) => string;
   export type ChartTooltipFormatter =
-    | string
-    | TooltipComponentFormatterCallback<TooltipComponentFormatterCallbackParams>;
+    TooltipComponentFormatterCallback<TooltipComponentFormatterCallbackParams>;
+  export type ChartDataZoomLabelFormatter = (
+    value: number,
+    valueStr: string
+  ) => string;
 
   export interface ChartOptions {
     color: string[];
@@ -35,7 +38,8 @@
 
     xAxisLabelFormatter?: string | ChartXAxisLabelFormatter;
     yAxisLabelFormatter?: string | ChartYAxisLabelFormatter;
-    tooltipFormatter?: ChartTooltipFormatter;
+    tooltipFormatter?: string | ChartTooltipFormatter;
+    dataZoomLabelFormatter?: string | ChartDataZoomLabelFormatter;
   }
 
   //--------------------------------------------------------------------------//
@@ -200,7 +204,8 @@
       series,
       xAxisLabelFormatter,
       yAxisLabelFormatter = (value) => formatNumber(value),
-      tooltipFormatter
+      tooltipFormatter,
+      dataZoomLabelFormatter
     } = chartOptions;
 
     barName = '';
@@ -250,6 +255,7 @@
     };
 
     const categoriesLenght = categories.length;
+
     const xAxis: EChartsOption['xAxis'] = {
       type: 'category',
       data: categories,
@@ -258,7 +264,7 @@
         formatter: xAxisLabelFormatter,
         hideOverlap: true,
         showMinLabel:
-          (isTinyScreen && categories.length > 10) || categories.length > 12
+          (isTinyScreen && categoriesLenght > 10) || categoriesLenght > 12
             ? false
             : true
       },
@@ -304,6 +310,29 @@
       yAxis,
       series: addBorderRadiusToBars(series)
     };
+
+    if (isTinyScreen && categoriesLenght > 12) {
+      grid.bottom = 55;
+
+      const startValue = categories[categoriesLenght - 13];
+      const end = 100;
+
+      // https://echarts.apache.org/en/option.html#dataZoom
+      options.dataZoom = [
+        {
+          type: 'inside',
+          startValue,
+          end
+        },
+        {
+          show: true,
+          type: 'slider',
+          startValue,
+          end,
+          labelFormatter: dataZoomLabelFormatter
+        }
+      ];
+    }
   };
 
   //--------------------------------------------------------------------------//

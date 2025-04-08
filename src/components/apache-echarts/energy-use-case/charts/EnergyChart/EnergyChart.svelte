@@ -89,6 +89,7 @@
     series: []
     // xAxisLabelFormatter
     // tooltipFormatter
+    // dataZoomLabelFormatter
   };
 
   //--------------------------------------------------------------------------//
@@ -319,6 +320,8 @@
 
       return content;
     };
+
+    chartOptions.dataZoomLabelFormatter = (_, value) => formatAxisLabel(value);
   };
 
   //--------------------------------------------------------------------------//
