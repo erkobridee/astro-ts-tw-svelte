@@ -28,7 +28,48 @@ export const getRandomIntAsString = (
   strLength = String(max).length
 ) => String(getRandomInt(min, max)).padStart(strLength, '0');
 
-export const getRandomValueInArray = <T>(values: T[], length: number = -1) => {
+//----------------------------------------------------------------------------//
+
+export const getRandomValuesFromArray = <T>(values: T[], maxAmount = 0) => {
+  const output: T[] = [];
+
+  switch (values.length) {
+    case 0:
+      return output;
+    case 1:
+      return values[0];
+  }
+
+  if (values.length < 5) {
+    return values[Math.floor(Math.random() * values.length)];
+  }
+
+  if (maxAmount < 1) {
+    maxAmount = getRandomInt(1, 3);
+  } else if (maxAmount >= values.length) {
+    const max = Math.floor(values.length / 2);
+    maxAmount = getRandomInt(1, max);
+  }
+
+  values = [...values];
+  while (output.length < maxAmount && values.length > 0) {
+    const index = Math.floor(Math.random() * values.length);
+
+    output.push(values[index]);
+
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
+    values.splice(index, 1);
+
+    values = [...values];
+  }
+
+  return output;
+};
+
+export const getRandomValueFromArray = <T>(
+  values: T[],
+  length: number = -1
+) => {
   if (length < 0) {
     length = values.length;
   }
@@ -37,7 +78,7 @@ export const getRandomValueInArray = <T>(values: T[], length: number = -1) => {
 };
 
 // https://www.geeksforgeeks.org/how-to-get-an-object-value-by-key-in-typescript/
-export const getRandomValueInObject = <
+export const getRandomValueFromObject = <
   T extends Object = Object,
   R = T[keyof T]
 >(
@@ -46,7 +87,9 @@ export const getRandomValueInObject = <
   type Keys = keyof typeof fromObject;
 
   const objectKeys = Object.keys(fromObject) as Keys[];
-  const key = getRandomValueInArray(objectKeys);
+  const key = getRandomValueFromArray(objectKeys);
 
   return fromObject[key] as R;
 };
+
+//----------------------------------------------------------------------------//
