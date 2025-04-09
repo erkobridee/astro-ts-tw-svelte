@@ -24,6 +24,7 @@ dayjs.extend(isSameOrBefore);
 export interface ReferencePower {
   /** datetime ISO string */
   startedAt?: string;
+
   value: number;
 }
 
@@ -423,20 +424,14 @@ export interface ElectricityTimeserieData<T = TimeSerie> {
   repartition: T;
 }
 
-export interface ElectricityTimeserieDataMapEntry<T = TimeSerie[]>
-  extends ElectricityTimeserieData<T> {
-  referencePowers: ReferencePower[];
-}
-
 export type ElectricityTimeserieDataMap<T = TimeSerie[]> = Record<
   string,
-  ElectricityTimeserieDataMapEntry<T>
+  ElectricityTimeserieData<T>
 >;
 
 export interface ElectricityDayData {
   day: ElectricityTimeserieData;
 
-  referencePower?: ReferencePower;
   hours: ElectricityTimeserieData<TimeSerie[]>;
   minutes: ElectricityTimeserieData<TimeSerie[]>;
 }
@@ -444,7 +439,6 @@ export interface ElectricityDayData {
 export interface ElectricityMonthData {
   month: ElectricityTimeserieData;
 
-  referencePowers: ReferencePower[];
   weeks: ElectricityTimeserieData<TimeSerie[]>;
   days: ElectricityTimeserieData<TimeSerie[]>;
 
@@ -453,7 +447,6 @@ export interface ElectricityMonthData {
 }
 
 export interface ElectricityData {
-  referencePowers: ReferencePower[];
   months: ElectricityTimeserieData<TimeSerie[]>;
   weeks: ElectricityTimeserieData<TimeSerie[]>;
 
@@ -506,8 +499,6 @@ export const generateElectricityDayData = (
       repartition: EMPTY_TIMESERIE
     },
 
-    // TODO: review
-    referencePower: undefined,
     hours: {
       plain: [],
       repartition: []
@@ -623,8 +614,6 @@ export const generateElectricityMonthData = (
       }
     },
 
-    // TODO: review
-    referencePowers: [],
     weeks: {
       plain: [],
       repartition: []
@@ -655,7 +644,7 @@ export const generateElectricityMonthData = (
 
   do {
     const stringId = formatDayStringId(startDate);
-    const { day, referencePower, hours, minutes } = generateElectricityDayData(
+    const { day, hours, minutes } = generateElectricityDayData(
       startDate,
       generateValues
     );
@@ -681,9 +670,8 @@ export const generateElectricityMonthData = (
     data.days.plain.push(plainDay);
     data.days.repartition.push(repartitionDay);
 
-    const referencePowers = referencePower ? [referencePower] : [];
-    data.hoursMap[stringId] = { referencePowers, ...hours };
-    data.minutesMap[stringId] = { referencePowers, ...minutes };
+    data.hoursMap[stringId] = hours;
+    data.minutesMap[stringId] = minutes;
 
     const nextDay = startDate.add(1, 'day').startOf('day');
 
@@ -732,7 +720,6 @@ export const generateElectricityData = (
   const endDate = startDate.endOf('year').endOf('day');
 
   const data: ElectricityData = {
-    referencePowers: [],
     months: { plain: [], repartition: [] },
     weeks: { plain: [], repartition: [] },
 
@@ -745,7 +732,7 @@ export const generateElectricityData = (
   do {
     let stringId = formatDayStringId(startDate);
 
-    const { month, referencePowers, weeks, days, hoursMap, minutesMap } =
+    const { month, weeks, days, hoursMap, minutesMap } =
       generateElectricityMonthData(startDate, generateValues);
 
     data.months.plain.push(month.plain);
@@ -754,8 +741,8 @@ export const generateElectricityData = (
     data.weeks.plain = [...data.weeks.plain, ...weeks.plain];
     data.weeks.repartition = [...data.weeks.repartition, ...weeks.repartition];
 
-    data.weeksMap[stringId] = { referencePowers, ...weeks };
-    data.daysMap[stringId] = { referencePowers, ...days };
+    data.weeksMap[stringId] = weeks;
+    data.daysMap[stringId] = days;
 
     data.hoursMap = { ...data.hoursMap, ...hoursMap };
     data.minutesMap = { ...data.minutesMap, ...minutesMap };
