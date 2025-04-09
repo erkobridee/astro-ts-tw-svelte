@@ -2,7 +2,7 @@
   // https://v4.svelte.dev/tutorial/group-inputs
 
   export interface ButtonToggle {
-    label: string;
+    label?: string;
     value: string;
     disabled?: boolean;
   }
@@ -55,7 +55,7 @@
         class={cn(baseInputRadioClass, {
           'rounded-l-md': index === 0,
           'rounded-r-md': index === lastIndex
-        })}>{item.label}</span
+        })}>{item.label ?? item.value}</span
       >
     </label>
   {/each}

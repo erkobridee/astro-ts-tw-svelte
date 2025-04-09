@@ -6,6 +6,7 @@
   import type {
     Aggregations,
     Units,
+    ReferencePower,
     TimeSerie,
     ElectricityTimeserieData,
     ElectricityData
@@ -22,7 +23,9 @@
   } from '~/components/apache-echarts/energy-use-case/AggregationLevelSelection';
 
   import Toggle from '~/components/apache-echarts/Toggle.svelte';
-  import ButtonsToggle from '~/components/apache-echarts/ButtonsToggle.svelte';
+  import ButtonsToggle, {
+    type ButtonToggle
+  } from '~/components/apache-echarts/ButtonsToggle.svelte';
 
   import {
     COLOR_ELECTRICITY_EXCEEDANCE,
@@ -32,11 +35,12 @@
 
   import { EnergyType, Unit, Aggregation } from '~/utils/timeseries';
   import { formatDate, formatDayStringId } from '~/utils/format';
+  import { getRandomBoolean } from '~/utils/random';
 
   //--------------------------------------------------------------------------//
 
   const LABELS_MAP = {
-    [`${EnergyChartType.PLAIN}`]: ['Consumption', 'Exceedance'],
+    [`${EnergyChartType.PLAIN}`]: ['Consumption'],
     [`${EnergyChartType.EXCEEDANCE}`]: ['Consumption', 'Exceedance'],
     [`${EnergyChartType.REPARTITION}`]: ['Shared with me', 'Bought from market']
   };
@@ -68,6 +72,10 @@
   let dataStartedAt: string;
   let timeseries: TimeSerie[] = [];
 
+  let referencePower: ReferencePower[] = [];
+  let referencePowerAmount: string = '0';
+  let referencePowerOptions: ButtonToggle[] = [];
+
   export let data: ElectricityData;
 
   $: onData(data);
@@ -81,6 +89,8 @@
     dataStartedAt = timeseries[0].startedAt;
     color = COLORS_MAP[type];
     labels = LABELS_MAP[type];
+
+    updateReferencePowerOptions();
 
     // TODO: remove
     console.log('ElectricityConsumption.onData', data);
@@ -111,6 +121,77 @@
 
     color = COLORS_MAP[type];
     labels = LABELS_MAP[type];
+
+    updateReferencePowerOptions();
+  };
+
+  //--------------------------------------------------------------------------//
+
+  const onReferencePowerAmountChange = (selectedAmount: string) => {
+    referencePowerAmount = selectedAmount;
+
+    // TODO: remove
+    console.log(
+      'ElectricityConsumption.onReferencePowerAmountChange ',
+      referencePowerAmount
+    );
+
+    if (referencePowerAmount === '0') {
+      referencePower = [];
+      return;
+    }
+
+    defineReferencePower();
+  };
+
+  const updateReferencePowerOptions = () => {
+    if (type !== EnergyChartType.EXCEEDANCE) {
+      referencePowerAmount = '0';
+      referencePower = [];
+      referencePowerOptions = [];
+      return;
+    }
+
+    const length = timeseries.length;
+
+    let maxAmount = 3;
+    if (length <= 6) {
+      maxAmount = 1;
+    } else if (length <= 12) {
+      maxAmount = 2;
+    }
+
+    if (Number(referencePowerAmount) > maxAmount) {
+      referencePowerAmount = String(maxAmount);
+    }
+
+    referencePowerOptions = [
+      {
+        label: 'None',
+        value: '0'
+      }
+    ];
+
+    for (let amount = 1; amount <= maxAmount; amount++) {
+      referencePowerOptions.push({
+        value: String(amount)
+      });
+    }
+
+    defineReferencePower();
+  };
+
+  const defineReferencePower = () => {
+    const amount = Number(referencePowerAmount);
+    const startAtBeginning = getRandomBoolean();
+
+    // TODO: remove
+    console.log('ElectricityConsumption.defineReferencePower ', {
+      amount,
+      startAtBeginning
+    });
+
+    // TODO: define the code logic
   };
 
   //--------------------------------------------------------------------------//
@@ -135,6 +216,8 @@
       aggregation = selectedAggregation;
       aggregationSelectionLayout = selectedLayout;
 
+      updateReferencePowerOptions();
+
       return;
     }
 
@@ -155,6 +238,8 @@
     dataStartedAt = timeseries[0].startedAt;
     aggregation = selectedAggregation;
     aggregationSelectionLayout = selectedLayout;
+
+    updateReferencePowerOptions();
   };
 
   const onChartClick = (timeserie: TimeSerie) => {
@@ -179,6 +264,8 @@
 
       dataStartedAt = timeseries[0].startedAt;
       aggregationSelectionLayout = AggregationLevelSelectionLayout.MONTH;
+
+      updateReferencePowerOptions();
 
       return;
     }
@@ -209,6 +296,7 @@
     ) {
       aggregationSelectionLayout = AggregationLevelSelectionLayout.DAY;
     }
+    updateReferencePowerOptions();
   };
 </script>
 
@@ -221,6 +309,7 @@
       {unit}
       {aggregation}
       {timeseries}
+      {referencePower}
       showAverageMarkline={showAverage}
       onclick={onChartClick}
     >
@@ -242,17 +331,16 @@
               <span>Consumption</span>
 
               <ButtonsToggle
-                name="buttons-toggle"
+                name="chart-type-toggle"
                 selected={type}
                 onchange={onTypeChange}
                 list={[
-                  { label: 'Measured', value: EnergyChartType.PLAIN },
-                  { label: 'Repartition', value: EnergyChartType.REPARTITION },
                   {
                     label: 'Exceedance',
-                    value: EnergyChartType.EXCEEDANCE,
-                    disabled: true
-                  }
+                    value: EnergyChartType.EXCEEDANCE
+                  },
+                  { label: 'Measured', value: EnergyChartType.PLAIN },
+                  { label: 'Repartition', value: EnergyChartType.REPARTITION }
                 ]}
               />
             </div>
@@ -263,6 +351,19 @@
                 label="show average mark line"
                 bind:checked={showAverage}
               />
+            {/if}
+
+            {#if type === EnergyChartType.EXCEEDANCE}
+              <div class="flex flex-col items-center gap-2 md:flex-row">
+                <span>Reference power amount</span>
+
+                <ButtonsToggle
+                  name="reference-power-toggle"
+                  selected={referencePowerAmount}
+                  onchange={onReferencePowerAmountChange}
+                  list={referencePowerOptions}
+                />
+              </div>
             {/if}
           </div>
 
