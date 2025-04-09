@@ -140,6 +140,9 @@ files:
 
 > generate a new dataset based on the data generated for the electricity consumption,
 > it should be able to have more than one reference power
+>
+> it's defined at minutes aggregation level and for the higher levels
+> it will be the sum of it
 
 - unit: `kW`
 
