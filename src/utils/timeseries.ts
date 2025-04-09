@@ -467,7 +467,7 @@ export const buildElectricityRepartitionTimeseries = (
       startedAt,
       endedAt,
       value: 0,
-      anotherValue: newAnotherValue
+      anotherValue: Math.abs(newAnotherValue)
     };
   }
 
