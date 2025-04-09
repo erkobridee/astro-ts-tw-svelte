@@ -312,7 +312,8 @@
       paramsArray.reverse().forEach((item) => {
         timeserie = timeseries[item.dataIndex];
 
-        const value = item.value;
+        let value = item.value;
+        value = value && !isNaN(value) ? value : 0;
 
         total += value;
 
