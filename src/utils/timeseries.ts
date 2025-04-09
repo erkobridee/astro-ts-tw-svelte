@@ -14,11 +14,13 @@ import {
   formatDayStringId,
   formatHourStringId
 } from '~/utils/format';
+import { getPercentageValueOf } from '~/utils/math';
 
 dayjs.extend(isSameOrBefore);
 
 //----------------------------------------------------------------------------//
 
+// only on the for a single metering point on plain data
 export interface ReferencePower {
   /** datetime ISO string */
   startedAt?: string;
@@ -58,16 +60,6 @@ export const EMPTY_TIMESERIE: TimeSerie = {
   endedAt: '',
   value: 0
 };
-
-//----------------------------------------------------------------------------//
-
-const valuePercentage = (value: number, percente: number) =>
-  percente <= 0 ? value : value * (percente / 100);
-
-/*
-const Percentage = (value: number, percente: number) =>
-  percente <= 0 ? value : value + valuePercentage(value, percente);
-*/
 
 //----------------------------------------------------------------------------//
 
@@ -431,27 +423,44 @@ export interface ElectricityTimeserieData<T = TimeSerie> {
   repartition: T;
 }
 
+export interface ElectricityTimeserieDataMapEntry<T = TimeSerie[]>
+  extends ElectricityTimeserieData<T> {
+  referencePowers: ReferencePower[];
+}
+
+export type ElectricityTimeserieDataMap<T = TimeSerie[]> = Record<
+  string,
+  ElectricityTimeserieDataMapEntry<T>
+>;
+
 export interface ElectricityDayData {
   day: ElectricityTimeserieData;
+
+  referencePower?: ReferencePower;
   hours: ElectricityTimeserieData<TimeSerie[]>;
   minutes: ElectricityTimeserieData<TimeSerie[]>;
 }
 
 export interface ElectricityMonthData {
   month: ElectricityTimeserieData;
+
+  referencePowers: ReferencePower[];
   weeks: ElectricityTimeserieData<TimeSerie[]>;
   days: ElectricityTimeserieData<TimeSerie[]>;
-  hoursMap: Record<string, ElectricityTimeserieData<TimeSerie[]>>;
-  minutesMap: Record<string, ElectricityTimeserieData<TimeSerie[]>>;
+
+  hoursMap: ElectricityTimeserieDataMap;
+  minutesMap: ElectricityTimeserieDataMap;
 }
 
 export interface ElectricityData {
+  referencePowers: ReferencePower[];
   months: ElectricityTimeserieData<TimeSerie[]>;
   weeks: ElectricityTimeserieData<TimeSerie[]>;
-  weeksMap: Record<string, ElectricityTimeserieData<TimeSerie[]>>;
-  daysMap: Record<string, ElectricityTimeserieData<TimeSerie[]>>;
-  hoursMap: Record<string, ElectricityTimeserieData<TimeSerie[]>>;
-  minutesMap: Record<string, ElectricityTimeserieData<TimeSerie[]>>;
+
+  weeksMap: ElectricityTimeserieDataMap;
+  daysMap: ElectricityTimeserieDataMap;
+  hoursMap: ElectricityTimeserieDataMap;
+  minutesMap: ElectricityTimeserieDataMap;
 }
 
 //---//
@@ -496,6 +505,9 @@ export const generateElectricityDayData = (
       plain: EMPTY_TIMESERIE,
       repartition: EMPTY_TIMESERIE
     },
+
+    // TODO: review
+    referencePower: undefined,
     hours: {
       plain: [],
       repartition: []
@@ -610,6 +622,9 @@ export const generateElectricityMonthData = (
         value: 0
       }
     },
+
+    // TODO: review
+    referencePowers: [],
     weeks: {
       plain: [],
       repartition: []
@@ -618,6 +633,7 @@ export const generateElectricityMonthData = (
       plain: [],
       repartition: []
     },
+
     hoursMap: {},
     minutesMap: {}
   };
@@ -639,7 +655,7 @@ export const generateElectricityMonthData = (
 
   do {
     const stringId = formatDayStringId(startDate);
-    const { day, hours, minutes } = generateElectricityDayData(
+    const { day, referencePower, hours, minutes } = generateElectricityDayData(
       startDate,
       generateValues
     );
@@ -665,8 +681,9 @@ export const generateElectricityMonthData = (
     data.days.plain.push(plainDay);
     data.days.repartition.push(repartitionDay);
 
-    data.hoursMap[stringId] = hours;
-    data.minutesMap[stringId] = minutes;
+    const referencePowers = referencePower ? [referencePower] : [];
+    data.hoursMap[stringId] = { referencePowers, ...hours };
+    data.minutesMap[stringId] = { referencePowers, ...minutes };
 
     const nextDay = startDate.add(1, 'day').startOf('day');
 
@@ -715,8 +732,10 @@ export const generateElectricityData = (
   const endDate = startDate.endOf('year').endOf('day');
 
   const data: ElectricityData = {
+    referencePowers: [],
     months: { plain: [], repartition: [] },
     weeks: { plain: [], repartition: [] },
+
     weeksMap: {},
     daysMap: {},
     hoursMap: {},
@@ -726,7 +745,7 @@ export const generateElectricityData = (
   do {
     let stringId = formatDayStringId(startDate);
 
-    const { month, weeks, days, hoursMap, minutesMap } =
+    const { month, referencePowers, weeks, days, hoursMap, minutesMap } =
       generateElectricityMonthData(startDate, generateValues);
 
     data.months.plain.push(month.plain);
@@ -735,8 +754,8 @@ export const generateElectricityData = (
     data.weeks.plain = [...data.weeks.plain, ...weeks.plain];
     data.weeks.repartition = [...data.weeks.repartition, ...weeks.repartition];
 
-    data.weeksMap[stringId] = weeks;
-    data.daysMap[stringId] = days;
+    data.weeksMap[stringId] = { referencePowers, ...weeks };
+    data.daysMap[stringId] = { referencePowers, ...days };
 
     data.hoursMap = { ...data.hoursMap, ...hoursMap };
     data.minutesMap = { ...data.minutesMap, ...minutesMap };
@@ -786,7 +805,7 @@ export const generateElectricityConsumptionValues: GenerateElectricityValues = (
   const value = getRandomFloat(min, max);
 
   const anotherValue = getRandomBoolean()
-    ? valuePercentage(value, getRandomInt(10, 30))
+    ? getPercentageValueOf(value, getRandomInt(10, 30))
     : 0;
 
   return [value, anotherValue];
@@ -876,7 +895,7 @@ export const generateElectricityProductionValues =
 
     const value = getRandomFloat(min, max);
     const anotherValue = getRandomBoolean()
-      ? valuePercentage(value, getRandomInt(10, 60))
+      ? getPercentageValueOf(value, getRandomInt(10, 60))
       : 0;
 
     return [value, anotherValue];
