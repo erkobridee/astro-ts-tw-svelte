@@ -135,9 +135,16 @@
       const serie = series[i];
 
       if (!serie.stack) {
-        serie.itemStyle = buildBarItemStyleBorderRadius(DEFAULT_RADIUS_BORDER);
+        serie.itemStyle = {
+          ...buildBarItemStyleBorderRadius(DEFAULT_RADIUS_BORDER),
+          borderWidth: 1
+        };
 
         continue;
+      } else {
+        serie.itemStyle = {
+          borderWidth: 1
+        };
       }
 
       const data = serie.data!;
@@ -150,9 +157,10 @@
         const isEnd = info.stackEnd[j] === i;
 
         const value = (data[j] && (data[j] as any).value) || data[j];
-        const itemStyle = buildBarItemStyleBorderRadius(
-          isEnd ? DEFAULT_RADIUS_BORDER : 0
-        );
+        const itemStyle = {
+          ...buildBarItemStyleBorderRadius(isEnd ? DEFAULT_RADIUS_BORDER : 0),
+          borderWidth: 1
+        };
 
         data[j] = {
           value,
