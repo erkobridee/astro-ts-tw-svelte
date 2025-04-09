@@ -27,3 +27,26 @@ export const getRandomIntAsString = (
   max: number,
   strLength = String(max).length
 ) => String(getRandomInt(min, max)).padStart(strLength, '0');
+
+export const getRandomValueInArray = <T>(values: T[], length: number = -1) => {
+  if (length < 0) {
+    length = values.length;
+  }
+
+  return values[Math.floor(Math.random() * length)];
+};
+
+// https://www.geeksforgeeks.org/how-to-get-an-object-value-by-key-in-typescript/
+export const getRandomValueInObject = <
+  T extends Object = Object,
+  R = T[keyof T]
+>(
+  fromObject: T
+): R => {
+  type Keys = keyof typeof fromObject;
+
+  const objectKeys = Object.keys(fromObject) as Keys[];
+  const key = getRandomValueInArray(objectKeys);
+
+  return fromObject[key] as R;
+};
