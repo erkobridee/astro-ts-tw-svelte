@@ -35,7 +35,7 @@
 
   import { EnergyType, Unit, Aggregation } from '~/utils/timeseries';
   import { formatDate, formatDayStringId } from '~/utils/format';
-  import { getRandomBoolean } from '~/utils/random';
+  import { getRandomBoolean, getRandomValueFromArray } from '~/utils/random';
 
   //--------------------------------------------------------------------------//
 
@@ -152,6 +152,8 @@
       return;
     }
 
+    // TODO: review
+    /*
     const length = timeseries.length;
 
     let maxAmount = 3;
@@ -177,6 +179,15 @@
         value: String(amount)
       });
     }
+    */
+
+    referencePowerOptions = [
+      {
+        label: 'None',
+        value: '0'
+      },
+      { value: '1' }
+    ];
 
     defineReferencePower();
   };
@@ -185,13 +196,42 @@
     const amount = Number(referencePowerAmount);
     const startAtBeginning = getRandomBoolean();
 
-    // TODO: remove
-    console.log('ElectricityConsumption.defineReferencePower ', {
-      amount,
-      startAtBeginning
-    });
-
     // TODO: define the code logic
+
+    if (amount > 0) {
+      // temporary code
+      const timeserie = getRandomValueFromArray(timeseries);
+
+      let reduction = 0;
+      switch (aggregation) {
+        case Aggregation.MONTH:
+          reduction = 1000;
+          break;
+        case Aggregation.WEEK:
+          reduction = 100;
+          break;
+        case Aggregation.DAY:
+          reduction = 10;
+          break;
+        case Aggregation.HOUR:
+          reduction = 2;
+          break;
+      }
+
+      const referencePowerItem: ReferencePower = {
+        startedAt: startAtBeginning ? undefined : timeserie.startedAt,
+        value: timeserie.value - reduction
+      };
+      referencePower = [referencePowerItem];
+
+      // TODO: remove
+      console.log('ElectricityConsumption.defineReferencePower ', {
+        amount,
+        startAtBeginning,
+        timeserie,
+        referencePowerItem
+      });
+    }
   };
 
   //--------------------------------------------------------------------------//
@@ -296,7 +336,10 @@
     ) {
       aggregationSelectionLayout = AggregationLevelSelectionLayout.DAY;
     }
-    updateReferencePowerOptions();
+
+    if (aggregation !== Aggregation.MINUTES) {
+      updateReferencePowerOptions();
+    }
   };
 </script>
 

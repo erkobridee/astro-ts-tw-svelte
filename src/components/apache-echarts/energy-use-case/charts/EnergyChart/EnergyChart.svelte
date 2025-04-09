@@ -29,6 +29,9 @@
     ChartDataZoomOptions
   } from './BaseColumnsChart.svelte';
 
+  import dayjs from 'dayjs';
+  import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+
   import { Unit, Aggregation } from '~/utils/timeseries';
   import {
     DEFAULT_MAXIMUM_FRACTION_DIGITS,
@@ -49,6 +52,9 @@
 
   import BaseColumnsChart from './BaseColumnsChart.svelte';
   import DisplayTotal from './DisplayTotal.svelte';
+
+  // https://day.js.org/docs/en/plugin/is-same-or-after
+  dayjs.extend(isSameOrAfter);
 
   //--------------------------------------------------------------------------//
 
@@ -129,8 +135,23 @@
   ) => {
     isDrilldownEnabled = canDrilldown(unit, aggregation);
 
-    const hasReferencePower = !!referencePower;
+    const isExceedance =
+      type === EnergyChartType.EXCEEDANCE && !!referencePower;
     const isRepartition = type === EnergyChartType.REPARTITION;
+
+    let referencePowerIndex = 0;
+    let referencePowerCurrent: ReferencePower | undefined;
+    let referencePowerNext: ReferencePower | undefined;
+    let referencePowerArray: ReferencePower[] = [];
+
+    if (isExceedance) {
+      referencePowerArray = Array.isArray(referencePower)
+        ? referencePower
+        : [referencePower];
+
+      referencePowerCurrent = referencePowerArray[referencePowerIndex];
+      referencePowerNext = referencePowerArray[referencePowerIndex + 1];
+    }
 
     let valueTotal = 0;
     let anotherValueTotal = 0;
@@ -146,31 +167,59 @@
       (acc, item) => {
         const { startedAt, value = NaN, anotherValue = NaN } = item;
 
-        valueTotal += value ?? 0;
-        anotherValueTotal += anotherValue ?? 0;
-
         acc.startedAtData.push(startedAt);
 
         if (isRepartition) {
+          valueTotal += value ?? 0;
+          anotherValueTotal += anotherValue ?? 0;
+
           acc.valueData.push(value);
           acc.anotherValueData.push(anotherValue);
+
           return acc;
         }
 
-        /*
-        if(hasReferencePower) {
-          const exceedance = value - referencePower;
+        if (isExceedance) {
+          let referencePowerValue = referencePowerCurrent?.value ?? 0;
 
-          if(exceedance > 0) {
-            acc.valueData.push(referencePower);
-            acc.anotherValueData.push(exceedance)
-          } else {
-            acc.valueData.push(value);
-            acc.anotherValueData.push(0)
+          if (
+            referencePowerNext &&
+            referencePowerNext.startedAt &&
+            dayjs(startedAt).isSameOrAfter(referencePowerNext.startedAt)
+          ) {
+            referencePowerIndex++;
+            referencePowerCurrent = referencePowerNext;
+            referencePowerNext = referencePowerArray[referencePowerIndex + 1];
+
+            referencePowerValue = referencePowerCurrent?.value ?? 0;
           }
-        }
-        */
 
+          let entryValue = value ?? 0;
+
+          const diff = entryValue - referencePowerValue;
+
+          if (referencePowerValue <= 0 || diff <= 0) {
+            valueTotal += value;
+
+            acc.valueData.push(value);
+            acc.anotherValueData.push(0);
+
+            return acc;
+          }
+
+          let entryAnotherValue = diff;
+          entryValue = entryValue - diff;
+
+          valueTotal += entryValue;
+          anotherValueTotal += entryAnotherValue;
+
+          acc.valueData.push(entryValue);
+          acc.anotherValueData.push(entryAnotherValue);
+
+          return acc;
+        }
+
+        valueTotal += value ?? 0;
         acc.valueData.push(value);
 
         return acc;
@@ -185,7 +234,7 @@
     chartOptions.color = Array.isArray(color) ? color : [color];
     chartOptions.categories = data.startedAtData;
 
-    if (isRepartition || hasReferencePower) {
+    if (isRepartition || isExceedance) {
       totalValues = [valueTotal, anotherValueTotal];
 
       // if hasReferencePower is present add markLines
@@ -197,6 +246,12 @@
         name: labels[0],
         data: data.valueData
       };
+
+      /*
+      if (isExceedance && referencePowerCurrent) {
+        // TODO: define the logic to add the mark line
+      }
+      */
 
       const anotherValueBarSeries: BarSeriesOption = {
         type: 'bar',
@@ -266,7 +321,7 @@
 
       isDrilldownEnabled,
 
-      hasReferencePower,
+      hasReferencePower: isExceedance,
       referencePower,
       referencePowerOptions,
 
