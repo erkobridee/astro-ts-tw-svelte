@@ -21,8 +21,7 @@
   } from '~/utils/timeseries';
   import type {
     ChartClick,
-    TimeSerieBarClick,
-    MarkLineOptions
+    TimeSerieBarClick
   } from '~/components/apache-echarts/energy-use-case/charts/common';
   import type {
     ChartOptions,
@@ -46,14 +45,12 @@
     COLOR_DEFAULT,
     DEFAULT_TIMESERIE_CLICK,
     DEFAULT_MARKLINE_SYMBOL,
-    DEFAULT_MARKLINE_OPTIONS,
     buildTooltipBarItem
   } from '~/components/apache-echarts/energy-use-case/charts/common';
 
   import BaseColumnsChart from './BaseColumnsChart.svelte';
   import DisplayTotal from './DisplayTotal.svelte';
 
-  // https://day.js.org/docs/en/plugin/is-same-or-after
   dayjs.extend(isSameOrAfter);
 
   //--------------------------------------------------------------------------//
@@ -83,8 +80,6 @@
 
   // add a mark line on the first bar series ( related to TimeSerie.value )
   export let referencePower: ReferencePowerProp = undefined;
-  /** Apache ECharts Mark Line configuration */
-  export let referencePowerOptions: MarkLineOptions = DEFAULT_MARKLINE_OPTIONS;
 
   export let labels: LabelProp = ['Consumption', 'Exceedance'];
 
@@ -117,8 +112,7 @@
     dataZoomOptions,
     color,
     timeseries,
-    referencePower,
-    referencePowerOptions
+    referencePower
   );
 
   const updateChartOptions = (
@@ -130,8 +124,7 @@
     dataZoomOptions: DataZoomOptionsProp,
     color: ColorProp,
     timeseries: TimeSerie[],
-    referencePower: ReferencePowerProp,
-    referencePowerOptions: MarkLineOptions
+    referencePower: ReferencePowerProp
   ) => {
     isDrilldownEnabled = canDrilldown(unit, aggregation);
 
@@ -180,7 +173,15 @@
         }
 
         if (isExceedance) {
-          let referencePowerValue = referencePowerCurrent?.value ?? 0;
+          let referencePowerValue = 0;
+
+          if (
+            referencePowerCurrent &&
+            (!referencePowerCurrent.startedAt ||
+              dayjs(startedAt).isSameOrAfter(referencePowerCurrent.startedAt))
+          ) {
+            referencePowerValue = referencePowerCurrent?.value ?? 0;
+          }
 
           if (
             referencePowerNext &&
@@ -237,21 +238,12 @@
     if (isRepartition || isExceedance) {
       totalValues = [valueTotal, anotherValueTotal];
 
-      // if hasReferencePower is present add markLines
-      // referencePower
-      // referencePowerOptions
       const valueBarSeries: BarSeriesOption = {
         type: 'bar',
         stack: 'energy',
         name: labels[0],
         data: data.valueData
       };
-
-      /*
-      if (isExceedance && referencePowerCurrent) {
-        // TODO: define the logic to add the mark line
-      }
-      */
 
       const anotherValueBarSeries: BarSeriesOption = {
         type: 'bar',
@@ -321,9 +313,8 @@
 
       isDrilldownEnabled,
 
-      hasReferencePower: isExceedance,
+      isExceedance,
       referencePower,
-      referencePowerOptions,
 
       data
     });
@@ -378,7 +369,7 @@
         });
       });
 
-      if (isRepartition) {
+      if (isRepartition || isExceedance) {
         content += `<div style="padding-top: 5px;"><hr>`;
         content += `<span style="float:right;margin-left:20px;font-weight:600">${formatNumber(total, maximumFractionDigits)} ${unit}</span>`;
         content += `</div>`;

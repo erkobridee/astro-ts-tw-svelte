@@ -219,6 +219,7 @@
       }
 
       const referencePowerItem: ReferencePower = {
+        //startedAt: timeserie.startedAt,
         startedAt: startAtBeginning ? undefined : timeserie.startedAt,
         value: timeserie.value - reduction
       };

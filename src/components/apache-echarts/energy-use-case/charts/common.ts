@@ -71,31 +71,7 @@ export type LineTypes = (typeof LineType)[LineTypeKeys] | number | number[];
 
 //---//
 
-export interface MarkLineOptions {
-  label?: string;
-  color?: string;
-  width?: number;
-  type?: LineTypes;
-}
-
-//---//
-
 export const DEFAULT_MARKLINE_SYMBOL = ['none', 'none'];
-
-export const DEFAULT_MARKLINE_LABEL = 'Reference Power';
-
-export const DEFAULT_MARKLINE_COLOR = '#ea580c'; // tailwind color orange 600
-
-export const DEFAULT_MARKLINE_WIDTH = 2;
-
-export const DEFAULT_MARKLINE_TYPE = LineType.SOLID;
-
-export const DEFAULT_MARKLINE_OPTIONS: MarkLineOptions = {
-  label: DEFAULT_MARKLINE_LABEL,
-  color: DEFAULT_MARKLINE_COLOR,
-  width: DEFAULT_MARKLINE_WIDTH,
-  type: DEFAULT_MARKLINE_TYPE
-};
 
 //----------------------------------------------------------------------------//
 
