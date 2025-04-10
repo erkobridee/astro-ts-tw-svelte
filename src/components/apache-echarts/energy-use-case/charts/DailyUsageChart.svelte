@@ -254,7 +254,7 @@
       type: 'bar',
       data: data.current,
       // https://echarts.apache.org/en/option.html#series-bar.barCategoryGap
-      barCategoryGap: 30,
+      barCategoryGap: 25,
 
       markLine
     };
