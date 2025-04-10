@@ -37,11 +37,11 @@ export const getRandomValuesFromArray = <T>(values: T[], maxAmount = 0) => {
     case 0:
       return output;
     case 1:
-      return values[0];
+      return [values[0]];
   }
 
-  if (values.length < 5) {
-    return values[Math.floor(Math.random() * values.length)];
+  if (values.length < 5 || maxAmount === 1) {
+    return [values[Math.floor(Math.random() * values.length)]];
   }
 
   if (maxAmount < 1) {
