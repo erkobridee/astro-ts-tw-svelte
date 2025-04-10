@@ -35,7 +35,12 @@
 
   import { EnergyType, Unit, Aggregation } from '~/utils/timeseries';
   import { formatDate, formatDayStringId } from '~/utils/format';
-  import { getRandomBoolean, getRandomValueFromArray } from '~/utils/random';
+  import {
+    getRandomBoolean,
+    getRandomInt,
+    getRandomValuesFromArray
+  } from '~/utils/random';
+  import { getPercentageValueOf } from '~/utils/math';
 
   //--------------------------------------------------------------------------//
 
@@ -152,8 +157,6 @@
       return;
     }
 
-    // TODO: review
-    /*
     const length = timeseries.length;
 
     let maxAmount = 3;
@@ -161,10 +164,6 @@
       maxAmount = 1;
     } else if (length <= 12) {
       maxAmount = 2;
-    }
-
-    if (Number(referencePowerAmount) > maxAmount) {
-      referencePowerAmount = String(maxAmount);
     }
 
     referencePowerOptions = [
@@ -179,60 +178,47 @@
         value: String(amount)
       });
     }
-    */
 
-    referencePowerOptions = [
-      {
-        label: 'None',
-        value: '0'
-      },
-      { value: '1' }
-    ];
+    if (Number(referencePowerAmount) > maxAmount) {
+      referencePowerAmount = String(maxAmount);
+    }
 
     defineReferencePower();
   };
 
   const defineReferencePower = () => {
     const amount = Number(referencePowerAmount);
-    const startAtBeginning = getRandomBoolean();
 
-    // TODO: define the code logic
-
-    if (amount > 0) {
-      // temporary code
-      const timeserie = getRandomValueFromArray(timeseries);
-
-      let reduction = 0;
-      switch (aggregation) {
-        case Aggregation.MONTH:
-          reduction = 1000;
-          break;
-        case Aggregation.WEEK:
-          reduction = 100;
-          break;
-        case Aggregation.DAY:
-          reduction = 10;
-          break;
-        case Aggregation.HOUR:
-          reduction = 2;
-          break;
-      }
-
-      const referencePowerItem: ReferencePower = {
-        //startedAt: timeserie.startedAt,
-        startedAt: startAtBeginning ? undefined : timeserie.startedAt,
-        value: timeserie.value - reduction
-      };
-      referencePower = [referencePowerItem];
-
-      // TODO: remove
-      console.log('ElectricityConsumption.defineReferencePower ', {
-        amount,
-        startAtBeginning,
-        timeserie,
-        referencePowerItem
-      });
+    if (amount < 1) {
+      return;
     }
+
+    const selectedTimeseries = getRandomValuesFromArray(timeseries, amount);
+
+    referencePower = selectedTimeseries.map(({ startedAt, value }, index) => {
+      const reduction = 10 * index;
+
+      return {
+        startedAt,
+        value: getPercentageValueOf(
+          value,
+          getRandomInt(50 - reduction, 80 - reduction)
+        )
+      };
+    });
+
+    const startAtBeginning = getRandomBoolean();
+    if (startAtBeginning) {
+      referencePower[0].startedAt = undefined;
+    }
+
+    // TODO: remove
+    console.log('ElectricityConsumption.defineReferencePower ', {
+      amount,
+      startAtBeginning,
+      referencePower,
+      selectedTimeseries
+    });
   };
 
   //--------------------------------------------------------------------------//
