@@ -23,7 +23,7 @@
 </script>
 
 <div class="flex flex-col gap-2">
-  <div class="flex h-[300px] w-[600px]">
+  <div class="flex h-[250px] w-full sm:h-[300px] sm:w-[500px] lg:w-[600px]">
     <EnergyOverviewChart
       {timeseries}
       unit="m³"

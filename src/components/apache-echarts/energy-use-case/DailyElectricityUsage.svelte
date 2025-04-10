@@ -23,8 +23,7 @@
 </script>
 
 <div class="flex flex-col gap-2">
-  <!--div class="flex h-[160px] w-[450px]"-->
-  <div class="flex h-[360px] w-[550px]">
+  <div class="flex h-[250px] w-full sm:h-[300px] sm:w-[500px] lg:w-[600px]">
     <DailyUsageChart
       data={innerData}
       unit="kWh"
