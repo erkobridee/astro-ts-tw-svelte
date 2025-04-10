@@ -8,9 +8,9 @@ import {
   generateGasConsumptionOverviewData
 } from '~/utils/timeseries';
 
-const timeseries: TimeSerie[] = generateGasConsumptionOverviewData();
+const data: TimeSerie[] = generateGasConsumptionOverviewData();
 ---
 
 <Layout title="Energy Use Case - Gas Consumption Overview">
-  <Example {timeseries} client:load />
+  <Example {data} client:load />
 </Layout>

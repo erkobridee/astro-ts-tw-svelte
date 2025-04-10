@@ -9,6 +9,7 @@
   import type { TimeSerie } from '~/utils/timeseries';
   import type { TimeSerieBarClick } from './common';
 
+  import dayjs from 'dayjs';
   import * as echarts from 'echarts';
 
   import { onMount } from 'svelte';
@@ -41,7 +42,7 @@
   export let colorOpacity: number = 0.55;
   export let backgroundColor: string = COLOR_GRAY_50;
 
-  export let timeseries: TimeSerie[];
+  export let timeseries: TimeSerie[] = [];
 
   export let onclick: TimeSerieBarClick = DEFAULT_TIMESERIE_CLICK;
 
@@ -67,6 +68,8 @@
   ) => {
     const lightColor = hexToRGB(color, colorOpacity);
     const lightLabelColor = hexToRGB(LABEL_COLOR, 0.75);
+
+    timeseries = generateEmptyDataIfNeeded(timeseries);
 
     const timeseriesLength = timeseries.length;
     const timeseriesLastIndex = timeseriesLength - 1;
@@ -183,6 +186,28 @@
 
   //--------------------------------------------------------------------------//
 
+  const generateEmptyDataIfNeeded = (timeseries: TimeSerie[]) => {
+    if (timeseries.length > 0) {
+      return timeseries;
+    }
+
+    for (let i = 6 - 1; i >= 0; i--) {
+      const startDate = (i > 0 ? dayjs().subtract(i, 'month') : dayjs())
+        .startOf('month')
+        .startOf('day');
+
+      timeseries.push({
+        startedAt: startDate.format(),
+        endedAt: startDate.endOf('month').endOf('day').format(),
+        value: 0
+      });
+    }
+
+    return timeseries;
+  };
+
+  //--------------------------------------------------------------------------//
+
   // https://echarts.apache.org/handbook/en/concepts/event/
   const onChartClick = (event: ECElementEvent) => {
     console.log('onChartClick', event);
@@ -198,12 +223,14 @@
     // https://echarts.apache.org/en/api.html#echartsInstance.on
     chart.on('click', onChartClick);
 
+    // TODO: remove
     console.log('EnergyOverviewChart - mounted', { chart });
 
     return () => {
       // https://echarts.apache.org/en/api.html#echartsInstance.off
       chart.off('click', onChartClick);
 
+      // TODO: remove
       console.log('EnergyOverviewChart - destroyed', { chart });
     };
   });
