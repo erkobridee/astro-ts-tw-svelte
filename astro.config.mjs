@@ -62,7 +62,8 @@ const baseConfig = {
 
   // https://docs.astro.build/en/guides/routing/#configured-redirects
   redirects: {
-    '/echarts/examples': '/echarts'
+    '/echarts/examples': '/echarts',
+    '/echarts/energy-use-case': '/echarts'
   }
 };
 

@@ -15,14 +15,16 @@ import Greetings from '~/components/Greetings.svelte';
     title: 'Astro + TS + TailwindCSS + Svelte v4'
   }}
 >
-  <div class="grid h-screen place-items-center content-center space-y-4">
+  <div
+    class="grid h-full place-items-center content-center space-y-4 px-4 py-8"
+  >
     <ConfettiButton>Tailwind Button in Astro!</ConfettiButton>
 
     <div class="w-full border-b border-gray-300"></div>
 
     <div class="flex flex-col items-center space-y-4">
       <div class="font-bold">Available Pages:</div>
-      <div class="flex gap-2 divide-x divide-gray-300">
+      <div class="flex flex-col gap-2 divide-gray-300 lg:flex-row lg:divide-x">
         <Link class="pr-2" href="/echarts">Apache ECharts</Link>
         <Link class="pr-2" href="/mdx-page">MDX</Link>
         <Link class="pr-2" href="/markdown-content-page">Markdown Content</Link>

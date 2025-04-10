@@ -1,0 +1,13 @@
+---
+import Layout from '~/layouts/ApacheEChartsLayout.astro';
+
+import Example from '~/components/apache-echarts/energy-use-case/ElectricityConsumption.svelte';
+
+import { generateElectricityConsumptionData } from '~/utils/timeseries';
+
+const data = generateElectricityConsumptionData();
+---
+
+<Layout title="Energy Use Case - Electricity Consumption">
+  <Example {data} client:load />
+</Layout>

@@ -21,14 +21,14 @@ const pageTitle = title ? `${title} | ${TITLE}` : TITLE;
   @reference "tailwindcss";
 
   .page-content {
-    @apply flex min-h-screen flex-col gap-4 divide-y divide-gray-300 p-10;
+    @apply flex min-h-screen flex-col gap-4 divide-y divide-gray-300 p-4 lg:p-10;
   }
 
   .header {
-    @apply flex justify-between pb-2;
+    @apply flex flex-col gap-4 pb-2 lg:flex-row lg:justify-between lg:gap-0;
 
     .left {
-      @apply flex items-center gap-2 divide-x divide-gray-300;
+      @apply flex flex-col gap-2 divide-gray-300 md:flex-row md:items-center md:divide-x;
     }
 
     .right {
@@ -71,7 +71,7 @@ const pageTitle = title ? `${title} | ${TITLE}` : TITLE;
       </div>
     </div>
 
-    <div class="flex h-full grow flex-col">
+    <div class="relative flex min-h-full grow flex-col">
       <slot />
     </div>
   </div>

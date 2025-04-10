@@ -1,0 +1,16 @@
+---
+import Layout from '~/layouts/ApacheEChartsLayout.astro';
+
+import Example from '~/components/apache-echarts/energy-use-case/GasConsumptionOverview.svelte';
+
+import {
+  type TimeSerie,
+  generateGasConsumptionOverviewData
+} from '~/utils/timeseries';
+
+const data: TimeSerie[] = generateGasConsumptionOverviewData();
+---
+
+<Layout title="Energy Use Case - Gas Consumption Overview">
+  <Example {data} client:load />
+</Layout>

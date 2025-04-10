@@ -20,6 +20,7 @@
   type ChartInitOptions = EChartsProps['initOptions'];
   type ChartNotMerge = EChartsProps['notMerge'];
   type ChartInstance = EChartsProps['chart'];
+  type ChartContainerDOMRect = EChartsProps['chartContainerDOMRect'];
 
   export let init: ChartInitFunction;
 
@@ -36,6 +37,8 @@
   export let transition: EChartsProps['transition'] = undefined;
 
   export let chart: ChartInstance = undefined;
+
+  export let chartContainerDOMRect: ChartContainerDOMRect = undefined;
 
   let element: HTMLDivElement;
 
@@ -85,7 +88,10 @@
     chart = initFunction(element, theme, initOptions);
   };
 
-  const onResize = () => {
+  const onResize = (entries: ResizeObserverEntry[]) => {
+    const chartContainer = entries[0];
+    chartContainerDOMRect = chartContainer?.contentRect;
+
     chart?.resize();
   };
 

@@ -1,4 +1,9 @@
 <script lang="ts">
+  /*
+    Another approach possible to stack bars
+    https://stackoverflow.com/questions/77415824/echarts-stacked-bar-chart-setting-borderradius-on-topmost-bar-only/77436099#77436099
+  */
+
   import type { EChartsOption, BarSeriesOption } from 'echarts';
 
   import * as echarts from 'echarts';
@@ -96,7 +101,22 @@
         const info = stackInfo[stackName];
         const data = serie.data![i];
 
-        if (data && data !== EMPTY_ENTRY) {
+        // https://echarts.apache.org/en/option.html#series-bar.data
+        // empty value: '-' or null or undefined or NaN
+        const isPresent = (() => {
+          if (!data || data === null) {
+            return false;
+          }
+
+          switch (typeof data) {
+            case 'number':
+              return !isNaN(data);
+            case 'string':
+              return data !== '-';
+          }
+        })();
+
+        if (isPresent) {
           if (info.stackStart[i] == null) {
             info.stackStart[i] = j;
           }
