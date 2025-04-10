@@ -5,9 +5,10 @@
     ECElementEvent,
     BarSeriesOption
   } from 'echarts';
-  import type { DailyUsage } from '~/utils/timeseries';
+  import type { DailyUsage, TimeSerie } from '~/utils/timeseries';
   import type { DailyUsageBarClick } from './common';
 
+  import dayjs from 'dayjs';
   import * as echarts from 'echarts';
 
   import { onMount } from 'svelte';
@@ -49,7 +50,7 @@
   export let colorOpacity: number = 0.55;
   export let backgroundColor: string = COLOR_GRAY_50;
 
-  export let data: DailyUsage;
+  export let data: DailyUsage = { current: [], previous: [] };
 
   export let onclick: DailyUsageBarClick = DEFAULT_DAILYUSAGE_CLICK;
 
@@ -77,6 +78,9 @@
   ) => {
     const lightCurrentColor = hexToRGB(currentColor, colorOpacity);
     const lightPreviousColor = hexToRGB(previousColor, colorOpacity);
+
+    const renderMarkLine = dailyUsageData.current.length > 0;
+    dailyUsageData = generateEmptyDataIfNeeded(dailyUsageData);
 
     const { current: currentTimeSeries, previous: previousTimeSeries } =
       dailyUsageData;
@@ -192,63 +196,67 @@
       data: data.previous
     };
 
+    const markLine: any = renderMarkLine
+      ? {
+          symbol: ['none', 'none'],
+          data: [
+            {
+              type: 'average',
+
+              // https://echarts.apache.org/en/option.html#series-bar.markLine.data.0.x
+              // @ts-ignore
+              x: X_PADDING,
+
+              lineStyle: {
+                color: currentColor,
+                width: 2,
+                type: 'solid'
+              },
+
+              // https://echarts.apache.org/en/option.html#series-bar.markLine.data.0.emphasis
+              emphasis: {
+                disabled: true
+              },
+
+              label: {
+                show: true,
+                position: 'insideStartTop',
+                fontWeight: 'bold',
+                fontSize: 12,
+                formatter: (params: any) => Number(params.value).toFixed(3)
+              }
+            },
+            {
+              type: 'average',
+              name: 'Average',
+
+              // https://echarts.apache.org/en/option.html#series-bar.markLine.data.0.x
+              // @ts-ignore
+              x: X_PADDING,
+
+              lineStyle: {
+                color: 'transparent'
+              },
+
+              label: {
+                show: true,
+                position: 'insideStartBottom',
+                fontSize: 12,
+                formatter: '{b}',
+                opacity: 0.8
+              }
+            }
+          ]
+        }
+      : undefined;
+
     const barCurrentSerie: BarSeriesOption = {
       type: 'bar',
       data: data.current,
       // https://echarts.apache.org/en/option.html#series-bar.barCategoryGap
       barCategoryGap: 30,
 
-      markLine: {
-        symbol: ['none', 'none'],
-        data: [
-          {
-            type: 'average',
-
-            // https://echarts.apache.org/en/option.html#series-bar.markLine.data.0.x
-            // @ts-ignore
-            x: X_PADDING,
-
-            lineStyle: {
-              color: currentColor,
-              width: 2,
-              type: 'solid'
-            },
-
-            // https://echarts.apache.org/en/option.html#series-bar.markLine.data.0.emphasis
-            emphasis: {
-              disabled: true
-            },
-
-            label: {
-              show: true,
-              position: 'insideStartTop',
-              fontWeight: 'bold',
-              fontSize: 12,
-              formatter: (params) => Number(params.value).toFixed(3)
-            }
-          },
-          {
-            type: 'average',
-            name: 'Average',
-
-            // https://echarts.apache.org/en/option.html#series-bar.markLine.data.0.x
-            // @ts-ignore
-            x: X_PADDING,
-
-            lineStyle: {
-              color: 'transparent'
-            },
-
-            label: {
-              show: true,
-              position: 'insideStartBottom',
-              fontSize: 12,
-              formatter: '{b}',
-              opacity: 0.8
-            }
-          }
-        ]
-      }
+      markLine
     };
 
     options = {
@@ -259,6 +267,37 @@
       yAxis,
       series: [barPreviousSerie, barCurrentSerie]
     };
+  };
+
+  //--------------------------------------------------------------------------//
+
+  const generateEmptyDataIfNeeded = (dailyUsageData: DailyUsage) => {
+    if (dailyUsageData.current.length > 0) {
+      return dailyUsageData;
+    }
+
+    for (let i = 6; i >= 0; i--) {
+      let date = (i > 0 ? dayjs().subtract(i, 'day') : dayjs()).startOf('day');
+
+      const current: TimeSerie = {
+        startedAt: date.format(),
+        endedAt: date.endOf('day').format(),
+        value: 0
+      };
+
+      date = date.subtract(1, 'week').startOf('day');
+
+      const previous: TimeSerie = {
+        startedAt: date.format(),
+        endedAt: date.endOf('day').format(),
+        value: 0
+      };
+
+      dailyUsageData.current.push(current);
+      dailyUsageData.previous.push(previous);
+    }
+
+    return dailyUsageData;
   };
 
   //--------------------------------------------------------------------------//
