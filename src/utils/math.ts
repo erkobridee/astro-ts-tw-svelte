@@ -1,14 +1,22 @@
-export const getPercentageValueOf = (value: number, percent: number) =>
-  percent === 0 ? 0 : (value * percent) / 100;
+/** `total = ( amount * 100 ) / percentage` */
+export const getValueFromPercentage = (amount: number, percentage: number) =>
+  percentage === 0 ? 0 : (amount * 100) / percentage;
 
-export const addPercentageValueTo = (value: number, percent: number) =>
-  percent === 0 ? value : value + getPercentageValueOf(value, percent);
+/** `percentage = ( amount * 100 ) / total` */
+export const getPercentageOf = (total: number, amount: number) =>
+  amount === 0 ? 0 : (amount * 100) / total;
 
-export const getPercentageOf = (value: number, amount: number) =>
-  amount === 0 ? 0 : (amount * 100) / value;
+/** `value = ( total * percentage ) / 100` */
+export const getPercentageValueOf = (total: number, percentage: number) =>
+  percentage === 0 ? 0 : (total * percentage) / 100;
 
-export const getValueFromPercentage = (amount: number, percent: number) =>
-  percent === 0 ? 0 : (amount * 100) / percent;
+/** `value = value + valuePercentage` */
+export const addPercentageValueTo = (value: number, percentage: number) =>
+  percentage === 0 ? value : value + getPercentageValueOf(value, percentage);
+
+/** `value = value - valuePercentage` */
+export const subtractPercentageValueTo = (value: number, percentage: number) =>
+  percentage === 0 ? value : value - getPercentageValueOf(value, percentage);
 
 //----------------------------------------------------------------------------//
 
