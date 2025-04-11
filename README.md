@@ -148,3 +148,7 @@ npm create astro@latest -- --template erkobridee/astro-ts-tw-svelte
 ```
 
 -->
+
+## GitHub Renovate
+
+- [how do i run npm install --legacy-peer-deps for some particular repo/project #22499](https://github.com/renovatebot/renovate/discussions/22499)
