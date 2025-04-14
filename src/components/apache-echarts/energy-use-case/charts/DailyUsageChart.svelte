@@ -26,6 +26,8 @@
   import ChartLoadingSpinner from './ChartLoadingSpinner.svelte';
 
   import {
+    COLOR_DEFAULT_OPACITY,
+    COLOR_DEFAULT_SHADOW,
     COLOR_DEFAULT,
     COLOR_GRAY_50,
     LABEL_COLOR,
@@ -47,7 +49,7 @@
 
   export let currentColor: string = COLOR_DEFAULT;
   export let previousColor: string = COLOR_DEFAULT;
-  export let colorOpacity: number = 0.55;
+  export let colorOpacity: number = COLOR_DEFAULT_OPACITY;
   export let backgroundColor: string = COLOR_GRAY_50;
 
   export let data: DailyUsage = { current: [], previous: [] };
@@ -149,7 +151,7 @@
         // https://echarts.apache.org/en/option.html#tooltip.axisPointer.z
         z: 0,
         shadowStyle: {
-          color: 'rgba(150,150,150,0.1)'
+          color: COLOR_DEFAULT_SHADOW
         }
       },
 
