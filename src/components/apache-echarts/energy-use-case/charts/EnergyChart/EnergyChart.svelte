@@ -13,12 +13,7 @@
 
 <script lang="ts">
   import type { BarSeriesOption } from 'echarts';
-  import type {
-    ReferencePower,
-    TimeSerie,
-    Units,
-    Aggregations
-  } from '~/utils/timeseries';
+  import type { TimeSerie, Units, Aggregations } from '~/utils/timeseries';
   import type {
     ChartClick,
     TimeSerieBarClick
@@ -56,7 +51,6 @@
   //--------------------------------------------------------------------------//
 
   type ColorProp = string | string[];
-  type ReferencePowerProp = ReferencePower[] | ReferencePower | undefined;
   type LabelProp = string[] | string;
   type DataZoomOptionsProp = ChartDataZoomOptions | undefined;
 
@@ -77,9 +71,6 @@
   export let color: ColorProp = COLOR_DEFAULT;
 
   export let timeseries: TimeSerie[] = [];
-
-  // add a mark line on the first bar series ( related to TimeSerie.value )
-  export let referencePower: ReferencePowerProp = undefined;
 
   export let labels: LabelProp = ['Consumption', 'Exceedance'];
 
@@ -111,8 +102,7 @@
     maximumFractionDigits,
     dataZoomOptions,
     color,
-    timeseries,
-    referencePower
+    timeseries
   );
 
   const updateChartOptions = (
@@ -123,28 +113,12 @@
     maximumFractionDigits: number,
     dataZoomOptions: DataZoomOptionsProp,
     color: ColorProp,
-    timeseries: TimeSerie[],
-    referencePower: ReferencePowerProp
+    timeseries: TimeSerie[]
   ) => {
     isDrilldownEnabled = canDrilldown(unit, aggregation);
 
-    const isExceedance =
-      type === EnergyChartType.EXCEEDANCE && !!referencePower;
+    const isExceedance = type === EnergyChartType.EXCEEDANCE;
     const isRepartition = type === EnergyChartType.REPARTITION;
-
-    let referencePowerIndex = 0;
-    let referencePowerCurrent: ReferencePower | undefined;
-    let referencePowerNext: ReferencePower | undefined;
-    let referencePowerArray: ReferencePower[] = [];
-
-    if (isExceedance) {
-      referencePowerArray = Array.isArray(referencePower)
-        ? referencePower
-        : [referencePower];
-
-      referencePowerCurrent = referencePowerArray[referencePowerIndex];
-      referencePowerNext = referencePowerArray[referencePowerIndex + 1];
-    }
 
     let valueTotal = 0;
     let anotherValueTotal = 0;
@@ -162,60 +136,12 @@
 
         acc.startedAtData.push(startedAt);
 
-        if (isRepartition) {
+        if (isRepartition || isExceedance) {
           valueTotal += value ?? 0;
           anotherValueTotal += anotherValue ?? 0;
 
           acc.valueData.push(value);
           acc.anotherValueData.push(anotherValue);
-
-          return acc;
-        }
-
-        if (isExceedance) {
-          let referencePowerValue = 0;
-
-          if (
-            referencePowerCurrent &&
-            (!referencePowerCurrent.startedAt ||
-              dayjs(startedAt).isSameOrAfter(referencePowerCurrent.startedAt))
-          ) {
-            referencePowerValue = referencePowerCurrent?.value ?? 0;
-          }
-
-          if (
-            referencePowerNext &&
-            referencePowerNext.startedAt &&
-            dayjs(startedAt).isSameOrAfter(referencePowerNext.startedAt)
-          ) {
-            referencePowerIndex++;
-            referencePowerCurrent = referencePowerNext;
-            referencePowerNext = referencePowerArray[referencePowerIndex + 1];
-
-            referencePowerValue = referencePowerCurrent?.value ?? 0;
-          }
-
-          let entryValue = value ?? 0;
-
-          const diff = entryValue - referencePowerValue;
-
-          if (referencePowerValue <= 0 || diff <= 0) {
-            valueTotal += value;
-
-            acc.valueData.push(value);
-            acc.anotherValueData.push(0);
-
-            return acc;
-          }
-
-          let entryAnotherValue = diff;
-          entryValue = entryValue - diff;
-
-          valueTotal += entryValue;
-          anotherValueTotal += entryAnotherValue;
-
-          acc.valueData.push(entryValue);
-          acc.anotherValueData.push(entryAnotherValue);
 
           return acc;
         }
@@ -314,7 +240,6 @@
       isDrilldownEnabled,
 
       isExceedance,
-      referencePower,
 
       data
     });

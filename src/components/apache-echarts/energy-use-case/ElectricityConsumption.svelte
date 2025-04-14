@@ -13,6 +13,7 @@
   } from '~/utils/timeseries';
 
   import dayjs from 'dayjs';
+  import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 
   import EnergyChart, {
     type EnergyChartTypes,
@@ -41,6 +42,8 @@
     getRandomValuesFromArray
   } from '~/utils/random';
   import { getPercentageValueOf } from '~/utils/math';
+
+  dayjs.extend(isSameOrAfter);
 
   //--------------------------------------------------------------------------//
 
@@ -103,12 +106,33 @@
 
   //---//
 
+  let rawTimeseries: TimeSerie[] = [];
+
+  const cloneTimeseries = (timeseries: TimeSerie[]) =>
+    timeseries.map(({ startedAt, endedAt, value, anotherValue }) => ({
+      startedAt,
+      endedAt,
+      value,
+      anotherValue
+    }));
+
   const readTimeseries = <T = TimeSerie,>(
     data: ElectricityTimeserieData<T>
   ) => {
     const dataType =
       type === EnergyChartType.REPARTITION ? 'repartition' : 'plain';
-    return data[dataType];
+
+    const entry = data[dataType];
+
+    if (
+      type === EnergyChartType.EXCEEDANCE &&
+      Array.isArray(entry) &&
+      entry.length > 0
+    ) {
+      rawTimeseries = cloneTimeseries(entry);
+    }
+
+    return timeseries;
   };
 
   //---//
@@ -143,6 +167,7 @@
 
     if (referencePowerAmount === '0') {
       referencePower = [];
+      timeseries = cloneTimeseries(rawTimeseries);
       return;
     }
 
@@ -189,6 +214,8 @@
   const defineReferencePower = () => {
     const amount = Number(referencePowerAmount);
 
+    timeseries = cloneTimeseries(rawTimeseries);
+
     if (amount < 1) {
       return;
     }
@@ -212,13 +239,55 @@
       referencePower[0].startedAt = undefined;
     }
 
-    // TODO: remove
-    console.log('ElectricityConsumption.defineReferencePower ', {
-      amount,
-      startAtBeginning,
-      referencePower,
-      selectedTimeseries
+    let referencePowerValue = 0;
+    let referencePowerIndex = 0;
+
+    let referencePowerCurrent: ReferencePower | undefined =
+      referencePower[referencePowerIndex];
+    let referencePowerNext: ReferencePower | undefined =
+      referencePower[referencePowerIndex + 1];
+
+    timeseries = timeseries.map((entry) => {
+      const { startedAt, value } = entry;
+
+      if (
+        referencePowerCurrent &&
+        (!referencePowerCurrent.startedAt ||
+          dayjs(startedAt).isSameOrAfter(referencePowerCurrent.startedAt))
+      ) {
+        referencePowerValue = referencePowerCurrent?.value ?? 0;
+      }
+
+      if (
+        referencePowerNext &&
+        referencePowerNext.startedAt &&
+        dayjs(startedAt).isSameOrAfter(referencePowerNext.startedAt)
+      ) {
+        referencePowerIndex++;
+        referencePowerCurrent = referencePowerNext;
+        referencePowerNext = referencePower[referencePowerIndex + 1];
+
+        referencePowerValue = referencePowerCurrent?.value ?? 0;
+      }
+
+      let entryValue = value ?? 0;
+
+      const diff = entryValue - referencePowerValue;
+
+      if (referencePowerValue <= 0 || diff <= 0) {
+        entry.anotherValue = 0;
+
+        return entry;
+      }
+
+      entry.value = entryValue - diff;
+      entry.anotherValue = diff;
+
+      return entry;
     });
+
+    referencePowerCurrent = undefined;
+    referencePowerNext = undefined;
   };
 
   //--------------------------------------------------------------------------//
@@ -339,7 +408,6 @@
       {unit}
       {aggregation}
       {timeseries}
-      {referencePower}
       showAverageMarkline={showAverage}
       onclick={onChartClick}
     >
