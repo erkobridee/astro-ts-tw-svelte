@@ -181,6 +181,7 @@
   import { onMount } from 'svelte';
 
   import {
+    COLOR_DEFAULT_SHADOW,
     COLOR_DEFAULT,
     TINY_SCREEN_MAX_WIDTH,
     TINY_SCREEN_MAX_HEIGHT,
@@ -277,7 +278,7 @@
         // https://echarts.apache.org/en/option.html#tooltip.axisPointer.z
         z: 0,
         shadowStyle: {
-          color: 'rgba(150,150,150,0.1)'
+          color: COLOR_DEFAULT_SHADOW
         }
       },
       formatter: tooltipFormatter
