@@ -18,10 +18,13 @@
 
   import { hexToRGB } from '~/utils/colors';
   import { formatMonthShort } from '~/utils/format';
+  import { addPercentageValueTo } from '~/utils/math';
 
   import ChartLoadingSpinner from './ChartLoadingSpinner.svelte';
 
   import {
+    COLOR_DEFAULT_OPACITY,
+    COLOR_DEFAULT_SHADOW,
     COLOR_DEFAULT,
     COLOR_GRAY_50,
     LABEL_COLOR,
@@ -39,8 +42,10 @@
   export let yAxisAttribute: string = 'value';
 
   export let color: string = COLOR_DEFAULT;
-  export let colorOpacity: number = 0.55;
+  export let colorOpacity: number = COLOR_DEFAULT_OPACITY;
   export let backgroundColor: string = COLOR_GRAY_50;
+
+  export let catchClickOnEmpty: boolean = false;
 
   export let timeseries: TimeSerie[] = [];
 
@@ -55,7 +60,8 @@
     yAxisAttribute,
     color,
     colorOpacity,
-    backgroundColor
+    backgroundColor,
+    catchClickOnEmpty
   );
 
   const updateOptions = (
@@ -64,7 +70,8 @@
     yAxisAttribute: string,
     color: string,
     colorOpacity: number,
-    backgroundColor: string
+    backgroundColor: string,
+    catchClickOnEmpty: boolean
   ) => {
     const lightColor = hexToRGB(color, colorOpacity);
     const lightLabelColor = hexToRGB(LABEL_COLOR, 0.75);
@@ -81,12 +88,19 @@
     const data = timeseries.reduce<{
       xAxis: string[];
       yAxis: Record<string, any>[];
+      maxYAxisValue: number;
     }>(
       (acc, item, index) => {
         const colorToUse = index === timeseriesLastIndex ? color : lightColor;
 
         const labelColor =
           index === timeseriesLastIndex ? LABEL_COLOR : lightLabelColor;
+
+        const value = item.value;
+        const isZero = value === 0;
+        if (value > acc.maxYAxisValue) {
+          acc.maxYAxisValue = value;
+        }
 
         acc.xAxis.push((item as any)[xAxisAttribute]);
         acc.yAxis.push({
@@ -105,7 +119,7 @@
             formatter: (params: any) => {
               const value = params.value as number;
 
-              if (value === 0) return '';
+              if (isZero) return '';
 
               return numberFormat.format(value);
             }
@@ -116,7 +130,8 @@
       },
       {
         xAxis: [],
-        yAxis: []
+        yAxis: [],
+        maxYAxisValue: 0
       }
     );
 
@@ -137,7 +152,7 @@
         // https://echarts.apache.org/en/option.html#tooltip.axisPointer.z
         z: 0,
         shadowStyle: {
-          color: 'rgba(150,150,150,0.1)'
+          color: COLOR_DEFAULT_SHADOW
         }
       },
       // do not display
@@ -163,7 +178,9 @@
       type: 'value',
       show: false,
       max: (value) => {
-        return value.max + value.max * (15 / 100);
+        return catchClickOnEmpty
+          ? value.max
+          : addPercentageValueTo(value.max, 15);
       }
     };
 
@@ -174,13 +191,21 @@
       barCategoryGap: 10
     };
 
+    const maxYAxisValue = addPercentageValueTo(data.maxYAxisValue, 15);
+    const barSerieBackground: BarSeriesOption = {
+      type: 'bar',
+      color: 'transparent',
+      data: data.yAxis.map(() => maxYAxisValue),
+      barGap: '-100%'
+    };
+
     options = {
       backgroundColor,
       grid,
       tooltip,
       xAxis,
       yAxis,
-      series: [barSerie]
+      series: catchClickOnEmpty ? [barSerieBackground, barSerie] : [barSerie]
     };
   };
 

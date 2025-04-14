@@ -12,9 +12,13 @@ export const TINY_SCREEN_MAX_HEIGHT = 915; // pixeds
 //----------------------------------------------------------------------------//
 // https://v3.tailwindcss.com/docs/customizing-colors
 
-export const COLOR_GRAY_50 = '#f9fafb'; // tailwind color gray 50
+export const COLOR_DEFAULT_OPACITY = 0.55;
+
+export const COLOR_DEFAULT_SHADOW = 'rgba(150,150,150,0.1)';
 
 export const COLOR_DEFAULT = '#6b7280'; // tailwind color gray 500
+
+export const COLOR_GRAY_50 = '#f9fafb'; // tailwind color gray 50
 
 export const COLOR_GAS_CONSUMPTION = '#0891b2'; // tailwind color cyan 600
 
