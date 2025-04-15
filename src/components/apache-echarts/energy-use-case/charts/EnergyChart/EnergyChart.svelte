@@ -23,9 +23,6 @@
     ChartDataZoomOptions
   } from './BaseColumnsChart.svelte';
 
-  import dayjs from 'dayjs';
-  import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
-
   import { Unit, Aggregation } from '~/utils/timeseries';
   import {
     DEFAULT_MAXIMUM_FRACTION_DIGITS,
@@ -45,8 +42,6 @@
 
   import BaseColumnsChart from './BaseColumnsChart.svelte';
   import DisplayTotal from './DisplayTotal.svelte';
-
-  dayjs.extend(isSameOrAfter);
 
   //--------------------------------------------------------------------------//
 
