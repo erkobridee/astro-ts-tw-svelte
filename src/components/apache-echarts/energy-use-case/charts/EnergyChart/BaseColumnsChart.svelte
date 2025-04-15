@@ -355,7 +355,7 @@
     ) {
       grid.bottom = 55;
 
-      // the minimum amount to display should be the halp of slider window size value
+      // the minimum amount to display should be the half of slider window size value
       const minSpan = dataZoomMinWindowSize
         ? (dataZoomMinWindowSize * 100) / categoriesLenght
         : undefined;
