@@ -357,7 +357,7 @@
         {#each labels as label, index (index)}
           {@const totalValue = totalValues[index]}
 
-          {#if !isNaN(totalValue)}
+          {#if !isNaN(totalValue) && totalValue > 0}
             <DisplayTotal
               {label}
               value={totalValues[index]}

@@ -13,14 +13,14 @@
   export let maximumFractionDigits: number = DEFAULT_MAXIMUM_FRACTION_DIGITS;
 </script>
 
-<div class="flex flex-col md:flex-row md:items-center md:gap-2">
-  <span>{label}</span>
+<div class="flex flex-col md:flex-row md:items-baseline md:gap-2">
+  <span class="text-base text-gray-900">{label}</span>
 
-  <div class="text-sm font-semibold" style="color: {valueColor};">
-    <span class="text-sm tabular-nums"
-      >{formatNumber(value, maximumFractionDigits)}</span
-    >
+  <div class="flex items-baseline gap-0.5 md:gap-1.5">
+    <span class="text-xl tabular-nums" style="color: {valueColor};">
+      {formatNumber(value, maximumFractionDigits)}
+    </span>
 
-    {#if unit}<span>{unit}</span>{/if}
+    {#if unit}<span class="text-sm text-gray-500">{unit}</span>{/if}
   </div>
 </div>
