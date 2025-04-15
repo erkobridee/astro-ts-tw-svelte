@@ -124,15 +124,12 @@
 
     const entry = data[dataType];
 
-    if (
-      type === EnergyChartType.EXCEEDANCE &&
-      Array.isArray(entry) &&
-      entry.length > 0
-    ) {
+    if (Array.isArray(entry) && entry.length > 0) {
       rawTimeseries = cloneTimeseries(entry);
+      return cloneTimeseries(entry);
     }
 
-    return timeseries;
+    return [];
   };
 
   //---//
