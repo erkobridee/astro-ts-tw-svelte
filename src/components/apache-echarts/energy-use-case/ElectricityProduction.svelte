@@ -255,7 +255,7 @@
         >
           <div class="flex flex-col items-center gap-4 lg:flex-row">
             <div class="flex flex-col items-center gap-2 md:flex-row">
-              <span>Consumption</span>
+              <span>Production</span>
 
               <ButtonsToggle
                 name="buttons-toggle"
