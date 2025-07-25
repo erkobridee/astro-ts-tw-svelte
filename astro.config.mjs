@@ -49,7 +49,7 @@ const viteTslibPluginFix = {
   name: 'tslib-fix'
 };
 
-/** @type {import('astro/config').config} */
+/** @type {import('astro').AstroUserConfig} */
 const baseConfig = {
   integrations: [svelte({ extensions: ['.svelte'] }), mdx()],
   vite: {
