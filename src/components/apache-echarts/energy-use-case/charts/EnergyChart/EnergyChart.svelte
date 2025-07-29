@@ -13,6 +13,7 @@
 
 <script lang="ts">
   import type { BarSeriesOption } from 'echarts';
+  import type { CallbackDataParams } from 'echarts/types/dist/shared.d.ts';
   import type { TimeSerie, Units, Aggregations } from '~/utils/timeseries';
   import type {
     ChartClick,
@@ -26,7 +27,6 @@
   import { Unit, Aggregation } from '~/utils/timeseries';
   import {
     DEFAULT_MAXIMUM_FRACTION_DIGITS,
-    formatDateTime,
     formatDate,
     formatWeekdayHour,
     formatMonth,
@@ -36,8 +36,7 @@
   import {
     COLOR_DEFAULT,
     DEFAULT_TIMESERIE_CLICK,
-    DEFAULT_MARKLINE_SYMBOL,
-    buildTooltipBarItem
+    DEFAULT_MARKLINE_SYMBOL
   } from '~/components/apache-echarts/energy-use-case/charts/common';
 
   import BaseColumnsChart from './BaseColumnsChart.svelte';
@@ -86,6 +85,9 @@
     // dataZoomLabelFormatter
     // dataZoomOptions
   };
+
+  let tooltipParams: CallbackDataParams[] | undefined;
+  let tooltipElement: HTMLElement;
 
   //--------------------------------------------------------------------------//
 
@@ -179,6 +181,7 @@
 
       const valueBarSeries: BarSeriesOption = {
         type: 'bar',
+        name: labels[0],
         data: data.valueData
       };
 
@@ -242,60 +245,24 @@
     //---//
 
     let formatAxisLabel = formatWeekdayHour;
-    let formatTooltipHeaderFn = (timeserie: TimeSerie) =>
-      formatDateTime(timeserie.startedAt);
 
     switch (aggregation) {
       case Aggregation.MONTH:
         formatAxisLabel = formatMonth;
-        formatTooltipHeaderFn = (timeserie: TimeSerie) =>
-          formatMonth(timeserie.startedAt);
         break;
       case Aggregation.WEEK:
         formatAxisLabel = formatDate;
-        formatTooltipHeaderFn = (timeserie: TimeSerie) =>
-          `${formatDate(timeserie.startedAt)} - ${formatDate(timeserie.endedAt)}`;
         break;
       case Aggregation.DAY:
         formatAxisLabel = formatDate;
-        formatTooltipHeaderFn = (timeserie: TimeSerie) =>
-          formatDate(timeserie.startedAt);
         break;
     }
 
     chartOptions.xAxisLabelFormatter = formatAxisLabel;
 
     chartOptions.tooltipFormatter = (params) => {
-      const paramsArray = params as any[];
-
-      let timeserie = timeseries[paramsArray[0].dataIndex];
-
-      let total = 0;
-      let content = '';
-
-      content += `<div>${formatTooltipHeaderFn(timeserie)}</div>`;
-
-      paramsArray.reverse().forEach((item) => {
-        timeserie = timeseries[item.dataIndex];
-
-        let value = item.value;
-        value = value && !isNaN(value) ? value : 0;
-
-        total += value;
-
-        content += buildTooltipBarItem({
-          color: item.color,
-          value: `${formatNumber(value, maximumFractionDigits)} ${unit}`
-        });
-      });
-
-      if (isRepartition || isExceedance) {
-        content += `<div style="padding-top: 5px;"><hr>`;
-        content += `<span style="float:right;margin-left:20px;font-weight:600">${formatNumber(total, maximumFractionDigits)} ${unit}</span>`;
-        content += `</div>`;
-      }
-
-      return content;
+      tooltipParams = params as CallbackDataParams[];
+      return tooltipElement;
     };
 
     chartOptions.dataZoomLabelFormatter = (_, value) => formatAxisLabel(value);
@@ -389,5 +356,13 @@
 
   {#if $$slots.footer}
     <slot name="footer" />
+  {/if}
+
+  {#if $$slots.tooltip && tooltipParams !== undefined}
+    <div style="display: none">
+      <div bind:this={tooltipElement}>
+        <slot name="tooltip" params={tooltipParams} />
+      </div>
+    </div>
   {/if}
 </div>
