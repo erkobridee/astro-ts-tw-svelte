@@ -19,6 +19,7 @@
     type EnergyChartTypes,
     EnergyChartType
   } from '~/components/apache-echarts/energy-use-case/charts/EnergyChart/EnergyChart.svelte';
+  import EnergyChartTooltip from '~/components/apache-echarts/energy-use-case/charts/EnergyChart/EnergyChartTooltip.svelte';
   import AggregationLevelSelection, {
     AggregationLevelSelectionLayout
   } from '~/components/apache-echarts/energy-use-case/AggregationLevelSelection';
@@ -467,6 +468,27 @@
             <span class="font-semibold">{formatDate(dataStartedAt)}</span>
           </div>
         </div>
+      </svelte:fragment>
+
+      <svelte:fragment slot="tooltip" let:params>
+        {#if params !== undefined}
+          {@const dataIndex = params[0]?.dataIndex}
+
+          {#if timeseries.length > dataIndex}
+            {@const currentItem = timeseries[dataIndex]}
+
+            <EnergyChartTooltip
+              {params}
+              {currentItem}
+              {aggregation}
+              {unit}
+              showTotal={[
+                `${EnergyChartType.REPARTITION}`,
+                `${EnergyChartType.EXCEEDANCE}`
+              ].includes(type)}
+            />
+          {/if}
+        {/if}
       </svelte:fragment>
     </EnergyChart>
   </div>
