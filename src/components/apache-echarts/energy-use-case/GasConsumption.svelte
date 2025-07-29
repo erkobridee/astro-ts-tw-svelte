@@ -12,6 +12,7 @@
   import dayjs from 'dayjs';
 
   import EnergyChart from '~/components/apache-echarts/energy-use-case/charts/EnergyChart/EnergyChart.svelte';
+  import EnergyChartTooltip from '~/components/apache-echarts/energy-use-case/charts/EnergyChart/EnergyChartTooltip.svelte';
   import AggregationLevelSelection, {
     AggregationLevelSelectionLayout
   } from '~/components/apache-echarts/energy-use-case/AggregationLevelSelection';
@@ -118,6 +119,8 @@
 
     dataStartedAt = timeseries[0].startedAt;
   };
+
+  const unit = Unit.M3;
 </script>
 
 <div class="relative grow">
@@ -126,7 +129,7 @@
       showAverageMarkline={showAverage}
       onclick={onChartClick}
       color={COLOR_GAS_CONSUMPTION}
-      unit={Unit.M3}
+      {unit}
       {timeseries}
       {aggregation}
     >
@@ -153,6 +156,18 @@
             <span class="font-semibold">{formatDate(dataStartedAt)}</span>
           </div>
         </div>
+      </svelte:fragment>
+
+      <svelte:fragment slot="tooltip" let:params>
+        {#if params !== undefined}
+          {@const dataIndex = params[0]?.dataIndex}
+
+          {#if timeseries.length > dataIndex}
+            {@const currentItem = timeseries[dataIndex]}
+
+            <EnergyChartTooltip {params} {currentItem} {aggregation} {unit} />
+          {/if}
+        {/if}
       </svelte:fragment>
     </EnergyChart>
   </div>
