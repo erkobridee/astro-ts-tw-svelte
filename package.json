@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "astro": "5.15.1",
-    "canvas-confetti": "1.9.3",
+    "canvas-confetti": "1.9.4",
     "dayjs": "1.11.18",
     "echarts": "6.0.0",
     "svelte": "4.2.19"
