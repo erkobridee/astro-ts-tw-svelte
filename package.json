@@ -32,7 +32,7 @@
     "@astrojs/ts-plugin": "1.10.6",
     "@eslint/compat": "2.0.0",
     "@tailwindcss/typography": "0.5.19",
-    "@tailwindcss/vite": "4.1.17",
+    "@tailwindcss/vite": "4.1.18",
     "@types/canvas-confetti": "1.9.0",
     "@typescript-eslint/eslint-plugin": "8.48.1",
     "@typescript-eslint/parser": "8.48.1",
@@ -54,7 +54,7 @@
     "prettier-plugin-tailwindcss": "0.7.2",
     "simple-git-hooks": "2.13.1",
     "tailwind-merge": "3.4.0",
-    "tailwindcss": "4.1.17",
+    "tailwindcss": "4.1.18",
     "typescript": "5.9.3"
   },
   "lint-staged": {
