@@ -22,7 +22,7 @@
     "astro": "5.18.1",
     "canvas-confetti": "1.9.4",
     "dayjs": "1.11.20",
-    "echarts": "6.0.0",
+    "echarts": "6.1.0",
     "svelte": "4.2.19"
   },
   "devDependencies": {
