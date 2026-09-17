@@ -1,0 +1,1 @@
+var e=[`Mon`,`Tue`,`Wed`,`Thu`,`Fri`,`Sat`,`Sun`],t=`#71717a`,n={type:[1,3],color:`#a3a3a3`},r=(e=0,t=0)=>({borderRadius:[e,e,t,t]});export{r as i,n,e as r,t};

@@ -1,0 +1,1 @@
+var e=(e,t)=>t===0?0:e*t/100,t=(t,n)=>n===0?t:t+e(t,n);export{e as n,t};

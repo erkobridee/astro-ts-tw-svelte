@@ -1,0 +1,1 @@
+var e=(e,t=1)=>e?((t<0||t>1)&&(t=1),e=e.toUpperCase(),`rgba(${parseInt(e.slice(1,3),16)}, ${parseInt(e.slice(3,5),16)}, ${parseInt(e.slice(5,7),16)}, ${t})`):``;export{e as t};
