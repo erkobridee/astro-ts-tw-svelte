@@ -7,7 +7,7 @@
       "minimumReleaseAge": "1 days"
     },
     {
-      "matchPackageNames": ["svelte", "@astrojs/svelte"],
+      "matchPackageNames": ["svelte", "@astrojs/svelte", "typescript"],
       "enabled": false
     }
   ],
