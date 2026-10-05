@@ -12,9 +12,9 @@ import globals from 'globals';
 
 //---//
 
-// https://eslint.org/docs/latest/use/configure/ignore#including-gitignore-files
+// https://eslint.org/docs/latest/use/configure/ignore#include-gitignore-files
 
-import { includeIgnoreFile } from '@eslint/compat';
+import { includeIgnoreFile } from 'eslint/config';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
