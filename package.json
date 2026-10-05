@@ -30,6 +30,7 @@
     "@astrojs/mdx": "8.0.2",
     "@astrojs/svelte": "5.7.3",
     "@astrojs/ts-plugin": "1.10.12",
+    "@emnapi/runtime": "^1.11.3",
     "@eslint/compat": "2.1.1",
     "@tailwindcss/typography": "0.5.20",
     "@tailwindcss/vite": "4.3.3",
@@ -54,7 +55,7 @@
     "simple-git-hooks": "2.14.0",
     "tailwind-merge": "3.7.0",
     "tailwindcss": "4.3.3",
-    "typescript": "6.0.3",
+    "typescript": "^6.0.3",
     "vite": "8.3.2"
   },
   "lint-staged": {
