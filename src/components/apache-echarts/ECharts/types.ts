@@ -30,8 +30,9 @@ type OmitHandlers<T> = {
 
 export type EChartsPropReplaceMerge = SetOptionOpts['replaceMerge'];
 
-export interface EChartsProps
-  extends OmitHandlers<HTMLAttributes<HTMLDivElement>> {
+export interface EChartsProps extends OmitHandlers<
+  HTMLAttributes<HTMLDivElement>
+> {
   init: typeof baseInit | typeof CoreInit;
 
   options?: EChartsOption | undefined;
