@@ -74,6 +74,8 @@ Following a Linux/Unix OS approach, we have the following alias mapping `~/* -> 
 
   - [Install Tailwind CSS with Astro](https://tailwindcss.com/docs/installation/framework-guides/astro)
 
+    - [Dark mode | Tailwind CSS Docs](https://tailwindcss.com/docs/dark-mode)
+
     - [[GitHub] tailwindlabs/tailwindcss-typography](https://github.com/tailwindlabs/tailwindcss-typography) - Beautiful typographic defaults for HTML you don't control.
 
     - [Use daisyUI as a Tailwind CSS component library for Astro projects | daisyUI](https://daisyui.com/astro-component-library/)
