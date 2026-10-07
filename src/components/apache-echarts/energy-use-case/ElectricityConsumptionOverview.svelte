@@ -5,7 +5,7 @@
 
   import { COLOR_ELECTRICITY_CONSUMPTION } from '~/components/apache-echarts/energy-use-case/charts/common';
 
-  import Toggle from '~/components/apache-echarts/Toggle.svelte';
+  import Toggle from '~/components/apache-echarts/Toggle';
 
   //--------------------------------------------------------------------------//
 

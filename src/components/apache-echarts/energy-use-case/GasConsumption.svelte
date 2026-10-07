@@ -16,7 +16,7 @@
   import AggregationLevelSelection, {
     AggregationLevelSelectionLayout
   } from '~/components/apache-echarts/energy-use-case/AggregationLevelSelection';
-  import Toggle from '~/components/apache-echarts/Toggle.svelte';
+  import Toggle from '~/components/apache-echarts/Toggle';
 
   import { COLOR_GAS_CONSUMPTION } from '~/components/apache-echarts/energy-use-case/charts/common';
 

@@ -1,20 +1,12 @@
-<script lang="ts" context="module">
-  export const ToggleLayout = {
-    DEFAULT: 'default',
-    LABELS: 'labels'
-  } as const satisfies Record<string, string>;
-
-  export type ToggleLayoutKeys = keyof typeof ToggleLayout;
-  export type ToggleLayouts = (typeof ToggleLayout)[ToggleLayoutKeys];
-</script>
-
 <script lang="ts">
-  export let id = 'toggle';
-  export let layout: ToggleLayouts = ToggleLayout.DEFAULT;
+  import { type ToggleProps, ToggleLayout } from './types';
 
-  export let checked: boolean;
-
-  export let label: string | string[] = '';
+  let {
+    id = 'toggle',
+    layout = ToggleLayout.DEFAULT,
+    checked = $bindable(),
+    label = ''
+  }: ToggleProps = $props();
 
   const getLabel = (index = 0) => {
     if (Array.isArray(label)) {

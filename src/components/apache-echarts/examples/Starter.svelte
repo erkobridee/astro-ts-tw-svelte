@@ -8,7 +8,7 @@
 
   import ECharts from '~/components/apache-echarts/ECharts';
 
-  import Toggle from '~/components/apache-echarts/Toggle.svelte';
+  import Toggle from '~/components/apache-echarts/Toggle';
 
   import {
     DEFAULT_RADIUS_BORDER,
