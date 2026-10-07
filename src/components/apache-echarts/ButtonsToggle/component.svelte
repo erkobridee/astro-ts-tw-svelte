@@ -1,31 +1,27 @@
-<script lang="ts" context="module">
-  // https://v4.svelte.dev/tutorial/group-inputs
-
-  export interface ButtonToggle {
-    label?: string;
-    value: string;
-    disabled?: boolean;
-  }
-
-  export type ButtonToggleChange = (_value: string) => void;
-
-  const DEFAULT_BUTTON_TOGGLE_CHANGE = () => undefined;
-</script>
-
 <script lang="ts">
+  // https://svelte.dev/tutorial/svelte/group-inputs
+
   import cn from '~/utils/cn';
 
-  export let name: string;
-  export let selected: string;
-  export let disabled: boolean = false;
-  export let list: ButtonToggle[];
+  import {
+    type ButtonsToggleProps,
+    DEFAULT_BUTTON_TOGGLE_CHANGE
+  } from './types';
 
-  export let onchange: ButtonToggleChange = DEFAULT_BUTTON_TOGGLE_CHANGE;
+  let {
+    name,
+    selected = $bindable(),
+    disabled = false,
+    list,
+    onchange = DEFAULT_BUTTON_TOGGLE_CHANGE
+  }: ButtonsToggleProps = $props();
 
-  $: lastIndex = list.length - 1;
+  const lastIndex = $derived(list.length - 1);
 
-  const baseInputRadioClass =
-    'bg-gray-300 px-4 py-1 peer-checked:bg-blue-300 peer-disabled:opacity-50';
+  const baseInputRadioClass = cn(
+    'px-4 py-1',
+    'bg-gray-300 peer-checked:bg-blue-300 peer-disabled:opacity-50'
+  );
 
   const innerButtonToggleChange = (event: Event) => {
     onchange((event.target as any)?.value);
@@ -48,7 +44,7 @@
         bind:group={selected}
         value={item.value}
         disabled={isDisabled}
-        on:input={innerButtonToggleChange}
+        oninput={innerButtonToggleChange}
       />
 
       <span

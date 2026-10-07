@@ -24,7 +24,7 @@
   } from '~/components/apache-echarts/energy-use-case/AggregationLevelSelection';
 
   import Toggle from '~/components/apache-echarts/Toggle';
-  import ButtonsToggle from '~/components/apache-echarts/ButtonsToggle.svelte';
+  import ButtonsToggle from '~/components/apache-echarts/ButtonsToggle';
 
   import {
     COLOR_ELECTRICITY_SHARED,

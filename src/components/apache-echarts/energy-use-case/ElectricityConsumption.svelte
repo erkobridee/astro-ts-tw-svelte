@@ -27,7 +27,7 @@
   import Toggle from '~/components/apache-echarts/Toggle';
   import ButtonsToggle, {
     type ButtonToggle
-  } from '~/components/apache-echarts/ButtonsToggle.svelte';
+  } from '~/components/apache-echarts/ButtonsToggle';
 
   import {
     COLOR_ELECTRICITY_EXCEEDANCE,
