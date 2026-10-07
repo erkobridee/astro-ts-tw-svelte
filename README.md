@@ -64,9 +64,11 @@ Following a Linux/Unix OS approach, we have the following alias mapping `~/* -> 
 
     - [Svelte](https://svelte.dev/)
 
+      - [$props | Svelte Docs](https://svelte.dev/docs/svelte/$props)
+
       - [TypeScript | Svelte Docs](https://svelte.dev/docs/svelte/typescript)
 
-      - [$props | Svelte Docs](https://svelte.dev/docs/svelte/$props)
+        - [Typing $props](https://svelte.dev/docs/svelte/typescript#Typing-$props)
 
   - [Install Tailwind CSS with Astro](https://tailwindcss.com/docs/installation/framework-guides/astro)
 
