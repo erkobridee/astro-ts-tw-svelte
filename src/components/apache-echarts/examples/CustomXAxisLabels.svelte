@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { EChartsOption } from 'echarts';
 
-  import * as echarts from 'echarts';
+  import { init as echartsInit } from 'echarts';
 
   import dayjs from 'dayjs';
 
@@ -9,7 +9,7 @@
 
   import { getRandomInt } from '~/utils/random';
 
-  //---//
+  //--------------------------------------------------------------------------//
 
   const MIN = 20;
   const MAX = 40;
@@ -139,6 +139,6 @@
 
 <div class="relative grow">
   <div class="absolute top-0 right-0 bottom-0 left-0">
-    <ECharts id="custom-x-axis" init={echarts.init} {options}></ECharts>
+    <ECharts id="custom-x-axis" init={echartsInit} {options}></ECharts>
   </div>
 </div>
