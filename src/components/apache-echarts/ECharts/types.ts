@@ -6,6 +6,7 @@
   https://echarts.apache.org/en/api.html#echarts.init
 */
 
+import type { Snippet } from 'svelte';
 import type { HTMLAttributes } from 'svelte/elements';
 
 import type {
@@ -55,4 +56,16 @@ export interface EChartsProps extends OmitHandlers<
   chart?: BaseEChartsType | CoreEChartsType | undefined;
 
   chartContainerDOMRect?: DOMRectReadOnly | undefined;
+
+  loadingRenderer?: Snippet | undefined;
+  loadingLabel?: string | undefined;
 }
+
+export type ChartInitFunction = EChartsProps['init'];
+export type ChartOptions = EChartsProps['options'];
+export type ChartLocale = EChartsProps['locale'];
+export type ChartTheme = EChartsProps['theme'];
+export type ChartInitOptions = EChartsProps['initOptions'];
+export type ChartNotMerge = EChartsProps['notMerge'];
+export type ChartInstance = EChartsProps['chart'];
+export type ChartContainerDOMRect = EChartsProps['chartContainerDOMRect'];
