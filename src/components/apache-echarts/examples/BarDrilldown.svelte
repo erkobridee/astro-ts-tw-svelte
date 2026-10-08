@@ -9,9 +9,7 @@
     BarSeriesOption
   } from 'echarts';
 
-  import * as echarts from 'echarts';
-
-  import { onMount } from 'svelte';
+  import { init as echartsInit } from 'echarts';
 
   import ECharts from '~/components/apache-echarts/ECharts';
 
@@ -20,7 +18,7 @@
     buildBarItemStyleBorderRadius
   } from '~/components/apache-echarts/common';
 
-  //---//
+  //--------------------------------------------------------------------------//
 
   interface DataItem {
     value: number;
@@ -120,10 +118,10 @@
 
   //---//
 
-  let options: EChartsOption = optionsLevel0;
-  let notMerge: boolean = false;
+  let options = $state<EChartsOption>(optionsLevel0);
+  let notMerge = $state<boolean>(false);
 
-  let chart: EChartsType;
+  let chart = $state<EChartsType>();
 
   //---//
 
@@ -186,15 +184,19 @@
     };
   };
 
-  onMount(() => {
+  $effect(() => {
+    if (!chart) {
+      return;
+    }
+
     // https://echarts.apache.org/en/api.html#echartsInstance.on
-    chart.on('click', onChartClick);
+    chart?.on('click', onChartClick);
 
     console.log('BarDrilldown - mounted', { chart });
 
     return () => {
       // https://echarts.apache.org/en/api.html#echartsInstance.off
-      chart.off('click', onChartClick);
+      chart?.off('click', onChartClick);
 
       console.log('BarDrilldown - destroyed', { chart });
     };
@@ -205,7 +207,7 @@
   <div class="absolute top-0 right-0 bottom-0 left-0">
     <ECharts
       id="bar-drilldown"
-      init={echarts.init}
+      init={echartsInit}
       {options}
       {notMerge}
       bind:chart
