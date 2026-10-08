@@ -4,7 +4,7 @@
 
   import type { EChartsOption } from 'echarts';
 
-  import * as echarts from 'echarts';
+  import { init as echartsInit } from 'echarts';
 
   import ECharts from '~/components/apache-echarts/ECharts';
 
@@ -15,9 +15,11 @@
     buildBarItemStyleBorderRadius
   } from '~/components/apache-echarts/common';
 
-  let themeToggleChecked = false;
+  //--------------------------------------------------------------------------//
 
-  $: theme = themeToggleChecked ? 'dark' : 'light';
+  let themeToggleChecked = $state(false);
+
+  const theme = $derived(themeToggleChecked ? 'dark' : 'light');
 
   const options: EChartsOption = {
     // https://echarts.apache.org/en/option.html#grid
@@ -86,7 +88,7 @@
       <ECharts
         class="chart-container-starter-example"
         id="test-id-charts"
-        init={echarts.init}
+        init={echartsInit}
         {theme}
         {options}>Loading Starter Example Chart...</ECharts
       >
