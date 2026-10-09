@@ -6,7 +6,7 @@
   //---//
 
   // Import the echarts core module, which provides the necessary interfaces for using echarts.
-  import * as echarts from 'echarts/core';
+  import { init as echartsInit, use as echartsUse } from 'echarts/core';
 
   // Import bar charts, all suffixed with Chart
   import { BarChart } from 'echarts/charts';
@@ -37,10 +37,10 @@
     buildBarItemStyleBorderRadius
   } from '~/components/apache-echarts/common';
 
-  //---//
+  //--------------------------------------------------------------------------//
 
   // Register the required components
-  echarts.use([
+  echartsUse([
     BarChart,
     LegendComponent,
     TitleComponent,
@@ -55,7 +55,13 @@
 
   //---//
 
-  export let dataSource: (string | number)[][];
+  interface Props {
+    dataSource: (string | number)[][];
+  }
+
+  let { dataSource }: Props = $props();
+
+  //---//
 
   const BAR_SERIE: BarSeriesOption = {
     type: 'bar',
@@ -68,7 +74,7 @@
     itemStyle: buildBarItemStyleBorderRadius(DEFAULT_RADIUS_BORDER)
   };
 
-  const options: EChartsOption = {
+  const options = $derived<EChartsOption>({
     // colors picked from TailwindCSS v3 default palette
     // https://v3.tailwindcss.com/docs/customizing-colors#default-color-palette
     color: ['#84cc16', '#22c55e', '#10b981'],
@@ -85,11 +91,11 @@
     // Declare several 'bar' series,
     // every series will auto-map to each column by default.
     series: [BAR_SERIE, BAR_SERIE, BAR_SERIE]
-  };
+  });
 </script>
 
 <div class="relative grow">
   <div class="absolute top-0 right-0 bottom-0 left-0">
-    <ECharts id="shrinking-bundle-size" init={echarts.init} {options}></ECharts>
+    <ECharts id="shrinking-bundle-size" init={echartsInit} {options}></ECharts>
   </div>
 </div>

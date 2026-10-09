@@ -6,7 +6,7 @@
 
   import type { EChartsOption } from 'echarts';
 
-  import * as echarts from 'echarts';
+  import { init as echartsInit } from 'echarts';
 
   import ECharts from '~/components/apache-echarts/ECharts';
 
@@ -89,7 +89,7 @@
 
 <div class="relative grow">
   <div class="absolute top-0 right-0 bottom-0 left-0">
-    <ECharts id="formatting-tooltip-values" init={echarts.init} {options}
+    <ECharts id="formatting-tooltip-values" init={echartsInit} {options}
     ></ECharts>
   </div>
 </div>

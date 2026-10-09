@@ -1,7 +1,7 @@
 # astro-ts-tw-svelte
 
 [![Astro v7](https://img.shields.io/badge/-astro_v7-gray?style=flat&logo=astro)](https://astro.build/)
-[![Svelte v4](https://img.shields.io/badge/-svelte_v4-gray?style=flat&logo=svelte)](https://v4.svelte.dev/)
+[![Svelte v5](https://img.shields.io/badge/-svelte_v5-gray?style=flat&logo=svelte)](https://svelte.dev/)
 [![Tailwind CSS v4](https://img.shields.io/badge/-tailwindcss_v4-gray?style=flat&logo=tailwindcss)](https://tailwindcss.com/)
 [![PostCSS v8](https://img.shields.io/badge/-postcss_v8-gray?style=flat&logo=postcss)](https://postcss.org/)
 [![TypeScript v6](https://img.shields.io/badge/-typescript_v6-gray?style=flat&logo=typescript)](https://www.typescriptlang.org/)
@@ -17,8 +17,6 @@
 - [VS Code](https://code.visualstudio.com/) + [Development Containers](https://containers.dev/) ( [Customizations](https://containers.dev/supporting#visual-studio-code) | [VS Code Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) )
 
   - [[GitHub] erkobridee/devcontainer-hello](https://github.com/erkobridee/devcontainer-hello) - Learning about Development Containers
-
-<!-- npm i --legacy-peer-deps -->
 
 ## import path alias
 
@@ -64,11 +62,25 @@ Following a Linux/Unix OS approach, we have the following alias mapping `~/* -> 
 
       - [[StackOverflow] Svelte - Extend standard html elements with typescript](https://stackoverflow.com/a/75961340)
 
-  - [Deprecated] [@astrojs/tailwind](https://docs.astro.build/en/guides/integrations-guide/tailwind/)
+    - [Svelte](https://svelte.dev/)
 
-    - [Tailwind 4 support](https://astro.build/blog/astro-520/#tailwind-4-support) >>> [Astro TailwindCSS Integration](https://docs.astro.build/en/guides/styling/#tailwind) >>> [Install Tailwind CSS v4 with Astro](https://tailwindcss.com/docs/installation/framework-guides/astro)
+      - [TypeScript | Svelte Docs](https://svelte.dev/docs/svelte/typescript)
+
+        - [Typing $props](https://svelte.dev/docs/svelte/typescript#Typing-$props)
+
+      - [$props | Svelte Docs](https://svelte.dev/docs/svelte/$props)
+
+      - [$bindable | Svelte Docs](https://svelte.dev/docs/svelte/$bindable)
+
+      - [$effect | Svelte Docs](https://svelte.dev/docs/svelte/$effect)
+
+  - [Install Tailwind CSS with Astro](https://tailwindcss.com/docs/installation/framework-guides/astro)
+
+    - [Dark mode | Tailwind CSS Docs](https://tailwindcss.com/docs/dark-mode)
 
     - [[GitHub] tailwindlabs/tailwindcss-typography](https://github.com/tailwindlabs/tailwindcss-typography) - Beautiful typographic defaults for HTML you don't control.
+
+    - [Use daisyUI as a Tailwind CSS component library for Astro projects | daisyUI](https://daisyui.com/astro-component-library/)
 
   - [Components | Astro Docs](https://docs.astro.build/en/basics/astro-components/)
 
@@ -149,6 +161,6 @@ npm create astro@latest -- --template erkobridee/astro-ts-tw-svelte
 
 -->
 
-## GitHub Renovate
+## Legacy dependencies - GitHub Renovate
 
 - [how do i run npm install --legacy-peer-deps for some particular repo/project #22499](https://github.com/renovatebot/renovate/discussions/22499)

@@ -1,3 +1,3 @@
-export { default } from './ECharts.svelte';
+export { default } from './component.svelte';
 
 export type { EChartsPropReplaceMerge } from './types';
