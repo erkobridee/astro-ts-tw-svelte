@@ -9,9 +9,8 @@
   import type { DailyUsageBarClick } from './common';
 
   import dayjs from 'dayjs';
-  import * as echarts from 'echarts';
 
-  import { onMount } from 'svelte';
+  import { init as echartInit } from 'echarts';
 
   import ECharts from '~/components/apache-echarts/ECharts';
 
@@ -38,36 +37,49 @@
 
   //--------------------------------------------------------------------------//
 
-  // const locale = 'en-US';
+  interface Props {
+    unit?: string;
 
-  export let unit: string = '';
-  export const tooltipDatetimeFormat: string = DATE_FORMAT;
-  export const xAxisDatetimeFormat: string = WEEKDAY_SHORT_FORMAT;
+    tooltipDatetimeFormat?: string;
+    xAxisDatetimeFormat?: string;
 
-  export let xAxisAttribute: string = 'startedAt';
-  export let yAxisAttribute: string = 'value';
+    xAxisAttribute?: string;
+    yAxisAttribute?: string;
 
-  export let currentColor: string = COLOR_DEFAULT;
-  export let previousColor: string = COLOR_DEFAULT;
-  export let colorOpacity: number = COLOR_DEFAULT_OPACITY;
-  export let backgroundColor: string = COLOR_GRAY_50;
+    currentColor?: string;
+    previousColor?: string;
+    colorOpacity?: number;
+    backgroundColor?: string;
 
-  export let data: DailyUsage = { current: [], previous: [] };
+    data?: DailyUsage;
 
-  export let onclick: DailyUsageBarClick = DEFAULT_DAILYUSAGE_CLICK;
+    onclick?: DailyUsageBarClick;
+  }
 
-  let chart: EChartsType;
-  let options: EChartsOption = {};
+  let {
+    unit = '',
+    tooltipDatetimeFormat = DATE_FORMAT,
+    xAxisDatetimeFormat = WEEKDAY_SHORT_FORMAT,
 
-  $: updateOptions(
-    data,
-    xAxisAttribute,
-    yAxisAttribute,
-    currentColor,
-    previousColor,
-    colorOpacity,
-    backgroundColor
-  );
+    xAxisAttribute = 'startedAt',
+    yAxisAttribute = 'value',
+
+    currentColor = COLOR_DEFAULT,
+    previousColor = COLOR_DEFAULT,
+    colorOpacity = COLOR_DEFAULT_OPACITY,
+    backgroundColor = COLOR_GRAY_50,
+
+    data = { current: [], previous: [] },
+
+    onclick = DEFAULT_DAILYUSAGE_CLICK
+  }: Props = $props();
+
+  //---//
+
+  let chart = $state<EChartsType>();
+  let options = $state<EChartsOption>({});
+
+  //---//
 
   const updateOptions = (
     dailyUsageData: DailyUsage,
@@ -271,6 +283,18 @@
     };
   };
 
+  $effect(() => {
+    updateOptions(
+      data,
+      xAxisAttribute,
+      yAxisAttribute,
+      currentColor,
+      previousColor,
+      colorOpacity,
+      backgroundColor
+    );
+  });
+
   //--------------------------------------------------------------------------//
 
   const generateEmptyDataIfNeeded = (dailyUsageData: DailyUsage) => {
@@ -320,17 +344,17 @@
     });
   };
 
-  onMount(() => {
+  $effect(() => {
     // https://echarts.apache.org/en/api.html#echartsInstance.on
-    chart.on('click', onChartClick);
+    chart?.on('click', onChartClick);
 
-    console.log('EnergyOverviewChart - mounted', { chart });
+    console.log('DailyUsageChart - mounted', { chart });
 
     return () => {
       // https://echarts.apache.org/en/api.html#echartsInstance.off
-      chart.off('click', onChartClick);
+      chart?.off('click', onChartClick);
 
-      console.log('EnergyOverviewChart - destroyed', { chart });
+      console.log('DailyUsageChart - destroyed', { chart });
     };
   });
 </script>
@@ -345,7 +369,7 @@
   <div
     class="absolute top-0 right-0 bottom-0 left-0 overflow-hidden rounded-lg border border-gray-100"
   >
-    <ECharts init={echarts.init} {options} notMerge bind:chart>
+    <ECharts init={echartInit} {options} notMerge bind:chart>
       <ChartLoadingSpinner color={currentColor} />
     </ECharts>
   </div>

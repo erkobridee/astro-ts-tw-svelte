@@ -9,11 +9,15 @@
 
   //--------------------------------------------------------------------------//
 
-  let showData = true;
+  interface Props {
+    data?: DailyUsage;
+  }
 
-  export let data: DailyUsage;
+  let { data }: Props = $props();
 
-  $: innerData = showData ? data : { current: [], previous: [] };
+  let showData = $state(true);
+
+  let innerData = $derived(showData ? data : { current: [], previous: [] });
 
   //--------------------------------------------------------------------------//
 
