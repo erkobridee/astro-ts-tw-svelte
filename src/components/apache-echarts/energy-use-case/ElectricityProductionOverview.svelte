@@ -9,13 +9,19 @@
 
   //--------------------------------------------------------------------------//
 
-  let catchClickOnEmpty = false;
+  interface Props {
+    data?: TimeSerie[];
+  }
 
-  let showData = true;
+  //---//
 
-  export let data: TimeSerie[];
+  let catchClickOnEmpty = $state(false);
 
-  $: timeseries = showData ? data : [];
+  let showData = $state(true);
+
+  let { data = [] }: Props = $props();
+
+  let timeseries = $derived(showData ? data : []);
 
   //--------------------------------------------------------------------------//
 
