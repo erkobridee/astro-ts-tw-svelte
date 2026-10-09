@@ -22,7 +22,7 @@
     "gh-pages-preview": "cross-env GITHUB_PAGES=true GITHUB_PAGES_PREVIEW=true npm run preview"
   },
   "dependencies": {
-    "astro": "7.3.6",
+    "astro": "7.3.8",
     "canvas-confetti": "1.9.4",
     "dayjs": "1.11.23",
     "echarts": "6.1.0",
