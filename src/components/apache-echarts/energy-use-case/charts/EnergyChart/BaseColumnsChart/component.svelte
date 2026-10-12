@@ -1,192 +1,23 @@
-<script lang="ts" context="module">
-  /* eslint-disable */
-
+<script lang="ts">
+  import type { EChartsType, EChartsOption } from 'echarts';
   import type {
-    EChartsType,
-    EChartsOption,
-    BarSeriesOption,
-    TooltipComponentFormatterCallback,
-    TooltipComponentFormatterCallbackParams
-  } from 'echarts';
+    ChartClick,
+    ChartMouseMove
+  } from '~/components/apache-echarts/energy-use-case/charts/common';
+  import type { ChartOptions, ChartDataZoomOptions } from './types';
+
+  import { init as echartsInit } from 'echarts';
+
+  import { untrack } from 'svelte';
 
   import {
     LABEL_COLOR,
     LINE_STYLE,
     DEFAULT_CHART_CLICK,
-    DEFAULT_RADIUS_BORDER,
-    buildBarItemStyleBorderRadius
-  } from '~/components/apache-echarts/energy-use-case/charts/common';
-
-  //--------------------------------------------------------------------------//
-
-  export interface ChartDataZoomOptions {
-    show?: boolean;
-    windowSize?: number;
-    minWindowSize?: number;
-
-    /** once defining the data zoom if it's true that will selectt all the slider */
-    showAll?: boolean;
-  }
-  export type ChartDataZoomLabelFormatter = (
-    value: number,
-    valueStr: string
-  ) => string;
-
-  export type ChartXAxisLabelFormatter = (value: string) => string;
-  export type ChartYAxisLabelFormatter = (value: number) => string;
-  export type ChartTooltipFormatter =
-    TooltipComponentFormatterCallback<TooltipComponentFormatterCallbackParams>;
-
-  export interface ChartOptions {
-    color: string[];
-
-    /** xAxis.data */
-    categories: string[];
-
-    series: BarSeriesOption[];
-
-    xAxisLabelFormatter?: string | ChartXAxisLabelFormatter;
-    yAxisLabelFormatter?: string | ChartYAxisLabelFormatter;
-    tooltipFormatter?: string | ChartTooltipFormatter;
-
-    dataZoomLabelFormatter?: string | ChartDataZoomLabelFormatter;
-    dataZoomOptions?: ChartDataZoomOptions;
-  }
-
-  //--------------------------------------------------------------------------//
-
-  export const DEFAULT_DATA_ZOOM_OPTIONS: ChartDataZoomOptions = {
-    show: false,
-    windowSize: 12,
-    showAll: false
-  };
-
-  //--------------------------------------------------------------------------//
-
-  type StackInfo = Record<
-    string,
-    {
-      stackStart: number[];
-      stackEnd: number[];
-    }
-  >;
-
-  // map to know which bar entry needs to have the border radius
-  const buildStackInfo = (series: BarSeriesOption[]) => {
-    const stackInfo: StackInfo = {};
-
-    for (let i = 0; i < series[0].data!.length; ++i) {
-      for (let j = 0; j < series.length; ++j) {
-        const serie = series[j];
-
-        const stackName = serie.stack;
-        if (!stackName) {
-          continue;
-        }
-
-        if (!stackInfo[stackName]) {
-          stackInfo[stackName] = {
-            stackStart: [],
-            stackEnd: []
-          };
-        }
-
-        const info = stackInfo[stackName];
-        const data = serie.data![i];
-
-        // https://echarts.apache.org/en/option.html#series-bar.data
-        // empty value: '-' or null or undefined or NaN
-        const isPresent = (() => {
-          const value =
-            data && (data as any).value ? (data as any).value : data;
-
-          if (!value || value === null) {
-            return false;
-          }
-
-          switch (typeof value) {
-            case 'number':
-              return !isNaN(value);
-            case 'string':
-              return value !== '-';
-          }
-        })();
-
-        if (isPresent) {
-          if (info.stackStart[i] == null) {
-            info.stackStart[i] = j;
-          }
-
-          info.stackEnd[i] = j;
-        }
-      }
-    }
-
-    return stackInfo;
-  };
-
-  // add the border radius to the specific data entry that needs to render it
-  const addBorderRadiusToBars = (
-    series: BarSeriesOption[]
-  ): EChartsOption['series'] => {
-    const stackInfo = buildStackInfo(series);
-
-    for (let i = 0; i < series.length; ++i) {
-      const serie = series[i];
-
-      if (!serie.stack) {
-        serie.itemStyle = {
-          ...buildBarItemStyleBorderRadius(DEFAULT_RADIUS_BORDER),
-          borderWidth: 1
-        };
-
-        continue;
-      } else {
-        serie.itemStyle = {
-          borderWidth: 1
-        };
-      }
-
-      const data = serie.data!;
-      const dataLength = data.length;
-
-      const info = stackInfo[serie.stack];
-
-      for (let j = 0; j < dataLength; ++j) {
-        // const isStart = info.stackStart[j] === i;
-        const isEnd = info.stackEnd[j] === i;
-
-        const value = (data[j] && (data[j] as any).value) || data[j];
-        const itemStyle = {
-          ...buildBarItemStyleBorderRadius(isEnd ? DEFAULT_RADIUS_BORDER : 0),
-          borderWidth: 1
-        };
-
-        data[j] = {
-          value,
-          itemStyle
-        } as any;
-      }
-    }
-
-    return series;
-  };
-
-  //--------------------------------------------------------------------------//
-</script>
-
-<script lang="ts">
-  import * as echarts from 'echarts';
-
-  import { onMount } from 'svelte';
-
-  import {
     COLOR_DEFAULT_SHADOW,
     COLOR_DEFAULT,
     TINY_SCREEN_MAX_WIDTH,
-    TINY_SCREEN_MAX_HEIGHT,
-    type ChartClick,
-    type ChartMouseMove
+    TINY_SCREEN_MAX_HEIGHT
   } from '~/components/apache-echarts/energy-use-case/charts/common';
 
   import ECharts from '~/components/apache-echarts/ECharts';
@@ -195,32 +26,41 @@
   import { formatNumber } from '~/utils/format';
   import { debounce } from '~/utils/debounce';
 
-  //--------------------------------------------------------------------------//
+  import { CLICK_EVENT, MOUSE_EVENT, DEFAULT_DATA_ZOOM_OPTIONS } from './types';
 
-  const CLICK_EVENT = 'click';
-  const MOUSE_EVENT = 'mousemove';
-
-  export let isTinyScreen = false;
-
-  export let chartOptions: ChartOptions;
-
-  export let onclick: ChartClick = DEFAULT_CHART_CLICK;
-
-  let chart: EChartsType;
-  let options: EChartsOption = {};
-
-  let chartContainerDOMRect: DOMRectReadOnly | undefined = undefined;
-
-  let barName = '';
-  let barOverName = '';
+  import { addBorderRadiusToBars } from './utils';
 
   //--------------------------------------------------------------------------//
 
-  $: color = chartOptions.color[1] ?? chartOptions.color[0] ?? COLOR_DEFAULT;
+  interface BaseColumnsChartProps {
+    isTinyScreen?: boolean;
+    onclick?: ChartClick;
+    chartOptions: ChartOptions;
+  }
+
+  let {
+    isTinyScreen = false,
+    onclick = DEFAULT_CHART_CLICK,
+    chartOptions
+  }: BaseColumnsChartProps = $props();
 
   //--------------------------------------------------------------------------//
 
-  $: updateOptions(chartOptions, chartContainerDOMRect);
+  let chart = $state<EChartsType>();
+  let options = $state<EChartsOption>({});
+
+  let chartContainerDOMRect = $state<DOMRectReadOnly | undefined>(undefined);
+
+  let barName = $state<string>('');
+  let barOverName = $state<string>('');
+
+  //--------------------------------------------------------------------------//
+
+  const color = $derived(
+    chartOptions.color[1] ?? chartOptions.color[0] ?? COLOR_DEFAULT
+  );
+
+  //--------------------------------------------------------------------------//
 
   const updateOptions = (
     chartOptions: ChartOptions,
@@ -388,6 +228,15 @@
     }
   };
 
+  $effect(() => {
+    const currentChartOptions = chartOptions;
+    const currentChartContainerDOMRect = chartContainerDOMRect;
+
+    untrack(() => {
+      updateOptions(currentChartOptions, currentChartContainerDOMRect);
+    });
+  });
+
   //--------------------------------------------------------------------------//
 
   const onInnerMouseDef: ChartMouseMove = (event) => {
@@ -430,18 +279,18 @@
     barOverName = '';
   };
 
-  onMount(() => {
+  $effect(() => {
     // https://echarts.apache.org/en/api.html#echartsInstance.on
-    chart.on(CLICK_EVENT, 'series', onInnerClick);
-    chart.on(MOUSE_EVENT, 'series', onInnerMouse);
+    chart?.on(CLICK_EVENT, 'series', onInnerClick);
+    chart?.on(MOUSE_EVENT, 'series', onInnerMouse);
 
     // TODO: remove
     console.log('BaseColumnsChart - mounted', { chart });
 
     return () => {
       // https://echarts.apache.org/en/api.html#echartsInstance.off
-      chart.off(CLICK_EVENT, onInnerClick);
-      chart.off(MOUSE_EVENT, onInnerMouse);
+      chart?.off(CLICK_EVENT, onInnerClick);
+      chart?.off(MOUSE_EVENT, onInnerMouse);
 
       // TODO: remove
       console.log('BaseColumnsChart - destroyed', { chart });
@@ -450,7 +299,7 @@
 </script>
 
 <ECharts
-  init={echarts.init}
+  init={echartsInit}
   {options}
   notMerge
   bind:chart

@@ -7,8 +7,7 @@
 
   export type EnergyChartTypeKeys = keyof typeof EnergyChartType;
   export type EnergyChartTypes = (typeof EnergyChartType)[EnergyChartTypeKeys];
-
-  export type { ChartDataZoomOptions } from './BaseColumnsChart.svelte';
+  export type { ChartOptions, ChartDataZoomOptions } from './BaseColumnsChart';
 </script>
 
 <script lang="ts">
@@ -19,10 +18,7 @@
     ChartClick,
     TimeSerieBarClick
   } from '~/components/apache-echarts/energy-use-case/charts/common';
-  import type {
-    ChartOptions,
-    ChartDataZoomOptions
-  } from './BaseColumnsChart.svelte';
+  import type { ChartOptions, ChartDataZoomOptions } from './BaseColumnsChart';
 
   import { Unit, Aggregation } from '~/utils/timeseries';
   import {
@@ -39,7 +35,7 @@
     DEFAULT_MARKLINE_SYMBOL
   } from '~/components/apache-echarts/energy-use-case/charts/common';
 
-  import BaseColumnsChart from './BaseColumnsChart.svelte';
+  import BaseColumnsChart from './BaseColumnsChart';
   import DisplayTotal from './DisplayTotal.svelte';
 
   //--------------------------------------------------------------------------//
