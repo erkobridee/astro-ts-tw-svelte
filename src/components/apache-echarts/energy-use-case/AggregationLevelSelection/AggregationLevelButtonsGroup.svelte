@@ -3,8 +3,14 @@
 
   import AggregationLevelButton from './AggregationLevelButton.svelte';
 
-  export let label: string;
-  export let list: AggregationLevelButtonsGroupItem[];
+  //--------------------------------------------------------------------------//
+
+  interface AggregationLevelButtonsGroupProps {
+    label: string;
+    list: AggregationLevelButtonsGroupItem[];
+  }
+
+  let { label, list }: AggregationLevelButtonsGroupProps = $props();
 </script>
 
 {#if list.length > 0}

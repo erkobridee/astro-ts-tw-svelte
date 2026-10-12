@@ -1,10 +1,26 @@
 <script lang="ts">
+  import type { HTMLButtonAttributes } from 'svelte/elements';
   import type { AggregationLevelButtonClick } from './types';
 
   import cn from '~/utils/cn';
 
-  export let isSelected: boolean = false;
-  export let onclick: AggregationLevelButtonClick;
+  //--------------------------------------------------------------------------//
+
+  interface AggregationLevelButtonProps extends HTMLButtonAttributes {
+    isSelected: boolean;
+    onclick: AggregationLevelButtonClick;
+  }
+
+  let {
+    isSelected = false,
+    disabled = false,
+    onclick,
+    class: className = '',
+    children,
+    ...restProps
+  }: AggregationLevelButtonProps = $props();
+
+  //---//
 
   const buttonClass = `
     rounded-md border border-slate-300
@@ -22,10 +38,10 @@
 
 <button
   type="button"
-  class={cn(buttonClass, $$props.class)}
-  disabled={isSelected || $$props.disabled}
-  on:click={onclick}
-  {...$$restProps}
+  class={cn(buttonClass, className)}
+  disabled={isSelected || disabled}
+  {onclick}
+  {...restProps}
 >
-  <slot />
+  {@render children?.()}
 </button>

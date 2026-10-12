@@ -6,25 +6,44 @@
     AggregationLevelButtonsGroupItem
   } from './types';
 
+  import { untrack } from 'svelte';
+
   import AggregationLevelButtonsGroup from './AggregationLevelButtonsGroup.svelte';
 
   import { EnergyType, Aggregation } from '~/utils/timeseries';
   import { AggregationLevelSelectionLayout } from './types';
 
-  export let energyType: EnergyTypes;
-  export let aggregation: Aggregations;
-  export let layout: AggregationLevelSelectionLayouts =
-    AggregationLevelSelectionLayout.YEAR;
+  //--------------------------------------------------------------------------//
 
-  export let onclick: AggregationLevelSelectionClick;
+  interface AggregationLevelSelectionProps {
+    energyType: EnergyTypes;
+    aggregation: Aggregations;
+    layout: AggregationLevelSelectionLayouts;
+    onclick: AggregationLevelSelectionClick;
+  }
+
+  let {
+    energyType,
+    aggregation,
+    layout = AggregationLevelSelectionLayout.YEAR,
+    onclick
+  }: AggregationLevelSelectionProps = $props();
 
   //--------------------------------------------------------------------------//
 
-  let yearLevelButtons: AggregationLevelButtonsGroupItem[] = [];
-  let monthLevelButtons: AggregationLevelButtonsGroupItem[] = [];
-  let dayLevelButtons: AggregationLevelButtonsGroupItem[] = [];
+  let yearLevelButtons = $state<AggregationLevelButtonsGroupItem[]>([]);
+  let monthLevelButtons = $state<AggregationLevelButtonsGroupItem[]>([]);
+  let dayLevelButtons = $state<AggregationLevelButtonsGroupItem[]>([]);
 
-  $: updateUI(energyType, aggregation, layout);
+  //---//
+
+  const onInnerClick =
+    (
+      selectedAggregation: Aggregations,
+      layout: AggregationLevelSelectionLayouts
+    ) =>
+    (_: Event) =>
+      onclick(selectedAggregation, layout);
 
   const updateUI = (
     energyType: EnergyTypes,
@@ -123,15 +142,15 @@
     }
   };
 
-  //--------------------------------------------------------------------------//
+  $effect(() => {
+    const currentEnergyType = energyType;
+    const currentAggregation = aggregation;
+    const currentLayout = layout;
 
-  const onInnerClick =
-    (
-      selectedAggregation: Aggregations,
-      layout: AggregationLevelSelectionLayouts
-    ) =>
-    (_: Event) =>
-      onclick(selectedAggregation, layout);
+    untrack(() => {
+      updateUI(currentEnergyType, currentAggregation, currentLayout);
+    });
+  });
 </script>
 
 <div class="flex flex-col gap-4 md:flex-row md:items-center">
