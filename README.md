@@ -74,6 +74,10 @@ Following a Linux/Unix OS approach, we have the following alias mapping `~/* -> 
 
       - [$effect | Svelte Docs](https://svelte.dev/docs/svelte/$effect)
 
+      - [{#snippet ...} | Svelte Docs](https://svelte.dev/docs/svelte/snippet)
+
+      - [{@render ...} | Svelte Docs](https://svelte.dev/docs/svelte/@render)
+
   - [Install Tailwind CSS with Astro](https://tailwindcss.com/docs/installation/framework-guides/astro)
 
     - [Dark mode | Tailwind CSS Docs](https://tailwindcss.com/docs/dark-mode)
