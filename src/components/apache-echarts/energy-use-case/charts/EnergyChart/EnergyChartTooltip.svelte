@@ -18,14 +18,29 @@
 
   //--------------------------------------------------------------------------//
 
-  export let params: CallbackDataParams[];
-  export let aggregation: Aggregations;
-  export let currentItem: TimeSerie;
-  export let unit: Units;
-  export let showTotal: boolean = false;
+  interface EnergyChartTooltipProps {
+    params: CallbackDataParams[];
+    aggregation: Aggregations;
+    currentItem: TimeSerie;
+    unit: Units;
+    showTotal?: boolean;
+  }
 
-  let formatTooltipHeaderFn = (timeserie: TimeSerie) =>
-    formatDateTime(timeserie.startedAt);
+  let {
+    params,
+    aggregation,
+    currentItem,
+    unit,
+    showTotal = false
+  }: EnergyChartTooltipProps = $props();
+
+  //---//
+
+  type FormatTooltipHeaderFn = (_: TimeSerie) => string;
+
+  let formatTooltipHeaderFn = $state<FormatTooltipHeaderFn>(
+    (timeserie: TimeSerie) => formatDateTime(timeserie.startedAt)
+  );
 
   const onAggregation = (aggregation: Aggregations) => {
     switch (aggregation) {
@@ -43,11 +58,16 @@
         return;
     }
   };
-  $: onAggregation(aggregation);
 
-  $: total = showTotal
-    ? params.map((item) => item.value as number).reduce((a, v) => a + v, 0)
-    : 0;
+  $effect(() => {
+    onAggregation(aggregation);
+  });
+
+  const total = $derived(
+    showTotal
+      ? params.map((item) => item.value as number).reduce((a, v) => a + v, 0)
+      : 0
+  );
 </script>
 
 <div class="mb-1 inline-flex w-full justify-between gap-2">
