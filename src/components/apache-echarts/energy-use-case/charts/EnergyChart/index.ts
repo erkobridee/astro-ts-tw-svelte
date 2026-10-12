@@ -1,2 +1,3 @@
-export * from './EnergyChart.svelte';
-export { default } from './EnergyChart.svelte';
+export * from './types';
+
+export { default } from './component.svelte';
