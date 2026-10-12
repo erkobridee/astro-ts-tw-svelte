@@ -6,11 +6,23 @@
 
   import { LABEL_COLOR } from '~/components/apache-echarts/energy-use-case/charts/common';
 
-  export let label: string;
-  export let value: number;
-  export let valueColor: string = LABEL_COLOR;
-  export let unit: string | undefined;
-  export let maximumFractionDigits: number = DEFAULT_MAXIMUM_FRACTION_DIGITS;
+  //--------------------------------------------------------------------------//
+
+  interface DisplayTotalProps {
+    label: string;
+    value: number;
+    valueColor?: string;
+    unit?: string;
+    maximumFractionDigits?: number;
+  }
+
+  let {
+    label,
+    value,
+    valueColor = LABEL_COLOR,
+    unit,
+    maximumFractionDigits = DEFAULT_MAXIMUM_FRACTION_DIGITS
+  }: DisplayTotalProps = $props();
 </script>
 
 <div class="flex flex-col md:flex-row md:items-baseline md:gap-2">
