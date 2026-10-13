@@ -54,14 +54,6 @@ Following a Linux/Unix OS approach, we have the following alias mapping `~/* -> 
 
   - [Svelte integration with Astro | Astro Docs](https://docs.astro.build/en/guides/integrations-guide/svelte/) - `@astrojs/svelte@5` to use the Svelte v4
 
-    - [Svelte v4](https://v4.svelte.dev/)
-
-      - [TypeScript | Svelte v4 Docs](https://v4.svelte.dev/docs/typescript)
-
-      - [Svelte: Components with Typed Props | Daaang Amy](https://blog.amyndang.me/blog/typed-svelte-components/)
-
-      - [[StackOverflow] Svelte - Extend standard html elements with typescript](https://stackoverflow.com/a/75961340)
-
     - [Svelte](https://svelte.dev/)
 
       - [TypeScript | Svelte Docs](https://svelte.dev/docs/svelte/typescript)
