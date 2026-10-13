@@ -11,7 +11,9 @@
 
   import dayjs from 'dayjs';
 
-  import EnergyChart from '~/components/apache-echarts/energy-use-case/charts/EnergyChart/EnergyChart.svelte';
+  import { untrack } from 'svelte';
+
+  import EnergyChart from '~/components/apache-echarts/energy-use-case/charts/EnergyChart';
   import EnergyChartTooltip from '~/components/apache-echarts/energy-use-case/charts/EnergyChart/EnergyChartTooltip.svelte';
   import AggregationLevelSelection, {
     AggregationLevelSelectionLayout
@@ -25,25 +27,52 @@
 
   //--------------------------------------------------------------------------//
 
-  export let data: GasConsumptionData;
+  interface GasConsumptionProps {
+    data: GasConsumptionData;
+  }
 
-  let aggregation: Aggregations = Aggregation.MONTH;
-  let aggregationSelectionLayout: AggregationLevelSelectionLayouts =
-    AggregationLevelSelectionLayout.YEAR;
+  let { data }: GasConsumptionProps = $props();
 
-  let showAverage = false;
+  //---//
 
-  let dataStartedAt: string;
-  let timeseries: TimeSerie[] = [];
+  let aggregation = $state<Aggregations>(Aggregation.MONTH);
+  let aggregationSelectionLayout = $state<AggregationLevelSelectionLayouts>(
+    AggregationLevelSelectionLayout.YEAR
+  );
 
-  $: updateTimeseries(data);
+  let showAverage = $state<boolean>(false);
+
+  let dataStartedAt = $state<string>('');
+  let timeseries = $state<TimeSerie[]>([]);
+
+  const unit = Unit.M3;
+
+  //---//
 
   const updateTimeseries = (data: GasConsumptionData) => {
     aggregation = Aggregation.MONTH;
     aggregationSelectionLayout = AggregationLevelSelectionLayout.YEAR;
     timeseries = data.months;
     dataStartedAt = timeseries[0].startedAt;
+
+    // TODO: remove
+    console.log('EnergyChart.updateTimeseries ', {
+      aggregation,
+      aggregationSelectionLayout,
+      timeseries,
+      dataStartedAt
+    });
   };
+
+  $effect(() => {
+    if (!data) return;
+
+    const currentData = data;
+
+    untrack(() => {
+      updateTimeseries(currentData);
+    });
+  });
 
   //--------------------------------------------------------------------------//
 
@@ -119,8 +148,6 @@
 
     dataStartedAt = timeseries[0].startedAt;
   };
-
-  const unit = Unit.M3;
 </script>
 
 <div class="relative grow">
@@ -133,16 +160,16 @@
       {timeseries}
       {aggregation}
     >
-      <svelte:fragment slot="headerActions">
+      {#snippet headerActions()}
         <AggregationLevelSelection
           {aggregation}
           energyType={EnergyType.GAS}
           layout={aggregationSelectionLayout}
           onclick={onAggregationLevelSelectionClick}
         />
-      </svelte:fragment>
+      {/snippet}
 
-      <svelte:fragment slot="footer">
+      {#snippet footer()}
         <div
           class="flex flex-col justify-between gap-4 md:flex-row md:items-center md:gap-0"
         >
@@ -156,9 +183,9 @@
             <span class="font-semibold">{formatDate(dataStartedAt)}</span>
           </div>
         </div>
-      </svelte:fragment>
+      {/snippet}
 
-      <svelte:fragment slot="tooltip" let:params>
+      {#snippet tooltip(params)}
         {#if params !== undefined}
           {@const dataIndex = params[0]?.dataIndex}
 
@@ -168,7 +195,7 @@
             <EnergyChartTooltip {params} {currentItem} {aggregation} {unit} />
           {/if}
         {/if}
-      </svelte:fragment>
+      {/snippet}
     </EnergyChart>
   </div>
 </div>
