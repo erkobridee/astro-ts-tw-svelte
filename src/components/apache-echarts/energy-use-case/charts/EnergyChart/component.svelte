@@ -1,14 +1,13 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
   import type { BarSeriesOption } from 'echarts';
-  import type { CallbackDataParams } from 'echarts/types/dist/shared.d.ts';
   import type { TimeSerie, Units, Aggregations } from '~/utils/timeseries';
   import type {
     ChartClick,
     TimeSerieBarClick
   } from '~/components/apache-echarts/energy-use-case/charts/common';
   import type { ChartOptions, ChartDataZoomOptions } from './BaseColumnsChart';
-  import type { EnergyChartTypes } from './types';
+  import type { CallbackDataParams, EnergyChartTypes } from './types';
 
   import { untrack } from 'svelte';
   import { Unit, Aggregation } from '~/utils/timeseries';
@@ -162,8 +161,15 @@
       }
     );
 
-    chartOptions.color = Array.isArray(color) ? color : [color];
-    chartOptions.categories = data.startedAtData;
+    chartOptions = {
+      color: Array.isArray(color) ? color : [color],
+      categories: data.startedAtData,
+      series: []
+      // xAxisLabelFormatter
+      // tooltipFormatter
+      // dataZoomLabelFormatter
+      // dataZoomOptions
+    };
 
     if (isRepartition || isExceedance) {
       totalValues = [valueTotal, anotherValueTotal];
