@@ -68,6 +68,11 @@
       ? params.map((item) => item.value as number).reduce((a, v) => a + v, 0)
       : 0
   );
+
+  const paramsReversed = $derived.by(() => {
+    const currentParams = [...params];
+    return currentParams.reverse();
+  });
 </script>
 
 <div class="mb-1 inline-flex w-full justify-between gap-2">
@@ -75,7 +80,7 @@
 </div>
 
 <dl class="m-0">
-  {#each params.reverse() as item, index (index)}
+  {#each paramsReversed as item, index (index)}
     {@const color = item.color}
     {@const seriesName = item.seriesName}
     {@const value = Number(item.value)}
