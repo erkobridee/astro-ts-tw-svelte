@@ -56,7 +56,7 @@
     dataStartedAt = timeseries[0].startedAt;
 
     // TODO: remove
-    console.log('EnergyChart.updateTimeseries ', {
+    console.log('GasConsumption.updateTimeseries ', {
       aggregation,
       aggregationSelectionLayout,
       timeseries,
