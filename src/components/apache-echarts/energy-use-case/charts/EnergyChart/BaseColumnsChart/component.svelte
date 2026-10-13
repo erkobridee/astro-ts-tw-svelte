@@ -226,9 +226,14 @@
         }
       ];
     }
+
+    // TODO: remove
+    console.log('BaseColumnChart.updateOptions ', { chartOptions, options });
   };
 
   $effect(() => {
+    if (!chartOptions || !chartContainerDOMRect) return;
+
     const currentChartOptions = chartOptions;
     const currentChartContainerDOMRect = chartContainerDOMRect;
 
