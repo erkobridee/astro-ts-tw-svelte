@@ -10,6 +10,5 @@
       "matchPackageNames": ["typescript"],
       "enabled": false
     }
-  ],
-  "npmrc": "legacy-peer-deps=true"
+  ]
 }
