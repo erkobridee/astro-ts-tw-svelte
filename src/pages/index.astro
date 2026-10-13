@@ -12,12 +12,10 @@ import Greetings from '~/components/Greetings.svelte';
 
 <Layout
   content={{
-    title: 'Astro + TS + TailwindCSS + Svelte v4'
+    title: 'Astro + TS + TailwindCSS + Svelte v4/v5'
   }}
 >
-  <div
-    class="grid h-full place-items-center content-center space-y-4 px-4 py-8"
-  >
+  <div class="grid h-full place-items-center content-center space-y-4 px-4 py-8">
     <ConfettiButton>Tailwind Button in Astro!</ConfettiButton>
 
     <div class="w-full border-b border-gray-300"></div>
@@ -25,12 +23,18 @@ import Greetings from '~/components/Greetings.svelte';
     <div class="flex flex-col items-center space-y-4">
       <div class="font-bold">Available Pages:</div>
       <div class="flex flex-col gap-2 divide-gray-300 lg:flex-row lg:divide-x">
-        <Link class="pr-2" href="/echarts">Apache ECharts</Link>
-        <Link class="pr-2" href="/mdx-page">MDX</Link>
-        <Link class="pr-2" href="/markdown-content-page">Markdown Content</Link>
-        <Link class="pr-2" href="/search?q=Hello World"
-          >Search 'Hello World'</Link
-        >
+        <Link class="pr-2" href="/echarts">
+          Apache ECharts
+        </Link>
+        <Link class="pr-2" href="/mdx-page">
+          MDX
+        </Link>
+        <Link class="pr-2" href="/markdown-content-page">
+          Markdown Content
+        </Link>
+        <Link class="pr-2" href="/search?q=Hello World">
+          Search 'Hello World'
+        </Link>
       </div>
     </div>
 
@@ -40,10 +44,10 @@ import Greetings from '~/components/Greetings.svelte';
 
     <Greetings message="Greetings from message property!" />
 
-    <Greetings
-      ><span class="font-semibold">Svelte v4 Component:</span> Greetings from the
-      children!</Greetings
-    >
+    <Greetings>
+      <span class="font-semibold">Svelte v5 Component:</span> Greetings from the
+      children!
+    </Greetings>
 
     <div class="w-full border-b border-gray-300"></div>
 

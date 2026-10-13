@@ -5,15 +5,19 @@
 
   import { COLOR_ELECTRICITY_CONSUMPTION } from '~/components/apache-echarts/energy-use-case/charts/common';
 
-  import Toggle from '~/components/apache-echarts/Toggle.svelte';
+  import Toggle from '~/components/apache-echarts/Toggle';
 
   //--------------------------------------------------------------------------//
 
-  let showData = true;
+  interface Props {
+    data?: DailyUsage;
+  }
 
-  export let data: DailyUsage;
+  let { data }: Props = $props();
 
-  $: innerData = showData ? data : { current: [], previous: [] };
+  let showData = $state(true);
+
+  let innerData = $derived(showData ? data : { current: [], previous: [] });
 
   //--------------------------------------------------------------------------//
 

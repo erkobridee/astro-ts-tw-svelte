@@ -1,9 +1,7 @@
 <script lang="ts">
   import type { EChartsType, EChartsOption, BarSeriesOption } from 'echarts';
 
-  import { onMount } from 'svelte';
-
-  import * as echarts from 'echarts';
+  import { init as echartsInit } from 'echarts';
 
   import ECharts from '~/components/apache-echarts/ECharts';
 
@@ -17,7 +15,7 @@
 
   //--------------------------------------------------------------------------//
 
-  let chart: EChartsType;
+  let chart = $state<EChartsType>();
 
   //---//
 
@@ -206,26 +204,34 @@
   //--------------------------------------------------------------------------//
   // https://echarts.apache.org/handbook/en/concepts/event#event-of-component-interaction
 
-  onMount(() => {
-    const onLegendSelectChanged = (params: any) => {
-      // State if legend is selected.
-      const isSelected = params.selected[params.name];
+  const onLegendSelectChanged = (params: any) => {
+    // State if legend is selected.
+    const isSelected = params.selected[params.name];
 
-      // print in the console.
-      console.log(
-        (isSelected ? 'Selected' : 'Not Selected') + 'legend' + params.name
-      );
+    // print in the console.
+    console.log(
+      (isSelected ? 'Selected' : 'Not Selected') + 'legend' + params.name
+    );
 
-      // print for all legends.
-      console.log('all legends', params.selected);
+    // print for all legends.
+    console.log('all legends', params.selected);
 
-      console.log(params);
-    };
+    console.log(params);
+  };
 
-    chart.on('legendselectchanged', onLegendSelectChanged);
+  const onClick = (params: any) => {
+    console.log('onClick', params);
+  };
+
+  $effect(() => {
+    console.log(chart);
+
+    chart?.on('legendselectchanged', onLegendSelectChanged);
+    chart?.on('click', onClick);
 
     return () => {
-      chart.off('legendselectchanged', onLegendSelectChanged);
+      chart?.off('legendselectchanged', onLegendSelectChanged);
+      chart?.off('click', onClick);
     };
   });
 </script>
@@ -234,7 +240,7 @@
   <div class="absolute top-0 right-0 bottom-0 left-0">
     <ECharts
       id="stacket-columns-plus-markline"
-      init={echarts.init}
+      init={echartsInit}
       {options}
       bind:chart
     />

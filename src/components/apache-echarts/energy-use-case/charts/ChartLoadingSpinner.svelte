@@ -1,7 +1,11 @@
 <script lang="ts">
   import { COLOR_DEFAULT } from './common';
 
-  export let color: string = COLOR_DEFAULT;
+  interface Props {
+    color?: string;
+  }
+
+  let { color = COLOR_DEFAULT }: Props = $props();
 </script>
 
 <div class="flex h-full w-full items-center justify-center">

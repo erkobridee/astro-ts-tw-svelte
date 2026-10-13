@@ -10,9 +10,8 @@
   import type { TimeSerieBarClick } from './common';
 
   import dayjs from 'dayjs';
-  import * as echarts from 'echarts';
 
-  import { onMount } from 'svelte';
+  import { init as echartsInit } from 'echarts';
 
   import ECharts from '~/components/apache-echarts/ECharts';
 
@@ -34,35 +33,36 @@
 
   //--------------------------------------------------------------------------//
 
+  interface Props {
+    unit?: string;
+    xAxisAttribute?: string;
+    yAxisAttribute?: string;
+    color?: string;
+    colorOpacity?: number;
+    backgroundColor?: string;
+    catchClickOnEmpty?: boolean;
+    timeseries?: TimeSerie[];
+    onclick?: TimeSerieBarClick;
+  }
+
   const locale = 'en-US';
 
-  export let unit: string = '';
+  let {
+    unit = '',
+    xAxisAttribute = 'startedAt',
+    yAxisAttribute = 'value',
+    color = COLOR_DEFAULT,
+    colorOpacity = COLOR_DEFAULT_OPACITY,
+    backgroundColor = COLOR_GRAY_50,
+    catchClickOnEmpty = false,
+    timeseries = [],
+    onclick = DEFAULT_TIMESERIE_CLICK
+  }: Props = $props();
 
-  export let xAxisAttribute: string = 'startedAt';
-  export let yAxisAttribute: string = 'value';
+  let chart = $state<EChartsType>();
+  let options = $state<EChartsOption>({});
 
-  export let color: string = COLOR_DEFAULT;
-  export let colorOpacity: number = COLOR_DEFAULT_OPACITY;
-  export let backgroundColor: string = COLOR_GRAY_50;
-
-  export let catchClickOnEmpty: boolean = false;
-
-  export let timeseries: TimeSerie[] = [];
-
-  export let onclick: TimeSerieBarClick = DEFAULT_TIMESERIE_CLICK;
-
-  let chart: EChartsType;
-  let options: EChartsOption = {};
-
-  $: updateOptions(
-    timeseries,
-    xAxisAttribute,
-    yAxisAttribute,
-    color,
-    colorOpacity,
-    backgroundColor,
-    catchClickOnEmpty
-  );
+  //---//
 
   const updateOptions = (
     timeseries: TimeSerie[],
@@ -209,6 +209,18 @@
     };
   };
 
+  $effect(() => {
+    updateOptions(
+      timeseries,
+      xAxisAttribute,
+      yAxisAttribute,
+      color,
+      colorOpacity,
+      backgroundColor,
+      catchClickOnEmpty
+    );
+  });
+
   //--------------------------------------------------------------------------//
 
   const generateEmptyDataIfNeeded = (timeseries: TimeSerie[]) => {
@@ -244,16 +256,16 @@
     onclick(timeseries[event.dataIndex]);
   };
 
-  onMount(() => {
+  $effect(() => {
     // https://echarts.apache.org/en/api.html#echartsInstance.on
-    chart.on('click', onChartClick);
+    chart?.on('click', onChartClick);
 
     // TODO: remove
     console.log('EnergyOverviewChart - mounted', { chart });
 
     return () => {
       // https://echarts.apache.org/en/api.html#echartsInstance.off
-      chart.off('click', onChartClick);
+      chart?.off('click', onChartClick);
 
       // TODO: remove
       console.log('EnergyOverviewChart - destroyed', { chart });
@@ -271,7 +283,7 @@
   <div
     class="absolute top-0 right-0 bottom-0 left-0 overflow-hidden rounded-lg border border-gray-100"
   >
-    <ECharts init={echarts.init} {options} notMerge bind:chart>
+    <ECharts init={echartsInit} {options} notMerge bind:chart>
       <ChartLoadingSpinner {color} />
     </ECharts>
   </div>

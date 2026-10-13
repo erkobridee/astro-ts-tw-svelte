@@ -1,9 +1,20 @@
 <script lang="ts">
-  export let message = 'Hello world!';
+  import type { Snippet } from 'svelte';
+
+  interface Props {
+    message?: string;
+    children?: Snippet;
+  }
+
+  const { message = 'Hello world!', children }: Props = $props();
 </script>
 
 <div class="grettings">
-  <slot>{message}</slot>
+  {#if children}
+    {@render children()}
+  {:else}
+    {message}
+  {/if}
 </div>
 
 <style lang="postcss">

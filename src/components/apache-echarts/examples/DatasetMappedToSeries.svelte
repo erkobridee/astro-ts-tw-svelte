@@ -3,7 +3,7 @@
 
   import type { EChartsOption, BarSeriesOption } from 'echarts';
 
-  import * as echarts from 'echarts';
+  import { init as echartsInit } from 'echarts';
 
   import ECharts from '~/components/apache-echarts/ECharts';
 
@@ -11,6 +11,8 @@
     DEFAULT_RADIUS_BORDER,
     buildBarItemStyleBorderRadius
   } from '~/components/apache-echarts/common';
+
+  //--------------------------------------------------------------------------//
 
   const BASE_BAR_SERIE: BarSeriesOption = {
     type: 'bar',
@@ -95,7 +97,7 @@
 
 <div class="relative grow">
   <div class="absolute top-0 right-0 bottom-0 left-0">
-    <ECharts id="dataset-mapped-to-series" init={echarts.init} {options}
+    <ECharts id="dataset-mapped-to-series" init={echartsInit} {options}
     ></ECharts>
   </div>
 </div>

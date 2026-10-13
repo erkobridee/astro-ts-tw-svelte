@@ -1,29 +1,15 @@
-<script lang="ts" context="module">
-  export const EnergyChartType = {
-    PLAIN: 'PLAIN',
-    REPARTITION: 'REPARTITION',
-    EXCEEDANCE: 'EXCEEDANCE'
-  } as const satisfies Record<string, string>;
-
-  export type EnergyChartTypeKeys = keyof typeof EnergyChartType;
-  export type EnergyChartTypes = (typeof EnergyChartType)[EnergyChartTypeKeys];
-
-  export type { ChartDataZoomOptions } from './BaseColumnsChart.svelte';
-</script>
-
 <script lang="ts">
+  import type { Snippet } from 'svelte';
   import type { BarSeriesOption } from 'echarts';
-  import type { CallbackDataParams } from 'echarts/types/dist/shared.d.ts';
   import type { TimeSerie, Units, Aggregations } from '~/utils/timeseries';
   import type {
     ChartClick,
     TimeSerieBarClick
   } from '~/components/apache-echarts/energy-use-case/charts/common';
-  import type {
-    ChartOptions,
-    ChartDataZoomOptions
-  } from './BaseColumnsChart.svelte';
+  import type { ChartOptions, ChartDataZoomOptions } from './BaseColumnsChart';
+  import type { CallbackDataParams, EnergyChartTypes } from './types';
 
+  import { untrack } from 'svelte';
   import { Unit, Aggregation } from '~/utils/timeseries';
   import {
     DEFAULT_MAXIMUM_FRACTION_DIGITS,
@@ -39,8 +25,9 @@
     DEFAULT_MARKLINE_SYMBOL
   } from '~/components/apache-echarts/energy-use-case/charts/common';
 
-  import BaseColumnsChart from './BaseColumnsChart.svelte';
+  import BaseColumnsChart from './BaseColumnsChart';
   import DisplayTotal from './DisplayTotal.svelte';
+  import { EnergyChartType } from './types';
 
   //--------------------------------------------------------------------------//
 
@@ -54,29 +41,59 @@
 
   //--------------------------------------------------------------------------//
 
-  export let type: EnergyChartTypes = EnergyChartType.PLAIN;
-  export let showAverageMarkline: boolean = false;
+  interface EnergyChartProps {
+    type?: EnergyChartTypes;
+    showAverageMarkline?: boolean;
 
-  export let unit: Units = Unit.UNDEFINED;
-  export let aggregation: Aggregations = Aggregation.UNDEFINED;
-  export let maximumFractionDigits: number = DEFAULT_MAXIMUM_FRACTION_DIGITS;
-  export let dataZoomOptions: DataZoomOptionsProp = undefined;
+    unit?: Units;
+    aggregation?: Aggregations;
 
-  export let color: ColorProp = COLOR_DEFAULT;
+    maximumFractionDigits?: number;
+    dataZoomOptions?: DataZoomOptionsProp;
 
-  export let timeseries: TimeSerie[] = [];
+    color?: ColorProp;
 
-  export let labels: LabelProp = ['Consumption', 'Exceedance'];
+    timeseries?: TimeSerie[];
 
-  export let onclick: TimeSerieBarClick = DEFAULT_TIMESERIE_CLICK;
+    labels?: LabelProp;
+
+    onclick?: TimeSerieBarClick;
+
+    headerActions?: Snippet;
+    footer?: Snippet;
+    tooltip?: Snippet<[CallbackDataParams[]]>;
+  }
+
+  let {
+    type = EnergyChartType.PLAIN,
+    showAverageMarkline = false,
+
+    unit = Unit.UNDEFINED,
+    aggregation = Aggregation.UNDEFINED,
+    maximumFractionDigits = DEFAULT_MAXIMUM_FRACTION_DIGITS,
+
+    dataZoomOptions,
+
+    color = COLOR_DEFAULT,
+
+    timeseries = [],
+
+    labels = ['Consumption', 'Exceedance'],
+
+    onclick = DEFAULT_TIMESERIE_CLICK,
+
+    headerActions,
+    footer,
+    tooltip
+  }: EnergyChartProps = $props();
 
   //--------------------------------------------------------------------------//
 
-  let isDrilldownEnabled = false;
+  let isDrilldownEnabled = $state<boolean>(false);
 
-  let totalValues: TotalValues = [0, NaN];
+  let totalValues = $state<TotalValues>([0, NaN]);
 
-  let chartOptions: ChartOptions = {
+  let chartOptions = $state<ChartOptions>({
     color: [],
     categories: [],
     series: []
@@ -84,23 +101,12 @@
     // tooltipFormatter
     // dataZoomLabelFormatter
     // dataZoomOptions
-  };
+  });
 
-  let tooltipParams: CallbackDataParams[] | undefined;
-  let tooltipElement: HTMLElement;
+  let tooltipElement = $state<HTMLElement>();
+  let tooltipParams = $state<CallbackDataParams[] | undefined>();
 
   //--------------------------------------------------------------------------//
-
-  $: updateChartOptions(
-    type,
-    showAverageMarkline,
-    unit,
-    aggregation,
-    maximumFractionDigits,
-    dataZoomOptions,
-    color,
-    timeseries
-  );
 
   const updateChartOptions = (
     type: EnergyChartTypes,
@@ -155,8 +161,15 @@
       }
     );
 
-    chartOptions.color = Array.isArray(color) ? color : [color];
-    chartOptions.categories = data.startedAtData;
+    chartOptions = {
+      color: Array.isArray(color) ? color : [color],
+      categories: data.startedAtData,
+      series: []
+      // xAxisLabelFormatter
+      // tooltipFormatter
+      // dataZoomLabelFormatter
+      // dataZoomOptions
+    };
 
     if (isRepartition || isExceedance) {
       totalValues = [valueTotal, anotherValueTotal];
@@ -262,12 +275,36 @@
 
     chartOptions.tooltipFormatter = (params) => {
       tooltipParams = params as CallbackDataParams[];
-      return tooltipElement;
+      return tooltipElement!;
     };
 
     chartOptions.dataZoomLabelFormatter = (_, value) => formatAxisLabel(value);
     chartOptions.dataZoomOptions = dataZoomOptions;
   };
+
+  $effect(() => {
+    const currentType = type;
+    const currentShowAverageMarkline = showAverageMarkline;
+    const currentUnit = unit;
+    const currentAggregation = aggregation;
+    const currentMaximumFractionDigits = maximumFractionDigits;
+    const currentDataZoomOptions = dataZoomOptions;
+    const currentColor = color;
+    const currentTimeseries = timeseries;
+
+    untrack(() => {
+      updateChartOptions(
+        currentType,
+        currentShowAverageMarkline,
+        currentUnit,
+        currentAggregation,
+        currentMaximumFractionDigits,
+        currentDataZoomOptions,
+        currentColor,
+        currentTimeseries
+      );
+    });
+  });
 
   //--------------------------------------------------------------------------//
 
@@ -345,7 +382,7 @@
       {/if}
     </div>
 
-    <div><slot name="headerActions" /></div>
+    <div>{@render headerActions?.()}</div>
   </div>
 
   <div class="relative min-h-[200px] grow">
@@ -354,14 +391,12 @@
     </div>
   </div>
 
-  {#if $$slots.footer}
-    <slot name="footer" />
-  {/if}
+  {@render footer?.()}
 
-  {#if $$slots.tooltip && tooltipParams !== undefined}
+  {#if tooltip && tooltipParams !== undefined}
     <div style="display: none">
       <div bind:this={tooltipElement}>
-        <slot name="tooltip" params={tooltipParams} />
+        {@render tooltip(tooltipParams)}
       </div>
     </div>
   {/if}

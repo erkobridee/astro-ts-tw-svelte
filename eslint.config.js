@@ -106,7 +106,10 @@ export default [
       'svelte/require-store-reactive-access': 'error',
       'svelte/system': 'error',
       'svelte/valid-each-key': 'error',
-      'svelte/valid-prop-names-in-kit-pages': 'error'
+      'svelte/valid-prop-names-in-kit-pages': 'error',
+
+      // TODO: review and remove it later, after migrating the code to svelte v5 syntax
+      'no-useless-assignment': 'off'
     }
   },
 
