@@ -15,10 +15,12 @@
   import dayjs from 'dayjs';
   import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 
+  import { untrack } from 'svelte';
+
   import EnergyChart, {
     type EnergyChartTypes,
     EnergyChartType
-  } from '~/components/apache-echarts/energy-use-case/charts/EnergyChart/EnergyChart.svelte';
+  } from '~/components/apache-echarts/energy-use-case/charts/EnergyChart';
   import EnergyChartTooltip from '~/components/apache-echarts/energy-use-case/charts/EnergyChart/EnergyChartTooltip.svelte';
   import AggregationLevelSelection, {
     AggregationLevelSelectionLayout
@@ -68,26 +70,37 @@
 
   //--------------------------------------------------------------------------//
 
-  let type: EnergyChartTypes = EnergyChartType.PLAIN;
-  let color = COLORS_MAP[type];
-  let labels: string[] = LABELS_MAP[type];
-  let unit: Units = Unit.KWH;
+  interface ElectricityConsumptionProps {
+    data: ElectricityData;
+  }
 
-  let aggregation: Aggregations = Aggregation.MONTH;
-  let aggregationSelectionLayout: AggregationLevelSelectionLayouts =
-    AggregationLevelSelectionLayout.YEAR;
+  let { data }: ElectricityConsumptionProps = $props();
 
-  let showAverage = false;
-  let dataStartedAt: string;
-  let timeseries: TimeSerie[] = [];
+  //---//
 
-  let referencePower: ReferencePower[] = [];
-  let referencePowerAmount: string = '0';
-  let referencePowerOptions: ButtonToggle[] = [];
+  const defaultType = EnergyChartType.PLAIN;
 
-  export let data: ElectricityData;
+  let type = $state<EnergyChartTypes>(defaultType);
+  let color = $state<string[]>(COLORS_MAP[defaultType]);
+  let labels = $state<string[]>(LABELS_MAP[defaultType]);
+  let unit = $state<Units>(Unit.KWH);
 
-  $: onData(data);
+  let aggregation = $state<Aggregations>(Aggregation.MONTH);
+  let aggregationSelectionLayout = $state<AggregationLevelSelectionLayouts>(
+    AggregationLevelSelectionLayout.YEAR
+  );
+
+  let showAverage = $state<boolean>(false);
+  let dataStartedAt = $state<string>('');
+
+  let timeseries = $state<TimeSerie[]>([]);
+  let rawTimeseries = $state<TimeSerie[]>([]);
+
+  let referencePower = $state<ReferencePower[]>([]);
+  let referencePowerAmount = $state<string>('0');
+  let referencePowerOptions = $state<ButtonToggle[]>([]);
+
+  //---//
 
   const onData = (data: ElectricityData) => {
     type = EnergyChartType.PLAIN;
@@ -105,9 +118,17 @@
     console.log('ElectricityConsumption.onData', data);
   };
 
-  //---//
+  $effect(() => {
+    if (!data) return;
 
-  let rawTimeseries: TimeSerie[] = [];
+    const currentData = data;
+
+    untrack(() => {
+      onData(currentData);
+    });
+  });
+
+  //---//
 
   const cloneTimeseries = (timeseries: TimeSerie[]) =>
     timeseries.map(({ startedAt, endedAt, value, anotherValue }) => ({
@@ -409,16 +430,16 @@
       showAverageMarkline={showAverage}
       onclick={onChartClick}
     >
-      <svelte:fragment slot="headerActions">
+      {#snippet headerActions()}
         <AggregationLevelSelection
           {aggregation}
           energyType={EnergyType.ELECTRICITY}
           layout={aggregationSelectionLayout}
           onclick={onAggregationLevelSelectionClick}
         />
-      </svelte:fragment>
+      {/snippet}
 
-      <svelte:fragment slot="footer">
+      {#snippet footer()}
         <div
           class="flex flex-col-reverse items-center gap-4 py-4 lg:flex-row lg:justify-between lg:gap-0 lg:py-2"
         >
@@ -468,9 +489,9 @@
             <span class="font-semibold">{formatDate(dataStartedAt)}</span>
           </div>
         </div>
-      </svelte:fragment>
+      {/snippet}
 
-      <svelte:fragment slot="tooltip" let:params>
+      {#snippet tooltip(params)}
         {#if params !== undefined}
           {@const dataIndex = params[0]?.dataIndex}
 
@@ -489,7 +510,7 @@
             />
           {/if}
         {/if}
-      </svelte:fragment>
+      {/snippet}
     </EnergyChart>
   </div>
 </div>
