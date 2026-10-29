@@ -1,0 +1,1 @@
+import{G as e}from"./client.DjGQg2Rs.js";e();
