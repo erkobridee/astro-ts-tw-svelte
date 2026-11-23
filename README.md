@@ -102,9 +102,11 @@ Following a Linux/Unix OS approach, we have the following alias mapping `~/* -> 
 
 - [Effortless Code Styling: Configuring Astro with Prettier, ESLint, and Tailwind CSS | Raj Vadeghar](https://r44j.dev/blog/beginner-s-guide-to-setting-up-astro-astro-prettier-eslint-tailwind-css/) (2024/03/03)
 
-<!--
-
 ## Useful references
+
+- [[GitHub] shadcn-ui/cn](https://github.com/shadcn-ui/cn) - cn is a new engine for Tailwind class merging and conflict resolution. It replaces tailwind-merge and clsx. Same APIs. Full parity. And it is 30× faster.
+
+<!--
 
 ### Markdown
 
