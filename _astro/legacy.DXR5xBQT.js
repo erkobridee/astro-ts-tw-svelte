@@ -1,1 +1,0 @@
-import{G as e}from"./client.do7Prizz.js";e();

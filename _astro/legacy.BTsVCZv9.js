@@ -1,0 +1,1 @@
+import{K as e}from"./client.DI0NkdGs.js";e();
