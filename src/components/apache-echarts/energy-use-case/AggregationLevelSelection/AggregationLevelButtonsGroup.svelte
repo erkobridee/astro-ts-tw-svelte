@@ -23,8 +23,10 @@
       <li>
         <AggregationLevelButton
           isSelected={item.isSelected}
-          onclick={item.onclick}>{item.label}</AggregationLevelButton
+          onclick={item.onclick}
         >
+          {item.label}
+        </AggregationLevelButton>
       </li>
     {/each}
   </ul>

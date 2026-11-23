@@ -51,8 +51,10 @@
         class={cn(baseInputRadioClass, {
           'rounded-l-md': index === 0,
           'rounded-r-md': index === lastIndex
-        })}>{item.label ?? item.value}</span
+        })}
       >
+        {item.label ?? item.value}
+      </span>
     </label>
   {/each}
 </div>

@@ -33,16 +33,20 @@
         'px-4 py-1',
         'bg-blue-300',
         'peer-checked:bg-gray-300'
-      )}>{leftLabel}</span
+      )}
     >
+      {leftLabel}
+    </span>
     <span
       class={cn(
         'rounded-r-md',
         'px-4 py-1',
         'bg-gray-300',
         'peer-checked:bg-blue-300'
-      )}>{rightLabel}</span
+      )}
     >
+      {rightLabel}
+    </span>
   </label>
 {/if}
 
@@ -55,9 +59,9 @@
     <input {id} type="checkbox" value="" class="peer sr-only" bind:checked />
 
     {#if hasLeftLabel}
-      <span class="mr-3 text-sm text-gray-900 dark:text-gray-300"
-        >{leftLabel}</span
-      >
+      <span class="mr-3 text-sm text-gray-900 dark:text-gray-300">
+        {leftLabel}
+      </span>
     {/if}
 
     <div
@@ -73,8 +77,8 @@
       )}
     ></div>
 
-    <span class="ms-3 text-sm text-gray-900 dark:text-gray-300"
-      >{hasLeftLabel ? rightLabel : leftLabel}</span
-    >
+    <span class="ms-3 text-sm text-gray-900 dark:text-gray-300">
+      {hasLeftLabel ? rightLabel : leftLabel}
+    </span>
   </label>
 {/if}

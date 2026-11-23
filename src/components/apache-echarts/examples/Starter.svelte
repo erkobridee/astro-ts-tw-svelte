@@ -90,8 +90,10 @@
         id="test-id-charts"
         init={echartsInit}
         {theme}
-        {options}>Loading Starter Example Chart...</ECharts
+        {options}
       >
+        Loading Starter Example Chart...
+      </ECharts>
     </div>
   </div>
 </div>
